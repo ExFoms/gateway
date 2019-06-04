@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <element name="InputData" type="InputDataType">
+        <annotation>
+            <documentation>Входные данные</documentation>
+        </annotation>
+    </element>
+    <element name="OutputData" type="OutputDataType">
+        <annotation>
+            <documentation>Выходные данные</documentation>
+        </annotation>
+    </element>
+    <complexType name="InputDataType">
+        <sequence>
+            <element name="IdentyPeoplesRequest" type="IdentyPeoplesRequestType">
+                <annotation>
+                    <documentation>Передача заявления о выборе страховой медицинской организации (СМО)</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="IdentyPeoplesRequestType">
+        <annotation>
+            <documentation>Передача заявления о выборе страховой медицинской организации (СМО)</documentation>
+        </annotation>
+        <sequence>
+            <element name="orderId" type="normalizedString">
+                <annotation>
+                    <documentation>Идентификатор заявления</documentation>
+                </annotation>
+            </element>
+            <element name="RegionCode" type="digits-5">
+                <annotation>
+                    <documentation>Пятизначный код ОКАТО субъекта Российской Федерации</documentation>
+                </annotation>
+            </element>
+            <element name="Code_smop" type="normalizedString">
+                <annotation>
+                    <documentation>Реестровый код СМО</documentation>
+                </annotation>
+            </element>
+            <element name="IssuingPointAddress" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Адрес пункта выдачи полисов ОМС</documentation>
+                </annotation>
+            </element>
+            <element name="AttachmentsBlock" type="_AttachmentsBlockType">
+                <annotation>
+                    <documentation>Блок описания вложения</documentation>
+                </annotation>
+            </element>
+         </sequence>
+    </complexType>
+    <complexType name="OutputDataType">
+        <sequence>
+            <element name="statusCode" type="statusType">
+                <annotation>
+                    <documentation>Статус результата проверки данных заявления</documentation>
+                </annotation>
+            </element>
+            <element name="Comment" type="string">
+                <annotation>
+                    <documentation>Текст результата проверки данных заявления</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="_AttachmentsBlockType">
+        <annotation>
+            <documentation>Блок описания вложения</documentation>
+        </annotation>
+        <sequence>
+            <element name="AttachmentDescription" type="_AttachmentDescriptionType"/>
+        </sequence>
+    </complexType>
+    <complexType name="_AttachmentDescriptionType">
+        <sequence>
+            <choice>
+                <annotation>
+                    <documentation>Указание способа передачи вложения: через ФХ или методом MTOM-передачи
+                    </documentation>
+                </annotation>
+                <element name="AttachmentFSLink" type="string">
+                    <annotation>
+                        <documentation>Ссылка на папку ФХ, в котором содержится передаваемое вложение</documentation>
+                    </annotation>
+                </element>
+                <element name="IsMTOMAttachmentContent" type="boolean">
+                    <annotation>
+                        <documentation>Признак передачи вложения методом MTOM</documentation>
+                    </annotation>
+                </element>
+            </choice>
+            <element name="AttachmentFormat1" type="_StructuredAttachmentFormatType1">
+                <annotation>
+                    <documentation>Описание структурированного формата вложения</documentation>
+                </annotation>
+            </element>
+            <element name="AttachmentSignatureFSLink" type="string" minOccurs="0">
+                <annotation>
+                    <documentation>Блок передачи файла отсоединенной электронной подписи вложения</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="_StructuredAttachmentFormatType1">
+        <annotation>
+            <documentation>Описание структурированного формата вложения</documentation>
+        </annotation>
+        <sequence>
+            <element name="IsUnstructuredFormat" type="boolean">
+                <annotation>
+                    <documentation>Обязательное и явное указание: является ли формат структурированным или не является</documentation>
+                </annotation>
+            </element>
+            <element name="IsZippedPacket" type="boolean">
+                <annotation>
+                    <documentation>Обязательное и явное указание: будет ли содержимое вложения упаковываться Zip-алгоритмом</documentation>
+                </annotation>
+            </element>
+            <element name="ApplicationFormData" type="ApplicationFormDataType">
+                <annotation>
+                    <documentation>Данные заполненной формы заявления</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="ApplicationFormDataType">
+        <annotation>
+            <documentation>Данные заполненной формы заявления</documentation>
+        </annotation>
+        <sequence>
+            <element name="InsuranceRegionCode" type="digits-5">
+                <annotation>
+                    <documentation>Код субъекта Российской Федерации территории страхования</documentation>
+                </annotation>
+            </element>
+            <element name="PolicyCarrierTypeCode" type="PolicyCarrierType">
+                <annotation>
+                    <documentation>Код формы полиса ОМС</documentation>
+                </annotation>
+            </element>
+            <group ref="q1:PhysicalPersonIdentificationInformation-ModelGroup">
+                <annotation>
+                    <documentation>ФИО, дата рождения и место рождения гражданина</documentation>
+                </annotation>
+            </group>
+            <element name="SNILS" type="q1:SNILSType">
+                <annotation>
+                    <documentation>СНИЛС гражданина</documentation>
+                </annotation>
+            </element>
+            <element name="Gender" type="GenderType">
+                <annotation>
+                    <documentation>Пол гражданина</documentation>
+                </annotation>
+            </element>
+            <element name="PassportRF" type="PassportRFType">
+                <annotation>
+                    <documentation>Паспорт гражданина РФ</documentation>
+                </annotation>
+            </element>
+            <element name="PhoneNumberRFType" type="q1:PhoneNumberRFType">
+                <annotation>
+                    <documentation>Номер телефона</documentation>
+                </annotation>
+            </element>
+            <element name="Nam_smok" type="normalizedString">
+                <annotation>
+                    <documentation>Краткое наименование страховой медицинской организации (филиала)
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="RegResidentialAddress" type="AddressInfoType">
+                <annotation>
+                    <documentation>Адрес регистрации по месту жительства</documentation>
+                </annotation>
+            </element>
+            <element name="RegDate" type="date">
+                <annotation>
+                    <documentation>Дата регистрации по месту жительства</documentation>
+                </annotation>
+            </element>
+            <element name="IsStayAddressTheSame" type="boolean">
+                <annotation>
+                    <documentation>Адрес места пребывания совпадает с адресом регистрации по месту жительства в
+                        Российской Федерации
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="StayAddress" type="AddressInfoType" minOccurs="0">
+                <annotation>
+                    <documentation>Адрес места пребывания</documentation>
+                </annotation>
+            </element>
+            <element name="ApplicationDate" type="date">
+                <annotation>
+                    <documentation>Дата подачи заявления</documentation>
+                </annotation>
+            </element>
+            <element name="Email" type="q1:EmailAddressType">
+                <annotation>
+                    <documentation>Адрес электронной почты пользователя</documentation>
+                </annotation>
+            </element>
+            <element name="Citizenship" type="CitizenshipType">
+                <annotation>
+                    <documentation>Гражданство</documentation>
+                </annotation>
+            </element>
+            <element name="IdentityDocument" type="IdentityDocumentType">
+                <annotation>
+                    <documentation>Вид документа, удостоверяющего личность</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="AddressInfoType">
+        <annotation>
+            <documentation>Данные по адресу регистрации по месту жительства/по месту пребывания</documentation>
+        </annotation>
+        <sequence>
+            <element name="FullAddressText" type="normalizedString">
+                <annotation>
+                    <documentation>Текст адреса полностью</documentation>
+                </annotation>
+            </element>
+            <element name="RegionCode" type="digits-5">
+                <annotation>
+                    <documentation>Код ОКАТО субъекта Российской Федерации</documentation>
+                </annotation>
+            </element>
+            <element name="RegionName" type="normalizedString">
+                <annotation>
+                    <documentation>Наименование субъекта Российской Федерации</documentation>
+                </annotation>
+            </element>
+            <element name="Area" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Район</documentation>
+                </annotation>
+            </element>
+            <element name="City" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Город</documentation>
+                </annotation>
+            </element>
+            <element name="IntracityArea" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Внутригородской район</documentation>
+                </annotation>
+            </element>
+            <element name="Locality" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Населенный пункт</documentation>
+                </annotation>
+            </element>
+            <element name="Street" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Улица</documentation>
+                </annotation>
+            </element>
+            <element name="AddTerritory" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Дополнительная территория</documentation>
+                </annotation>
+            </element>
+            <element name="AddTerritoryStreet" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Улица на дополнительной территории</documentation>
+                </annotation>
+            </element>
+            <element name="House" type="normalizedString">
+                <annotation>
+                    <documentation>Дом</documentation>
+                </annotation>
+            </element>
+            <element name="Building" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Корпус</documentation>
+                </annotation>
+            </element>
+            <element name="HouseStructure" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Строение</documentation>
+                </annotation>
+            </element>
+            <element name="Flat" type="normalizedString" minOccurs="0">
+                <annotation>
+                    <documentation>Квартира</documentation>
+                </annotation>
+            </element>
+            <element name="PostalIndex" type="q1:PostalCodeRFType">
+                <annotation>
+                    <documentation>Почтовый индекс</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="PassportRFType">
+        <annotation>
+            <documentation>Паспорт РФ</documentation>
+        </annotation>
+        <sequence>
+            <element name="Series" type="q1:digits-4">
+                <annotation>
+                    <documentation>Серия</documentation>
+                </annotation>
+            </element>
+            <element name="Number" type="q1:digits-6">
+                <annotation>
+                    <documentation>Номер</documentation>
+                </annotation>
+            </element>
+            <element name="IssueDate" type="date">
+                <annotation>
+                    <documentation>Дата выдачи</documentation>
+                </annotation>
+            </element>
+            <element name="IssuerCode" type="PassportRFIssuerCode">
+                <annotation>
+                    <documentation>Код подразделения</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <simpleType name="GenderType">
+        <annotation>
+            <documentation>Пол гражданина</documentation>
+        </annotation>
+        <restriction base="normalizedString">
+            <enumeration value="Мужской"/>
+            <enumeration value="Женский"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="PolicyCarrierType">
+        <annotation>
+            <documentation>Виды полиса ОМС</documentation>
+        </annotation>
+        <restriction base="normalizedString">
+            <enumeration value="1">
+                <annotation>
+                    <documentation>В форме бумажного бланка</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="2">
+                <annotation>
+                    <documentation>В форме пластиковой карты с электронным носителем</documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+    <simpleType name="CitizenshipType">
+        <annotation>
+            <documentation>Гражданство</documentation>
+        </annotation>
+        <restriction base="normalizedString">
+            <enumeration value="Россия"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="IdentityDocumentType">
+        <annotation>
+            <documentation>Вид документа, удостоверяющего личность</documentation>
+        </annotation>
+        <restriction base="normalizedString">
+            <enumeration value="Паспорт гражданина Российской Федерации"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="PassportRFIssuerCode">
+        <annotation>
+            <documentation>Код подразделения органа, выдавшего документ, удостоверяющий личность</documentation>
+        </annotation>
+        <restriction base="string">
+            <pattern value="[\d]{3}[\-][\d]{3}"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="digits-16">
+        <annotation>
+            <documentation>Строка из 16 цифр</documentation>
+        </annotation>
+        <restriction base="string">
+            <pattern value="[\d]{16}"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="digits-5">
+        <annotation>
+            <documentation>Строка из 5 цифр</documentation>
+        </annotation>
+        <restriction base="string">
+            <pattern value="[\d]{5}"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="statusType">
+        <annotation>
+            <documentation>Технологические коды статусов заявления в концентраторе услуг ТФОМС</documentation>
+        </annotation>
+        <restriction base="q1:string-10">
+            <enumeration value="Исполнено">
+                <annotation>
+                    <documentation>Оформленный полис ОМС единого образца готов к выдаче</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="Отказ">
+                <annotation>
+                    <documentation>Отказано в оформлении полиса ОМС единого образца</documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+</schema>

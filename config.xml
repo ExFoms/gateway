@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <connections/>   
+  <processes comment="Процессы выполняемые Шлюзом">
+    <transport_files comment="ТЕСТ">
+      <zap>
+        <name>Перенос входящих файлов СМЭВ (схема 1.2)</name>
+        <tick comment="через 10 сек">1000</tick>
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, входящие сообщения СМЭВ (схема 1.2)</comment>
+        <source>C:\testdata\input</source>
+        <destination>C:\testdata\output</destination>
+        <prefix/>
+        <masks>
+          <mask comment="Все файлы">{*}.xml</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      </transport_files>
+    <transport_files_inpersonalfolder comment="Получатель определяется в маске # имени файла">
+      <zap>
+        <name>Перенос файлов в персональные папки получателей (СМО)</name>
+        <tick comment="через 10 сек">1000</tick>
+        <nrecord>0</nrecord>
+        <comment>Перенос файлов в персональные папки получателей (СМО)</comment>
+        <source>C:\testdata\input</source>
+        <destination>C:\testdata\output</destination>
+        <recipients>
+          <recipient>28001</recipient>
+          <recipient>28004</recipient>
+          <recipient>28005-test</recipient>
+        </recipients>
+        <prefix/>
+          <masks>
+          <mask comment="Протоколы результатов обработки I">P#*.xml</mask>
+          <mask comment="Протоколы ФЛК структуры файлов I">F#*.xml</mask>
+          <mask comment="Закрытие страхования">S#*.xml</mask>
+          <mask comment="Перемена имени, данные ЗАГС">E#_*.xml</mask>
+          <mask comment="Рождение, данные ЗАГС">N#_*.xml</mask>
+          <mask comment="Протокол обработки прикрепления ЗЛ">EO1#*.CSV</mask>
+          <mask comment="Протокол обработки прикрепления ЗЛ">LO1#*.CSV</mask>
+          <mask comment="Запрос из СМЭВ о выборе ЗЛ СМО">SMEV-#*.ZIP</mask>
+          <mask comment="Срез данных для СМО">SRZ#-*.xml</mask>
+          <mask comment="Запросы с сайта">S?S#_*.xml</mask>
+          <mask>ZLDNT#_*.xml</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+    </transport_files_inpersonalfolder>
+    <transport_files_email/>
+  </processes>
+</configuration>

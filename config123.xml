@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <connections comment="Контрольные соединения Шлюза, без которых работоспособность должна быть остановлена">
+    <connection>
+      <nrecord>0</nrecord> 
+      <connectiontype>1</connectiontype> 
+      <name>server-r</name> 
+      <connectionString>uid=sa;pwd=Cvbqwe2!;server=192.168.1.6</connectionString> 
+      <restartInterval /> 
+      <serverIp>192.168.1.6</serverIp> 
+      <connectionFolders /> 
+      <comments>Cервер СРЗ (ip)</comments> 
+    </connection>
+    <connection>
+      <nrecord>1</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-c</name>
+      <connectionString>Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!</connectionString>
+      <restartInterval />
+      <serverIp>192.168.1.4</serverIp>
+      <connectionFolders />
+      <comments>Cервер МП (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>1</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-e</name>
+      <connectionString>uid=Sa;pwd=Q1w2e3;server=11.0.0.83</connectionString>
+      <restartInterval />
+      <serverIp>11.0.0.83</serverIp>
+      <connectionFolders />
+      <comments>Cервер ЕИР (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>2</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-shrk</name>
+      <connectionString>uid=sa;pwd=Wedfzx8!;server=192.168.1.93</connectionString>
+      <restartInterval />
+      <serverIp>192.168.1.93</serverIp>
+      <connectionFolders />
+      <comments>Cервер ШРК (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>4</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>storage</name>
+      <connectionString />
+      <restartInterval />
+      <serverIp />
+      <connectionFolders>
+        <folder>S:\</folder>
+      </connectionFolders>
+      <comments>Место хранения резервных копий баз данных</comments>
+    </connection>
+    <connection>
+      <nrecord>3</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-shrk-name</name>
+      <connectionString>uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\SQLEXPRESS</connectionString>
+      <restartInterval />
+      <serverIp>SERVER-SHRK</serverIp>
+      <connectionFolders />
+      <comments>Cерверу ШРК (name)</comments>
+    </connection>
+    <connection>
+      <nrecord>4</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>disk-c-tmp</name>
+      <connectionString />
+      <restartInterval />
+      <serverIp />
+      <connectionFolders>
+        <folder>l:\</folder>
+      </connectionFolders>
+      <comments>Подключение к папке c:\tmpp</comments>
+    </connection>
+      <connection>
+      <nrecord>5</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>server-shrk-folders</name>
+      <connectionString></connectionString>
+      <restartInterval />
+      <serverIp />
+      <connectionFolders>
+        <folder>U:\</folder>
+        <folder>W:\</folder>
+      </connectionFolders>
+      <comments>Папки сервера ШРК</comments>
+    </connection>
+  </connections>    
+  <processes comment="Процессы выполняемые Шлюзом">
+    <transport_files comment="ТЕСТ">
+      <zap>
+        <name>name1</name>
+        <tick comment="через 10 сек">1000</tick>
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, файлы от СМО</comment>
+        <source>l:\input</source>
+        <destination>l:\output</destination>
+        <masks>
+          <mask comment="Тестовый случай">test*.txt</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>name1</name>
+        <tick comment="через 10 сек">1000</tick>
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, файлы для ЕИР</comment>
+        <source>C:\srz_support\current\input\</source>
+        <destination>C:\srz_support\current\output\</destination>
+        <masks>
+          <mask>SNM*</mask>
+          <mask>SMM*</mask>
+          <mask>SAM*</mask>
+          <mask>SRM*</mask>
+          <mask>SHM*</mask>
+          <mask>SEM*</mask>
+          <mask>SVM*</mask>
+          <mask>SOM*</mask>
+          <mask>INF*</mask>
+        </masks>
+        <rewrite>true</rewrite>
+      </zap>
+    </transport_files>
+    <transport_files_inpersonalfolder comment="Получатель определяется в маске # имени файла">
+      <zap>
+        <name>Перенос файлов в персональные папки получателей (СМО)</name>
+        <tick comment="через 10 сек">1000</tick>
+        <nrecord>0</nrecord>
+        <comment>Перенос файлов в персональные папки получателей (СМО)</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>C:\srz_support\current\output\</destination>
+        <recipients>
+          <recipient>28001</recipient>
+          <recipient>28004</recipient>
+          <recipient>28005-test</recipient>
+        </recipients>
+        <masks>
+          <mask comment="Запросы с сайта">S?S#_*.xml</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+    </transport_files_inpersonalfolder>
+    <transport_files_email comment="отправка электронной почтой">
+      <zap>
+        <name>name1</name>
+        <tick comment="">1000</tick>
+        <nrecord>0</nrecord>
+        <comment>Отправка электронной почтой omo_zdrav@mail.ru в МИНЗДРАВ</comment>
+        <source>W:\minzdrav\omo</source>
+        <!-->email>omo_zdrav@mail.ru</email-->
+        <!-->email>evpoddubnova_443@mail.ru</email-->
+        <email>den@aofoms.tsl.ru</email>
+        <caption>Анализ направлений</caption>
+      </zap>
+      <zap>
+        <name>name1</name>
+        <tick comment="">1000</tick>
+        <nrecord>0</nrecord>
+        <comment>Уведомление администратора</comment>
+        <source>W:\admin\error</source>
+        <email>sa.gate.aofoms@yandex.ru</email>
+        <caption>Ошибка в процессе</caption>
+      </zap>
+    </transport_files_email>
+  </processes>
+</configuration>

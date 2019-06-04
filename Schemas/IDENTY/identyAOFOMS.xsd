@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://ffoms.ru/ExecutionMedicalInsurancePolicy/1.0.0"
+           xmlns:q1="urn://x-artefacts-smev-gov-ru/supplementary/commons/1.2"
+           targetNamespace="http://ffoms.ru/ExecutionMedicalInsurancePolicy/1.0.0" elementFormDefault="qualified"
+           attributeFormDefault="unqualified" version="1.0">
+    <xs:import namespace="urn://x-artefacts-smev-gov-ru/supplementary/commons/1.2" schemaLocation="commons/smev-supplementary-commons-1.2.xsd"/>
+    <xs:element name="InputData" type="ns1:InputDataType">
+        <xs:annotation>
+            <xs:documentation>Входные данные</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="OutputData" type="ns1:OutputDataType">
+        <xs:annotation>
+            <xs:documentation>Выходные данные</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="InputDataType">
+        <xs:sequence>
+            <xs:element name="IdentyPeoplesRequest" type="ns1:IdentyPeoplesRequestType">
+                <xs:annotation>
+                    <xs:documentation>Передача заявления о выборе страховой медицинской организации (СМО)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IdentyPeoplesRequestType">
+        <xs:annotation>
+            <xs:documentation>Передача заявления о выборе страховой медицинской организации (СМО)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="orderId" type="xs:normalizedString">
+                <xs:annotation>
+                    <xs:documentation>Идентификатор заявления</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RegionCode" type="ns1:digits-5">
+                <xs:annotation>
+                    <xs:documentation>Пятизначный код ОКАТО субъекта Российской Федерации</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Code_smop" type="xs:normalizedString">
+                <xs:annotation>
+                    <xs:documentation>Реестровый код СМО</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="IssuingPointAddress" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Адрес пункта выдачи полисов ОМС</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AttachmentsBlock" type="ns1:_AttachmentsBlockType">
+                <xs:annotation>
+                    <xs:documentation>Блок описания вложения</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+         </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OutputDataType">
+        <xs:sequence>
+            <xs:element name="statusCode" type="ns1:statusType">
+                <xs:annotation>
+                    <xs:documentation>Статус результата проверки данных заявления</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Comment" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Текст результата проверки данных заявления</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="_AttachmentsBlockType">
+        <xs:annotation>
+            <xs:documentation>Блок описания вложения</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="AttachmentDescription" type="ns1:_AttachmentDescriptionType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="_AttachmentDescriptionType">
+        <xs:sequence>
+            <xs:choice>
+                <xs:annotation>
+                    <xs:documentation>Указание способа передачи вложения: через ФХ или методом MTOM-передачи
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:element name="AttachmentFSLink" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Ссылка на папку ФХ, в котором содержится передаваемое вложение</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="IsMTOMAttachmentContent" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>Признак передачи вложения методом MTOM</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+            <xs:element name="AttachmentFormat1" type="ns1:_StructuredAttachmentFormatType1">
+                <xs:annotation>
+                    <xs:documentation>Описание структурированного формата вложения</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AttachmentSignatureFSLink" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Блок передачи файла отсоединенной электронной подписи вложения</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="_StructuredAttachmentFormatType1">
+        <xs:annotation>
+            <xs:documentation>Описание структурированного формата вложения</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="IsUnstructuredFormat" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Обязательное и явное указание: является ли формат структурированным или не является</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="IsZippedPacket" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Обязательное и явное указание: будет ли содержимое вложения упаковываться Zip-алгоритмом</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ApplicationFormData" type="ns1:ApplicationFormDataType">
+                <xs:annotation>
+                    <xs:documentation>Данные заполненной формы заявления</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ApplicationFormDataType">
+        <xs:annotation>
+            <xs:documentation>Данные заполненной формы заявления</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="InsuranceRegionCode" type="ns1:digits-5">
+                <xs:annotation>
+                    <xs:documentation>Код субъекта Российской Федерации территории страхования</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PolicyCarrierTypeCode" type="ns1:PolicyCarrierType">
+                <xs:annotation>
+                    <xs:documentation>Код формы полиса ОМС</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:group ref="q1:PhysicalPersonIdentificationInformation-ModelGroup">
+                <xs:annotation>
+                    <xs:documentation>ФИО, дата рождения и место рождения гражданина</xs:documentation>
+                </xs:annotation>
+            </xs:group>
+            <xs:element name="SNILS" type="q1:SNILSType">
+                <xs:annotation>
+                    <xs:documentation>СНИЛС гражданина</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Gender" type="ns1:GenderType">
+                <xs:annotation>
+                    <xs:documentation>Пол гражданина</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PassportRF" type="ns1:PassportRFType">
+                <xs:annotation>
+                    <xs:documentation>Паспорт гражданина РФ</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PhoneNumberRFType" type="q1:PhoneNumberRFType">
+                <xs:annotation>
+                    <xs:documentation>Номер телефона</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Nam_smok" type="xs:normalizedString">
+                <xs:annotation>
+                    <xs:documentation>Краткое наименование страховой медицинской организации (филиала)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RegResidentialAddress" type="ns1:AddressInfoType">
+                <xs:annotation>
+                    <xs:documentation>Адрес регистрации по месту жительства</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RegDate" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Дата регистрации по месту жительства</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="IsStayAddressTheSame" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Адрес места пребывания совпадает с адресом регистрации по месту жительства в
+                        Российской Федерации
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="StayAddress" type="ns1:AddressInfoType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Адрес места пребывания</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ApplicationDate" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Дата подачи заявления</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Email" type="q1:EmailAddressType">
+                <xs:annotation>
+                    <xs:documentation>Адрес электронной почты пользователя</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Citizenship" type="ns1:CitizenshipType">
+                <xs:annotation>
+                    <xs:documentation>Гражданство</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="IdentityDocument" type="ns1:IdentityDocumentType">
+                <xs:annotation>
+                    <xs:documentation>Вид документа, удостоверяющего личность</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AddressInfoType">
+        <xs:annotation>
+            <xs:documentation>Данные по адресу регистрации по месту жительства/по месту пребывания</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="FullAddressText" type="xs:normalizedString">
+                <xs:annotation>
+                    <xs:documentation>Текст адреса полностью</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RegionCode" type="ns1:digits-5">
+                <xs:annotation>
+                    <xs:documentation>Код ОКАТО субъекта Российской Федерации</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RegionName" type="xs:normalizedString">
+                <xs:annotation>
+                    <xs:documentation>Наименование субъекта Российской Федерации</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Area" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Район</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="City" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Город</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="IntracityArea" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Внутригородской район</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Locality" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Населенный пункт</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Street" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Улица</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AddTerritory" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Дополнительная территория</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AddTerritoryStreet" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Улица на дополнительной территории</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="House" type="xs:normalizedString">
+                <xs:annotation>
+                    <xs:documentation>Дом</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Building" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Корпус</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="HouseStructure" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Строение</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Flat" type="xs:normalizedString" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Квартира</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PostalIndex" type="q1:PostalCodeRFType">
+                <xs:annotation>
+                    <xs:documentation>Почтовый индекс</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PassportRFType">
+        <xs:annotation>
+            <xs:documentation>Паспорт РФ</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Series" type="q1:digits-4">
+                <xs:annotation>
+                    <xs:documentation>Серия</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Number" type="q1:digits-6">
+                <xs:annotation>
+                    <xs:documentation>Номер</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="IssueDate" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Дата выдачи</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="IssuerCode" type="ns1:PassportRFIssuerCode">
+                <xs:annotation>
+                    <xs:documentation>Код подразделения</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="GenderType">
+        <xs:annotation>
+            <xs:documentation>Пол гражданина</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Мужской"/>
+            <xs:enumeration value="Женский"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PolicyCarrierType">
+        <xs:annotation>
+            <xs:documentation>Виды полиса ОМС</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="1">
+                <xs:annotation>
+                    <xs:documentation>В форме бумажного бланка</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="2">
+                <xs:annotation>
+                    <xs:documentation>В форме пластиковой карты с электронным носителем</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CitizenshipType">
+        <xs:annotation>
+            <xs:documentation>Гражданство</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Россия"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="IdentityDocumentType">
+        <xs:annotation>
+            <xs:documentation>Вид документа, удостоверяющего личность</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Паспорт гражданина Российской Федерации"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PassportRFIssuerCode">
+        <xs:annotation>
+            <xs:documentation>Код подразделения органа, выдавшего документ, удостоверяющий личность</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[\d]{3}[\-][\d]{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="digits-16">
+        <xs:annotation>
+            <xs:documentation>Строка из 16 цифр</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[\d]{16}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="digits-5">
+        <xs:annotation>
+            <xs:documentation>Строка из 5 цифр</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[\d]{5}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="statusType">
+        <xs:annotation>
+            <xs:documentation>Технологические коды статусов заявления в концентраторе услуг ТФОМС</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="q1:string-10">
+            <xs:enumeration value="Исполнено">
+                <xs:annotation>
+                    <xs:documentation>Оформленный полис ОМС единого образца готов к выдаче</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Отказ">
+                <xs:annotation>
+                    <xs:documentation>Отказано в оформлении полиса ОМС единого образца</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
