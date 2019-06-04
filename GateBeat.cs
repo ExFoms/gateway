@@ -28,7 +28,7 @@ namespace WindowsFormsApplication3
    
         public DateTime time;
         public Guid guid;
-        public object parameters; //параметры передаваемые в бит или передаваемые в подчиненый бит
+        public object parameters; //параметры передаваемые в бит или передаваемые в подчиненый бит 
         public Guid guid_parent = Guid.Empty;
         public int shedule_id;
         public int region_id;
