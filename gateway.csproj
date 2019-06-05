@@ -82,7 +82,7 @@
     </Reference>
     <Reference Include="lib_classesConections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\cloudData\release\dll\lib_classesConections.dll</HintPath>
+      <HintPath>..\..\..\..\release\dll\lib_classesConections.dll</HintPath>
     </Reference>
     <Reference Include="lib_classesErrors, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -98,7 +98,7 @@
     </Reference>
     <Reference Include="lib_metodsMain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\cloudData\release\dll\lib_metodsMain.dll</HintPath>
+      <HintPath>..\..\..\..\release\dll\lib_metodsMain.dll</HintPath>
     </Reference>
     <Reference Include="metods_reglamentAOFOMS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

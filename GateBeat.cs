@@ -1609,12 +1609,9 @@ namespace WindowsFormsApplication3
                                     queue_status.Enqueue(new Log_status(filename, string.Empty, result_comment));
                                     break;
                                 case Reglament_owner.SMEV13:
-                                    ignore = true;
-                                    /*result = reglamentSMEV.getRequest_file13(file, link_connections, folders, reglamentLinker, out result_comment);
+                                    result = reglamentSMEV.getRequest_file13(file, link_connections, folders, reglamentLinker, out result_comment);
                                     queue_status.Enqueue(new Log_status(filename, string.Empty, result_comment));
-                                    */
                                     break;
-
                                 default: // Если нет обработки, он оставется без внимания
                                     ignore = true;
                                     break;
