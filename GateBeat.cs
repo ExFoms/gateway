@@ -1661,8 +1661,7 @@ namespace WindowsFormsApplication3
                         ref reglament_connections,
                         "tmpForSRZ", String.Format("EXEC [dbo].[get_tmpZLDNforSMO] '{0}', '{1}'", "28001", filename)),
                     Path.Combine(folders[1], filename)
-                );
-                
+                );          
                 
                 state = Thread_state.finished;
             }
@@ -1814,7 +1813,9 @@ namespace WindowsFormsApplication3
                             else
                                 queue_status.Enqueue(new Log_status(request[1], "", result_comment));
                             break;
-                        case "ZAGS":
+                        case "FATALZP":
+                        case "ROGDZP":
+                        case "PERNAMEZP":
                             break;
                         default:
                             break;
