@@ -138,7 +138,6 @@ namespace WindowsFormsApplication3
                 case "handling_files": thread = new Thread(handling_files) { IsBackground = true }; break;
                 case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
 
-                case "get_handling_SMEV_FNS": thread = new Thread(handling_SMEV_FNS) { IsBackground = true, Name = gate_nametask }; break;
                 case "responseAsync_SMEV": thread = new Thread(responseAsync_SMEV) { IsBackground = true, Name = gate_nametask }; break;
 
                 default: result = false; break;
@@ -1679,106 +1678,6 @@ namespace WindowsFormsApplication3
 
 
 //----- СМЭВ -------
-
-        public void handling_SMEV_FNS()
-        // СМЭВ Получение и обработка данных ФНС 
-        {
-            state = Thread_state.starting;
-            try
-            {
-
-
-                int count = 0;
-                //
-                //string _file = "{4f40b22b-6187-4ecc-a50f-6c6aa98a7060}-{GetRequestResponse}-{SUCCESS}.xml";
-                //
-                XmlDocument xml = new XmlDocument();
-                List<string> files = new List<string>(Directory.GetFiles(@"O:\ServiceSRZ\", "*.XML"/*_file*/));
-                //List<string> idRequests = new List<string>();
-                if (files.Count() > 0)
-                {
-                    files.Sort();
-                    foreach (string file in files)
-                    {
-                        
-                            xml.Load(file);
-
-                            XmlNodeList messageMetadata = xml.GetElementsByTagName("MessageMetadata");
-                            if (messageMetadata.Count == 0) messageMetadata = xml.GetElementsByTagName("ns2:MessageMetadata");
-
-                            string messageId = String.Empty;
-                            messageId = (messageMetadata[0]["MessageId"] != null) ? messageMetadata[0]["MessageId"].InnerText : messageMetadata[0]["ns2:MessageId"].InnerText;
-                            //MessageBox.Show(messageId);
-
-                            var messagePrimaryContent = xml.GetElementsByTagName("MessagePrimaryContent");
-                            if (messagePrimaryContent.Count == 0) messagePrimaryContent = xml.GetElementsByTagName("ns2:MessagePrimaryContent");
-
-
-                            var request = messagePrimaryContent[0]["Request"];
-                            if (request == null) request = messagePrimaryContent[0]["ns2:Request"];
-                            {
-
-                                //Console.WriteLine(nodes[0].InnerXml);
-                                Type type =
-                                    (request.GetPrefixOfNamespace("http://ffoms.ru/ExecutionMedicalInsurancePolicy/1.0.0") != "") ? typeof(VS01112v001_TABL00) :
-                                    (request.GetPrefixOfNamespace("http://ffoms.ru/GetInsuredRenderedMedicalServices/1.0.0") != "") ? typeof(VS01113v001_TABL00) :
-                                    (request.GetPrefixOfNamespace("urn://x-artefacts-zags-fatalzp/root/112-25/4.0.0") != "") ? typeof(VS01285v001_TABL00) :
-                                    (request.GetPrefixOfNamespace("urn://x-artefacts-zags-rogdzp/root/112-23/4.0.0") != "") ? typeof(VS01287v001_TABL00) :
-                                    (request.GetPrefixOfNamespace("urn://x-artefacts-zags-pernamezp/root/112-24/4.0.0") != "") ? typeof(VS01284v001_TABL00) :
-                                    (request.GetPrefixOfNamespace("http://kvs.pfr.com/snils-by-additionalData/1.0.1") != "") ? typeof(VS00648v001_PFR001) :
-                                    null;
-                                /*if (type != null)
-                                {
-                                    processing_RequestMessage(messageId, (XmlElement)request);
-                                    //MessageBox.Show(type.Name);
-                                    ++count;
-                                    //logQueue.Enqueue(new clsLog(DateTime.Now, 1, "Adapter_SMEV", 0, 0, DateTime.Now, DateTime.Now, messageId + "  GET / " + type.Name + " / --"));
-                                    clsLibrary.execQuery_insert(
-                                                    "uid=sa;pwd=Cvbqwe2!;server=server-r;database=srz3_00_adapter;",
-                                                    "INSERT INTO SMEV_MESSAGES ([MESSAGEID],[REFERENCEMESSAGEID],[TRANSACTIONCODE]) VALUES ",
-                                                    String.Format("'{0}','{1}','{2}'", messageId, messageId, messageId));
-
-                                    if (!processing_RequestMessage(messageId, (XmlElement)request))
-                                        clsLibrary.execQuery_insert(
-                                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                                            "INSERT INTO [SMEV].[dbo].[ErrMessageId] ([MessageId]) VALUES ",
-                                            clsLibrary.string_Apostrophe(messageId));
-                                    try
-                                    {
-                                        File.Move(file, Path.Combine(@"O:\ServiceSRZ\check", Path.GetFileName(file)));
-                                    }
-                                    catch
-                                    {
-                                        File.Delete(file);
-                                    }
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        File.Move(file, Path.Combine(@"O:\ServiceSRZ\fail", Path.GetFileName(file)));
-                                    }
-                                    catch
-                                    {
-                                        File.Delete(file);
-                                    }
-
-                                }*/
-                            }
-                        
-                        //MessageBox.Show(count.ToString());
-                        //logQueue.Enqueue(new clsLog(DateTime.Now, 1, "Adapter_SMEV", 0, 0, DateTime.Now, DateTime.Now, String.Format("Обработана файлов - {0}", count)));
-                    }
-                }
-                state = Thread_state.finished;
-            }
-            catch
-            {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }
-        }
-        
         public void responseAsync_SMEV()
         // Отправка ответов на Асинхронные запросы СМЭВ 
         {
@@ -1794,34 +1693,32 @@ namespace WindowsFormsApplication3
                 clsLibrary.ExecQurey_GetListStrings(link_connections, null, "srz3_00_adapter"
                     , "select Id, MessageId, TipData from SMEV_MESSAGES where isnull(state,0) = 0",
                     ref requests);
-                //MessageBox.Show(request.Count.ToString());
                 foreach (string[] request in requests)
                 {
+                    result = false;
                     result_comment = String.Empty;
+                    clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter", String.Format("update SMEV_MESSAGES set STATE = '{0}' where ID = '{1}'", "1", request[0]));
                     switch (request[2])
                     {
                         case "POLIS":
                             //sendResponse_Polis(request_row);
                             break;
                         case "USLUGI":
-                            clsLibrary.execQuery(ref link_connections,null, "srz3_00_adapter"
-                                ,String.Format("update SMEV_MESSAGES set STATE = '{0}' where ID = '{1}'", "1", request[0])
-                            );
                             result = reglamentSMEV.sendResponse_USLUGI(request, link_connections, folders, out result_comment);
-                            if (result)
-                                queue_status.Enqueue(new Log_status(request[1], "", "Send Response / " + request[2]));
-                            else
-                                queue_status.Enqueue(new Log_status(request[1], "", result_comment));
                             break;
                         case "FATALZP":
                         case "ROGDZP":
                         case "PERNAMEZP":
-                            break;
-                        default:
+                            result = reglamentSMEV.sendResponse(request, ref link_connections, ref folders, out result_comment);
                             break;
                     }
+                    if (result)
+                        queue_status.Enqueue(new Log_status(request[1], "", "Send Response / " + request[2]));
+                    else
+                        queue_status.Enqueue(new Log_status(request[1], "", result_comment));
+                    clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
+                        String.Format("update SMEV_MESSAGES set STATE = '{0}' where ID = '{1}'", (result) ? 99 : 5, request[0]));
                 }
-
                 state = Thread_state.finished;
             }
             catch
