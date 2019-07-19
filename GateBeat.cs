@@ -120,25 +120,25 @@ namespace WindowsFormsApplication3
                 case "identification_create_response_01": thread = new Thread(identification_create_response_01) { IsBackground = true, Name = gate_nametask }; break;
                 case "cleaner_identificationPeople": thread = new Thread(cleaner_identificationPeople) { IsBackground = true, Name = gate_nametask }; break;
                 case "serverC_get_request_idetification": thread = new Thread(serverC_get_request_idetification) { IsBackground = true, Name = gate_nametask }; break;
-                case "serverE_checkIdentification": thread = new Thread(serverE_checkIdentification) { IsBackground = true, Name = gate_nametask }; break;
-                case "ServerC_unload_identification": thread = new Thread(ServerC_unload_identification) { IsBackground = true, Name = gate_nametask }; break;
-                case "ServerE_unload_identification": thread = new Thread(ServerE_unload_identification) { IsBackground = true, Name = gate_nametask }; break;
-
-                case "serverE_get_request_idetification": thread = new Thread(serverE_get_request_idetification) { IsBackground = true, Name = gate_nametask }; break;
-                case "serverE_check_buffers": thread = new Thread(serverE_check_buffers) { IsBackground = true, Name = gate_nametask }; break;
-                case "serverE_import_inProductiveFromBuffers": thread = new Thread(serverE_import_inProductiveFromBuffers) { IsBackground = true, Name = gate_nametask }; break;
-                case "serverE_sendRequestHandlingInfo": thread = new Thread(serverE_sendRequestHandlingInfo) { IsBackground = true, Name = gate_nametask }; break;
-                case "serverE_unload_PRT": thread = new Thread(serverE_unload_PRT) { IsBackground = true, Name = gate_nametask }; break;
-                case "serverE_unload_FLK": thread = new Thread(serverE_unload_FLK) { IsBackground = true, Name = gate_nametask }; break;
-                case "static_createRefresheble": thread = new Thread(static_createRefresheble) { IsBackground = true, Name = gate_nametask }; break;
-                case "serverE_cleaner_identificationPeople": thread = new Thread(serverE_cleaner_identificationPeople) { IsBackground = true, Name = gate_nametask }; break;
+                case "ServerC_unload_identification": thread = new Thread(ServerC_unload_identification) { IsBackground = true, Name = gate_nametask }; break;     
                 case "gateBackup": thread = new Thread(gateBackup) { IsBackground = true, Name = gate_nametask }; break;
                 case "eirBackup": thread = new Thread(eirBackup) { IsBackground = true, Name = gate_nametask }; break;
-
                 case "handling_files": thread = new Thread(handling_files) { IsBackground = true }; break;
                 case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
-
                 case "responseAsync_SMEV": thread = new Thread(responseAsync_SMEV) { IsBackground = true, Name = gate_nametask }; break;
+
+                //Gate 
+                case "gate_get_flk_from_eir": thread =      new Thread(gate_get_flk_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_FLK
+                case "gate_get_prt_from_eir": thread =      new Thread(gate_get_prt_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_PRT
+                case "gate_get_info_from_eir": thread =     new Thread(gate_get_info_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_sendRequestHandlingInfo
+                case "gate_get_request_identification_from_eir": thread = new Thread(gate_get_request_identification_from_eir) { IsBackground = true, Name = gate_nametask }; break;
+                case "gate_send_response_identification_to_eir": thread = new Thread(gate_send_response_identification_to_eir) { IsBackground = true, Name = gate_nametask }; break; //ServerE_unload_identification
+
+                //EIR
+                case "eir_event_flk": thread =      new Thread(eir_event_flk) { IsBackground = true, Name = gate_nametask }; break; 
+                case "eir_event_identy": thread =   new Thread(eir_event_identy) { IsBackground = true, Name = gate_nametask }; break; //new
+                case "eir_event_prt": thread =      new Thread(eir_event_prt) { IsBackground = true, Name = gate_nametask }; break; //new
+                case "eir_event_import": thread =   new Thread(eir_event_import) { IsBackground = true, Name = gate_nametask }; break; 
 
                 default: result = false; break;
             }
@@ -166,6 +166,7 @@ namespace WindowsFormsApplication3
                 folder_in = folders[0];
                 folder_out = folders[1];
                 dirs = Directory.GetFiles(folder_in, "MO128*.csv");
+                //queue_status.Enqueue(new Log_status("Прикрепление", string.Empty, string.Format("Найдено файлов: {0}", dirs.Count())));
             }
             catch
             {
@@ -173,12 +174,14 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
                 return;
             }
-            if (dirs.Count() < 1)
+            if (dirs.Count() == 0)
             {
                 state = Thread_state.finished;
+                //queue_status.Enqueue(new Log_status("Прикрепление", string.Empty, "Закрыт из условия"));
                 return;
             }
-#region Загрузка файлов
+            
+            #region Загрузка файлов
             #region
             List<clsLibrary.Id_row> list_fileId = new List<clsLibrary.Id_row>();
             //создаём таблицу
@@ -194,10 +197,13 @@ namespace WindowsFormsApplication3
                 new DataColumn("SUBDIV", typeof(String)), new DataColumn("DISTRICT", typeof(String)), new DataColumn("SS_DOCTOR", typeof(String)), new DataColumn("KATEG", typeof(String)),    
                 new DataColumn("DOCDATE", typeof(String))});
             #endregion
+
             foreach (string dir in dirs) //перебираем файлы
             {
+                
                 string smo_sender = Path.GetFileNameWithoutExtension(dir).Substring(3, 5);
                 int MO_LOG = clsLibrary.InsertNameFile(Path.GetFileName(dir));
+               
                 if (MO_LOG == -1)
                 {
                     string file_back = folder_in + smo_sender  + @"\exist" + Path.GetFileName((string)dir);
@@ -212,6 +218,7 @@ namespace WindowsFormsApplication3
                 string[] tblValues = null;
                 string[] tblLines = null;
                 List<clsLibrary.Id_row> tblLine_failed = new List<clsLibrary.Id_row>();
+
                 try //контроль ошибки чтения файла
                 {
                     tblLines = File.ReadAllLines((string)dir, Encoding.Default);
@@ -814,7 +821,7 @@ namespace WindowsFormsApplication3
                 folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
                 folder_in = folders[0];
                 folder_out = folders[1];
-                files = Directory.GetFiles(folder_in, "errors_21-22.xls");
+                files = Directory.GetFiles(folder_in, "errors_21-22*.xls");
             }
             catch
             {
@@ -1043,21 +1050,21 @@ namespace WindowsFormsApplication3
             }
         }
 
-        public void serverE_get_request_idetification()
+        public void gate_get_request_identification_from_eir()
         // Получение запросов на идентификацию
         {
 
             state = Thread_state.starting;
             int limit_transaction = 5000;
             List<string[]> response = new List<string[]>();
-            if (!clsLibrary.execQuery_getListString(
-                ref response
-                ,ref link_connections
-                ,reglament_connections
-                ,"eir"
-                , string.Format("select top {0} '{1}', scheme, id, fam, im, ot, CONVERT(varchar(10), dr, 121) dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys, isnull(actual,0), actual_pid from identifications where identification_state is null order by DATE_SYS desc", limit_transaction, "Server-e")
-                ,0
-                ,"'"))
+            if (!clsLibrary.ExecQurey_PGR_GetListStrings(
+                ref link_connections
+                , null
+                , "postgres"
+                , string.Format("select '{0}', scheme, id, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys, 0, actual_pid from identy.identifications where identification_state = 0 order by DATE_SYS limit {1}", "eir", limit_transaction)
+                , ref response
+                , limit_transaction
+                ))
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
@@ -1066,6 +1073,13 @@ namespace WindowsFormsApplication3
             {
                 if (response.Count() != 0)
                 {
+                    /*queue_status.Enqueue(new Log_status("gate_get_request_identification_from_eir",
+                            string.Empty,
+                            clsLibrary.execQuery_insertList_string("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
+                        "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, actual, actual_pid) VALUES ", response, 1))
+                        );                    
+                    */
+
                     if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
                         "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, actual, actual_pid) VALUES ", response, 1))
                     {
@@ -1076,11 +1090,74 @@ namespace WindowsFormsApplication3
                     {
                         List<string> values = new List<string>();
                         foreach (string[] row in response) values.Add(row[2]);
-                        if (!clsLibrary.execQuery(
+                        if (!clsLibrary.execQuery_PGR(
                             ref link_connections
-                            ,reglament_connections
-                            ,"eir"
-                            ,string.Format("Update identifications set identification_state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                            , "postgres"
+                            , string.Format("Update identy.identifications set identification_state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                            ))
+                        {
+                            state = Thread_state.error;
+                            error = GateError.errorPerformanceMetod;
+                        }
+                        else state = Thread_state.finished;
+                    }
+                }
+                else
+                    state = Thread_state.finished;
+            }
+        }
+
+        public void gate_send_response_identification_to_eir()
+        // Выгрузка запросов на идентификацию
+        {
+            state = Thread_state.starting;
+
+            int limit_transaction = 5000;
+            List<string[]> response = new List<string[]>();
+            if (!clsLibrary.execQuery_getListString(
+                ref response, ref link_connections, reglament_connections, "tmpForSRZ"
+                , string.Format("SELECT TOP {0} [ID], PID, KEYS_RESULT, RESPONSE, clientId FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id", limit_transaction, "eir")
+                ))
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            else
+            {
+                if (response.Count() != 0)
+                {
+                    List<string> values = new List<string>();
+                    IdentificationResponse_01.IdentificationResponse_01Type response_ = new IdentificationResponse_01.IdentificationResponse_01Type();
+
+                    foreach (string[] row in response)
+                    {
+                        //response_ = null;                        
+                        //    XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationResponse_01.IdentificationResponse_01Type));
+                        //    StringReader stringReader = new StringReader(row[2]);
+                        //    response_ = (IdentificationResponse_01.IdentificationResponse_01Type)xmlSerializer.Deserialize(stringReader);*/
+                        values.Add(string.Format("update identy.identifications set pid = {0}, KEYS_RESULT = '{1}', RESPONSE = '{2}', identification_state = 99, identification_date = '{3}' where id = {4}"
+                            , row[1]
+                            , row[2]
+                            , row[3]
+                            , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
+                            , row[4]
+                            )
+                        );
+                    }
+                    
+                    if (!clsLibrary.execQuery_PGR_updateList(ref link_connections, null, "postgres", ref values))
+                    {
+                        state = Thread_state.error;
+                        error = GateError.errorPerformanceMetod;
+                    }
+                    else
+                    {
+                        values.Clear();
+                        foreach (string[] row in response) values.Add(row[0]);
+                        string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                        if (!clsLibrary.execQuery(
+                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
+                            , string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", date, string.Join(",", values.ToArray()))
                             ))
                         {
                             state = Thread_state.error;
@@ -1093,6 +1170,7 @@ namespace WindowsFormsApplication3
             }
         }
 
+
         public void cleaner_identificationPeople()
         // Зачистка таблицы запросов на идентификацию
         {
@@ -1103,20 +1181,6 @@ namespace WindowsFormsApplication3
                     string.Format("EXEC dbo.GATE_cleaner_IdentificationPeople {0}", limit_time)
                     )
                 )
-            {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }
-            else
-                state = Thread_state.finished;
-        }
-
-        public void serverE_cleaner_identificationPeople()
-        // Зачистка таблицы запросов на идентификацию
-        {
-            state = Thread_state.starting;
-            int limit_day = 3;
-            if (!clsLibrary.execQuery(ref link_connections,reglament_connections,"eir",string.Format("EXEC [dbo].[cleaner_identificationPeople] @limit_day = {0}", limit_day)))
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
@@ -1177,73 +1241,11 @@ namespace WindowsFormsApplication3
             }
         }
 
-        public void ServerE_unload_identification()
-        // Выгрузка запросов на идентификацию
+        public void eir_event_flk()
+        // 
         {
-            state = Thread_state.starting;
-            int limit_transaction = 5000;
-            List<string[]> response = new List<string[]>();
-            if (!clsLibrary.execQuery_getListString(
-                ref response, ref link_connections, reglament_connections, "tmpForSRZ"
-                , string.Format("SELECT TOP {0} [ID], PID, KEYS_RESULT, RESPONSE, clientId FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id desc", limit_transaction, "Server-e")
-                ))
-            {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }
-            else
-            {
-                if (response.Count() != 0)
-                {
-                    List<string> values = new List<string>();
-                    IdentificationResponse_01.IdentificationResponse_01Type response_ = new IdentificationResponse_01.IdentificationResponse_01Type();
-
-                    foreach (string[] row in response)
-                    {
-                        /*response_ = null;
-                        
-                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationResponse_01.IdentificationResponse_01Type));
-                            StringReader stringReader = new StringReader(row[2]);
-                            response_ = (IdentificationResponse_01.IdentificationResponse_01Type)xmlSerializer.Deserialize(stringReader);*/
-                        values.Add(string.Format("Update identifications set pid = {0}, KEYS_RESULT = '{1}', RESPONSE = '{2}', identification_state = 99, identification_date = '{3}' where id = {4}"
-                            , row[1]
-                            , row[2]
-                            , row[3]
-                            , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
-                            , row[4]
-                            )
-                        );
-                    }
-                    if (!clsLibrary.execQuery_updateListString(ref values, ref link_connections, reglament_connections, 1, "eir"))
-                    {
-                        state = Thread_state.error;
-                        error = GateError.errorPerformanceMetod;
-                    }
-                    else
-                    {
-                        values.Clear();
-                        foreach (string[] row in response) values.Add(row[0]);
-                        string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                        if (!clsLibrary.execQuery(
-                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
-                            , string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", date, string.Join(",", values.ToArray()))
-                            ))
-                        {
-                            state = Thread_state.error;
-                            error = GateError.errorPerformanceMetod;
-                        }
-                        else state = Thread_state.finished;
-                    }
-                }
-                else state = Thread_state.finished;
-            }
-        }
-
-        public void serverE_checkIdentification()
-        // Проставляем отметку о завершении идентификации по схеме 'si_schema' ЗЛ в пакетах
-        {
-            state = Thread_state.starting;
-            if (!clsLibrary.execQuery(ref link_connections, reglament_connections, "eir", "exec dbo.check_IdentificationComplite"))
+            state = Thread_state.starting;            
+            if (!clsLibrary.execQuery_PGR(ref link_connections, "postgres", "select buf_checking.event_flk()"))
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
@@ -1251,11 +1253,11 @@ namespace WindowsFormsApplication3
             else
                 state = Thread_state.finished;
         }
-        public void serverE_check_buffers()
-        // Проставляем отметку о завершении идентификации по схеме 'si_schema' ЗЛ в пакетах
+        public void eir_event_identy()
+        // 
         {
             state = Thread_state.starting;
-            if (!clsLibrary.execQuery(ref link_connections, reglament_connections, "eir", "exec dbo.check_Buffers"))
+            if (!clsLibrary.execQuery_PGR(ref link_connections, "postgres", "select buf_checking.event_identy()"))
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
@@ -1263,11 +1265,23 @@ namespace WindowsFormsApplication3
             else
                 state = Thread_state.finished;
         }
-        public void serverE_import_inProductiveFromBuffers()
+        public void eir_event_prt()
+        // 
+        {
+            state = Thread_state.starting;
+            if (!clsLibrary.execQuery_PGR(ref link_connections, "postgres", "select buf_checking.event_prt()"))
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            else
+                state = Thread_state.finished;
+        }
+        public void eir_event_import()
         // Импортируем из буфера SI
         {
             state = Thread_state.starting;
-            if (!clsLibrary.execQuery(ref link_connections, reglament_connections, "eir", "exec import_inProductiveFromBuffers"))
+            if (!clsLibrary.execQuery(ref link_connections, reglament_connections, "eir", "select import.import"))
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
@@ -1276,10 +1290,13 @@ namespace WindowsFormsApplication3
                 state = Thread_state.finished;
         }
 
-        public void serverE_sendRequestHandlingInfo()
+        public void gate_get_info_from_eir()
         //отправка информации по результатам загрузки пакетов /пока только SI
         {
             state = Thread_state.starting;
+            // заглушка
+            state = Thread_state.finished;
+            return;
             try
             {
                 List<string[]> response = new List<string[]>();
@@ -1292,7 +1309,7 @@ namespace WindowsFormsApplication3
                     &&
                     response.Count > 0)
                 {
-                    static_createRefresheble();
+                    //static_createRefresheble();
                     for (int i = 1; i < 100000; i++) ;
                         foreach (string[] Request in response)
                         {
@@ -1315,10 +1332,13 @@ namespace WindowsFormsApplication3
             }
         }
 
-        public void serverE_unload_PRT()
+        public void gate_get_prt_from_eir()
         // Выгрузка прикладной проверки
         {
             state = Thread_state.starting;
+            // заглушка
+            state = Thread_state.finished;
+            return;
             try
             {
                 List<string[]> idRequests = new List<string[]>();
@@ -1406,10 +1426,13 @@ namespace WindowsFormsApplication3
 
         }
 
-        public void serverE_unload_FLK()
+        public void gate_get_flk_from_eir()
         // Выгрузка прикладной проверки
         {
             state = Thread_state.starting;
+            // заглушка
+            state = Thread_state.finished;
+            return;
             try
             {
                 List<string[]> idRequests = new List<string[]>();
@@ -1497,18 +1520,6 @@ namespace WindowsFormsApplication3
 
         }
         
-        public void static_createRefresheble()
-        // Формирование статистики
-        {
-            state = Thread_state.starting;
-            if (!clsLibrary.execQuery(ref link_connections, reglament_connections, "eir", "exec dbo.static_createRefresheble 2019, 'si_schema'"))
-            {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }
-            else
-                state = Thread_state.finished;
-        }
 
         public void gateBackup()
         // Резервное копирование Gate
@@ -1549,6 +1560,8 @@ namespace WindowsFormsApplication3
         // Резервное копирование Gate
         {
             state = Thread_state.starting;
+            
+            //
             string nameForMessage = string.Empty;
             clsLibrary.unpack("*");
             try
@@ -1582,14 +1595,9 @@ namespace WindowsFormsApplication3
                             {
                                 // ----------------- Обработка пакетов Регаментов АОФОМС
                                 case Reglament_owner.AOFOMS:
-                                    ignore = true;
-                                    /*// проверяем наличие необходимых соединений
-                                    count_row = reglamentAOFOMS.handling_file_aofoms(file, link_connections, reglament_connections, folders, reglamentLinker, out result_comment);
-                                    result = (count_row != -1);
-                                    if (result)
-                                        queue_status.Enqueue(new Log_status(filename, string.Empty, String.Format("Обработанo, записей - {0}", count_row)));
-                                    else
-                                        queue_status.Enqueue(new Log_status(filename, string.Empty, result_comment));*/
+                                    // проверяем наличие необходимых соединений
+                                    result = reglamentAOFOMS.handling_file(file, link_connections, folders, reglamentLinker, out result_comment, out count_row);
+                                    queue_status.Enqueue(new Log_status(filename, string.Empty, result_comment));
                                     break;
                                 // ----------------- Обработка пакетов СМЭВ
                                 case Reglament_owner.SMEV12:
@@ -1704,8 +1712,7 @@ namespace WindowsFormsApplication3
                             //sendResponse_Polis(request_row);
                             break;
                         case "USLUGI":
-                            result = reglamentSMEV.sendResponse_USLUGI(request, link_connections, folders, out result_comment);
-                            break;
+                            //result = reglamentSMEV.sendResponse_USLUGI(request, link_connections, folders, out result_comment); break;
                         case "FATALZP":
                         case "ROGDZP":
                         case "PERNAMEZP":

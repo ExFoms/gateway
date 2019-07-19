@@ -853,8 +853,8 @@ namespace WindowsFormsApplication3
             //logQueue.Enqueue(DateTime.Now.ToString() + " отчет - Анализ прикрепления, выполняется");
             //Excel.Workbook fileExcel;
             String vFilename = "Анализ прикрепления";
-            String vFullPathFile = @"W:\AMIAC\" + vFilename + "_" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
-            //String vFullPathFile = @"c:\temp\" + vFilename + "_" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
+            //String vFullPathFile = @"W:\AMIAC\" + vFilename + "_" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
+            String vFullPathFile = @"c:\temp\" + vFilename + "_" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
             try
             {
                 //string  sqlConnection = "uid=sa;pwd=Cvbqwe2!;server=server-r;database=srz3_00;";
