@@ -123,11 +123,11 @@ namespace WindowsFormsApplication3
                 case "ServerC_unload_identification": thread = new Thread(ServerC_unload_identification) { IsBackground = true, Name = gate_nametask }; break;     
                 case "gateBackup": thread = new Thread(gateBackup) { IsBackground = true, Name = gate_nametask }; break;
                 case "eirBackup": thread = new Thread(eirBackup) { IsBackground = true, Name = gate_nametask }; break;
-                case "handling_files": thread = new Thread(handling_files) { IsBackground = true }; break;
                 case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
                 case "responseAsync_SMEV": thread = new Thread(responseAsync_SMEV) { IsBackground = true, Name = gate_nametask }; break;
 
                 //Gate 
+                case "gate_handling_files": thread = new Thread(gate_handling_files) { IsBackground = true }; break;
                 case "gate_get_flk_from_eir": thread =      new Thread(gate_get_flk_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_FLK
                 case "gate_get_prt_from_eir": thread =      new Thread(gate_get_prt_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_PRT
                 case "gate_get_info_from_eir": thread =     new Thread(gate_get_info_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_sendRequestHandlingInfo
@@ -1061,9 +1061,8 @@ namespace WindowsFormsApplication3
                 ref link_connections
                 , null
                 , "postgres"
-                , string.Format("select '{0}', scheme, id, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys, 0, actual_pid from identy.identifications where identification_state = 0 order by DATE_SYS limit {1}", "eir", limit_transaction)
+                , string.Format("select '{0}', scheme, id, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys, 0, actual_pid from identy.identifications where identification_state = 0 order by DATE_SYS limit {1};", "eir", limit_transaction)
                 , ref response
-                , limit_transaction
                 ))
             {
                 state = Thread_state.error;
@@ -1081,7 +1080,7 @@ namespace WindowsFormsApplication3
                     */
 
                     if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                        "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, actual, actual_pid) VALUES ", response, 1))
+                        "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, actual, actual_pid) VALUES ", response, 10))
                     {
                         state = Thread_state.error;
                         error = GateError.errorPerformanceMetod;
@@ -1093,8 +1092,8 @@ namespace WindowsFormsApplication3
                         if (!clsLibrary.execQuery_PGR(
                             ref link_connections
                             , "postgres"
-                            , string.Format("Update identy.identifications set identification_state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
-                            ))
+                            , string.Format("Update identy.identifications set identification_state = 1, identification_date = '{0}' where id in ({1});", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                            ,wait_interval))
                         {
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
@@ -1111,12 +1110,13 @@ namespace WindowsFormsApplication3
         // Выгрузка запросов на идентификацию
         {
             state = Thread_state.starting;
-
+            string _date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             int limit_transaction = 5000;
             List<string[]> response = new List<string[]>();
             if (!clsLibrary.execQuery_getListString(
                 ref response, ref link_connections, reglament_connections, "tmpForSRZ"
-                , string.Format("SELECT TOP {0} [ID], PID, KEYS_RESULT, RESPONSE, clientId FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id", limit_transaction, "eir")
+                , string.Format("SELECT TOP {0} [ID], PID, KEYS_RESULT, RESPONSE, clientId FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id", limit_transaction, "eir"),
+                wait_interval
                 ))
             {
                 state = Thread_state.error;
@@ -1135,18 +1135,19 @@ namespace WindowsFormsApplication3
                         //    XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationResponse_01.IdentificationResponse_01Type));
                         //    StringReader stringReader = new StringReader(row[2]);
                         //    response_ = (IdentificationResponse_01.IdentificationResponse_01Type)xmlSerializer.Deserialize(stringReader);*/
-                        values.Add(string.Format("update identy.identifications set pid = {0}, KEYS_RESULT = '{1}', RESPONSE = '{2}', identification_state = 99, identification_date = '{3}' where id = {4}"
+                        values.Add(string.Format("update identy.identifications set pid = {0}, KEYS_RESULT = '{1}', RESPONSE = '{2}', identification_state = 99, identification_date = '{3}' where id = {4};"
                             , row[1]
                             , row[2]
                             , row[3]
-                            , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
+                            , _date
                             , row[4]
                             )
                         );
                     }
-                    
-                    if (!clsLibrary.execQuery_PGR_updateList(ref link_connections, null, "postgres", ref values))
+                    clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_updateList_varResult(ref link_connections, null, "postgres", ref values, 100, wait_interval);
+                    if (!varResult.result)
                     {
+                        queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir",string.Empty, varResult.comment));
                         state = Thread_state.error;
                         error = GateError.errorPerformanceMetod;
                     }
@@ -1154,12 +1155,14 @@ namespace WindowsFormsApplication3
                     {
                         values.Clear();
                         foreach (string[] row in response) values.Add(row[0]);
-                        string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                        if (!clsLibrary.execQuery(
-                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
-                            , string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", date, string.Join(",", values.ToArray()))
-                            ))
+                        varResult = clsLibrary.execQuery_VarResult(ref link_connections, reglament_connections, "tmpForSRZ",
+                             string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray())), wait_interval);
+                        if (!varResult.result)                           
+                            //"uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
+                            //, string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray()))
+                            
                         {
+                            queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir", string.Empty, varResult.comment));
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
                         }
@@ -1245,8 +1248,9 @@ namespace WindowsFormsApplication3
         // 
         {
             state = Thread_state.starting;            
-            if (!clsLibrary.execQuery_PGR(ref link_connections, "postgres", "select buf_checking.event_flk()"))
+            if (clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres", "select buf_checking.event_flk();", wait_interval) == -1)
             {
+                //queue_status.Enqueue(new Log_status("eir_event_flk", string.Empty, wait_interval.ToString()));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
@@ -1257,7 +1261,7 @@ namespace WindowsFormsApplication3
         // 
         {
             state = Thread_state.starting;
-            if (!clsLibrary.execQuery_PGR(ref link_connections, "postgres", "select buf_checking.event_identy()"))
+            if (clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres", "select buf_checking.event_identy();", wait_interval) == -1)
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
@@ -1269,25 +1273,44 @@ namespace WindowsFormsApplication3
         // 
         {
             state = Thread_state.starting;
-            if (!clsLibrary.execQuery_PGR(ref link_connections, "postgres", "select buf_checking.event_prt()"))
+            clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_varResult(ref link_connections, "postgres", "select result, comment, code from buf_checking.event_prt();", wait_interval);
+            if (varResult == null)
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
             else
-                state = Thread_state.finished;
+            {
+                if (!varResult.result)
+                {
+                    queue_status.Enqueue(new Log_status("eir_event_prt", string.Empty, varResult.comment));
+                    state = Thread_state.error;
+                }
+                else
+                    state = Thread_state.finished;
+            }
         }
         public void eir_event_import()
         // Импортируем из буфера SI
-        {
+        {            
             state = Thread_state.starting;
-            if (!clsLibrary.execQuery(ref link_connections, reglament_connections, "eir", "select import.import"))
+            clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_varResult(ref link_connections, "postgres", "select result, comment, code from import.import();", wait_interval);
+            if (varResult == null)
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
             else
-                state = Thread_state.finished;
+            {
+                if (!varResult.result)
+                {
+                    queue_status.Enqueue(new Log_status("eir_event_import",string.Empty,varResult.comment));
+                    state = Thread_state.error;
+                }
+                else
+                    state = Thread_state.finished;
+            }
+                
         }
 
         public void gate_get_info_from_eir()
@@ -1556,7 +1579,7 @@ namespace WindowsFormsApplication3
         }
 
 
-        public void handling_files()
+        public void gate_handling_files()
         // Резервное копирование Gate
         {
             state = Thread_state.starting;
@@ -1597,7 +1620,7 @@ namespace WindowsFormsApplication3
                                 case Reglament_owner.AOFOMS:
                                     // проверяем наличие необходимых соединений
                                     result = reglamentAOFOMS.handling_file(file, link_connections, folders, reglamentLinker, out result_comment, out count_row);
-                                    queue_status.Enqueue(new Log_status(filename, string.Empty, result_comment));
+                                    queue_status.Enqueue(new Log_status(filename, count_row.ToString(), result_comment));
                                     break;
                                 // ----------------- Обработка пакетов СМЭВ
                                 case Reglament_owner.SMEV12:
@@ -1625,11 +1648,13 @@ namespace WindowsFormsApplication3
                             }
                         }
                         //статус ignore мог измениться после обработки
-                        if(!ignore)
+                        if (!ignore)
                         {
                             string subFolder = (result) ? "ok" : "fail";
                             if (!clsLibrary.moveFile(file, Path.Combine(folders[0], subFolder), out result_comment)) throw new Exception(result_comment);
-                        }
+                            ++count;
+                        }                            
+                        if (count >= 10) break;
                     }
                 }
                 state = Thread_state.finished;
