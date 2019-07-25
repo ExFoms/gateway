@@ -11,7 +11,7 @@ using System.Xml;
 
 namespace WindowsFormsApplication3
 {
-    public enum Thread_state {notInicialized, wait, starting, finished, error, notresponding, broke, ignored, process /*для обозначения законченности задачи, но ожидания завершения подчиненных*/};
+    public enum Thread_state { notInicialized, wait, starting, finished, error, notresponding, broke, ignored, process /*для обозначения законченности задачи, но ожидания завершения подчиненных*/};
     public class clsBeat : clsErrors
     {
         public struct Log_status
@@ -20,12 +20,12 @@ namespace WindowsFormsApplication3
             public string comment;
             public Log_status(string text1_, string text2_, string comment_)
             {
-                text1 = text1_; 
+                text1 = text1_;
                 text2 = text2_;
                 comment = comment_;
             }
         }
-   
+
         public DateTime time;
         public Guid guid;
         public object parameters; //параметры передаваемые в бит или передаваемые в подчиненый бит 
@@ -48,10 +48,10 @@ namespace WindowsFormsApplication3
         {
             Inicialization();
         }
-        public clsBeat(int region_id_, int task_id_, int shedule_id_, DateTime createDate_, 
-            DateTime time_, Guid guid_, Guid guid_parent_, 
-            string gate_nametask_ = "", 
-            List<clsConnections> link_connections_ = null, string reglament_connections_ = "", 
+        public clsBeat(int region_id_, int task_id_, int shedule_id_, DateTime createDate_,
+            DateTime time_, Guid guid_, Guid guid_parent_,
+            string gate_nametask_ = "",
+            List<clsConnections> link_connections_ = null, string reglament_connections_ = "",
             string folders_connections_ = "",
             int wait_interval_ = 0, object parameters_ = null)
         {
@@ -65,7 +65,7 @@ namespace WindowsFormsApplication3
             gate_nametask = gate_nametask_;
             link_connections = link_connections_;
             reglament_connections = reglament_connections_;
-            folders_connections = folders_connections_; 
+            folders_connections = folders_connections_;
             wait_interval = wait_interval_;
             parameters = parameters_;
             Inicialization();
@@ -75,7 +75,7 @@ namespace WindowsFormsApplication3
         {
             if (state == Thread_state.wait && time < DateTime.Now)
             {
-                try 
+                try
                 {
                     thread.Start();
                 }
@@ -120,7 +120,7 @@ namespace WindowsFormsApplication3
                 case "identification_create_response_01": thread = new Thread(identification_create_response_01) { IsBackground = true, Name = gate_nametask }; break;
                 case "cleaner_identificationPeople": thread = new Thread(cleaner_identificationPeople) { IsBackground = true, Name = gate_nametask }; break;
                 case "serverC_get_request_idetification": thread = new Thread(serverC_get_request_idetification) { IsBackground = true, Name = gate_nametask }; break;
-                case "ServerC_unload_identification": thread = new Thread(ServerC_unload_identification) { IsBackground = true, Name = gate_nametask }; break;     
+                case "ServerC_unload_identification": thread = new Thread(ServerC_unload_identification) { IsBackground = true, Name = gate_nametask }; break;
                 case "gateBackup": thread = new Thread(gateBackup) { IsBackground = true, Name = gate_nametask }; break;
                 case "eirBackup": thread = new Thread(eirBackup) { IsBackground = true, Name = gate_nametask }; break;
                 case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
@@ -128,17 +128,17 @@ namespace WindowsFormsApplication3
 
                 //Gate 
                 case "gate_handling_files": thread = new Thread(gate_handling_files) { IsBackground = true }; break;
-                case "gate_get_flk_from_eir": thread =      new Thread(gate_get_flk_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_FLK
-                case "gate_get_prt_from_eir": thread =      new Thread(gate_get_prt_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_PRT
-                case "gate_get_info_from_eir": thread =     new Thread(gate_get_info_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_sendRequestHandlingInfo
+                case "gate_get_flk_from_eir": thread = new Thread(gate_get_flk_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_FLK
+                case "gate_get_prt_from_eir": thread = new Thread(gate_get_prt_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_PRT
+                case "gate_get_info_from_eir": thread = new Thread(gate_get_info_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_sendRequestHandlingInfo
                 case "gate_get_request_identification_from_eir": thread = new Thread(gate_get_request_identification_from_eir) { IsBackground = true, Name = gate_nametask }; break;
                 case "gate_send_response_identification_to_eir": thread = new Thread(gate_send_response_identification_to_eir) { IsBackground = true, Name = gate_nametask }; break; //ServerE_unload_identification
 
                 //EIR
-                case "eir_event_flk": thread =      new Thread(eir_event_flk) { IsBackground = true, Name = gate_nametask }; break; 
-                case "eir_event_identy": thread =   new Thread(eir_event_identy) { IsBackground = true, Name = gate_nametask }; break; //new
-                case "eir_event_prt": thread =      new Thread(eir_event_prt) { IsBackground = true, Name = gate_nametask }; break; //new
-                case "eir_event_import": thread =   new Thread(eir_event_import) { IsBackground = true, Name = gate_nametask }; break; 
+                case "eir_event_flk": thread = new Thread(eir_event_flk) { IsBackground = true, Name = gate_nametask }; break;
+                case "eir_event_identy": thread = new Thread(eir_event_identy) { IsBackground = true, Name = gate_nametask }; break; //new
+                case "eir_event_prt": thread = new Thread(eir_event_prt) { IsBackground = true, Name = gate_nametask }; break; //new
+                case "eir_event_import": thread = new Thread(eir_event_import) { IsBackground = true, Name = gate_nametask }; break;
 
                 default: result = false; break;
             }
@@ -180,33 +180,33 @@ namespace WindowsFormsApplication3
                 //queue_status.Enqueue(new Log_status("Прикрепление", string.Empty, "Закрыт из условия"));
                 return;
             }
-            
+
             #region Загрузка файлов
             #region
             List<clsLibrary.Id_row> list_fileId = new List<clsLibrary.Id_row>();
             //создаём таблицу
             System.Data.DataTable table = new System.Data.DataTable();
             //добавляем колонки в таблицу
-            table.Columns.AddRange(new DataColumn[] { 
-                new DataColumn("NREC", typeof(String)), new DataColumn("MO_LOG", typeof(String)), new DataColumn("OP", typeof(String)), new DataColumn("TDOC", typeof(String)),     
-                new DataColumn("SPOL", typeof(String)), new DataColumn("NPOL", typeof(String)), new DataColumn("ENP", typeof(String)), new DataColumn("FAM", typeof(String)),      
-                new DataColumn("IM", typeof(String)), new DataColumn("OT", typeof(String)), new DataColumn("DR", typeof(String)), new DataColumn("MR", typeof(String)),       
-                new DataColumn("DOCTP", typeof(String)), new DataColumn("DOCS", typeof(String)), new DataColumn("DOCN", typeof(String)), new DataColumn("DOCDT", typeof(String)),      
-                new DataColumn("DOCORG", typeof(String)), new DataColumn("SS", typeof(String)), new DataColumn("LPU", typeof(String)), new DataColumn("LPUAUTO", typeof(String)),  
-                new DataColumn("LPUTYPE", typeof(String)), new DataColumn("LPUDT", typeof(String)), new DataColumn("LPUDX", typeof(String)), new DataColumn("OID", typeof(String)),    
-                new DataColumn("SUBDIV", typeof(String)), new DataColumn("DISTRICT", typeof(String)), new DataColumn("SS_DOCTOR", typeof(String)), new DataColumn("KATEG", typeof(String)),    
+            table.Columns.AddRange(new DataColumn[] {
+                new DataColumn("NREC", typeof(String)), new DataColumn("MO_LOG", typeof(String)), new DataColumn("OP", typeof(String)), new DataColumn("TDOC", typeof(String)),
+                new DataColumn("SPOL", typeof(String)), new DataColumn("NPOL", typeof(String)), new DataColumn("ENP", typeof(String)), new DataColumn("FAM", typeof(String)),
+                new DataColumn("IM", typeof(String)), new DataColumn("OT", typeof(String)), new DataColumn("DR", typeof(String)), new DataColumn("MR", typeof(String)),
+                new DataColumn("DOCTP", typeof(String)), new DataColumn("DOCS", typeof(String)), new DataColumn("DOCN", typeof(String)), new DataColumn("DOCDT", typeof(String)),
+                new DataColumn("DOCORG", typeof(String)), new DataColumn("SS", typeof(String)), new DataColumn("LPU", typeof(String)), new DataColumn("LPUAUTO", typeof(String)),
+                new DataColumn("LPUTYPE", typeof(String)), new DataColumn("LPUDT", typeof(String)), new DataColumn("LPUDX", typeof(String)), new DataColumn("OID", typeof(String)),
+                new DataColumn("SUBDIV", typeof(String)), new DataColumn("DISTRICT", typeof(String)), new DataColumn("SS_DOCTOR", typeof(String)), new DataColumn("KATEG", typeof(String)),
                 new DataColumn("DOCDATE", typeof(String))});
             #endregion
 
             foreach (string dir in dirs) //перебираем файлы
             {
-                
+
                 string smo_sender = Path.GetFileNameWithoutExtension(dir).Substring(3, 5);
                 int MO_LOG = clsLibrary.InsertNameFile(Path.GetFileName(dir));
-               
+
                 if (MO_LOG == -1)
                 {
-                    string file_back = folder_in + smo_sender  + @"\exist" + Path.GetFileName((string)dir);
+                    string file_back = folder_in + smo_sender + @"\exist" + Path.GetFileName((string)dir);
                     if (File.Exists(file_back)) File.Delete(file_back);
                     File.Move(dir, file_back);
                     queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), string.Empty, "загружен ранее, возвращен"));
@@ -228,7 +228,7 @@ namespace WindowsFormsApplication3
                         row_rec++;
                         try //контроль на ошибки в строках 
                         {
-#region
+                            #region
                             tblValues = tblLines[i].Split(';');
                             string SPOL = "", NPOL = tblValues[2];
                             int index = NPOL.IndexOf("№");
@@ -250,14 +250,14 @@ namespace WindowsFormsApplication3
                             if (tblValues.Count() >= 24) row["KATEG"] = clsLibrary.string_ForDB(tblValues[23]); else row["KATEG"] = clsLibrary.string_ForDB(string.Empty);
                             if (tblValues.Count() >= 25) row["DOCDATE"] = clsLibrary.string_ForDB(tblValues[24]); else row["DOCDATE"] = clsLibrary.string_ForDB(string.Empty);
                             table.Rows.Add(row);
-#endregion
+                            #endregion
                         }
                         catch //добавляем в список ошибочных записи
                         {
                             tblLine_failed.Add(new clsLibrary.Id_row(i + 1, tblLines[i]));
                         }
                     }
-#region
+                    #region
                     List<string> values = new List<string>();
                     foreach (DataRow new_row in table.Rows)
                     {
@@ -271,22 +271,22 @@ namespace WindowsFormsApplication3
                             clsLibrary.string_Apostrophe(new_row["DOCORG"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SS"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPU"].ToString()) + "," +
                             clsLibrary.string_Apostrophe(new_row["LPUAUTO"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPUTYPE"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPUDT"].ToString()) + "," +
                             clsLibrary.string_Apostrophe(new_row["LPUDX"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["OID"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SUBDIV"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["DISTRICT"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SS_DOCTOR"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["KATEG"].ToString()) 
-                            //+ "," + clsLibrary.string_Apostrophe(new_row["DOCDT"].ToString())
+                            clsLibrary.string_Apostrophe(new_row["DISTRICT"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SS_DOCTOR"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["KATEG"].ToString())
+                        //+ "," + clsLibrary.string_Apostrophe(new_row["DOCDT"].ToString())
                         );
                     }
-#endregion
-                    List<int> list_error = 
+                    #endregion
+                    List<int> list_error =
                             clsLibrary.execQuery_insertList_list(
                             "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
                             "INSERT INTO srz3_00.dbo.MO_BUFFER ([NREC],[MO_LOG],[OP],[TDOC],[SPOL],[NPOL],[ENP],[FAM],[IM],[OT],[DR],[MR],[DOCTP],[DOCS],[DOCN],[DOCDT],[DOCORG],[SS],[LPU],[LPUAUTO],[LPUTYPE],[LPUDT],[LPUDX],[OID],[SUBDIV],[DISTRICT],[SS_DOCTOR],[KATEG]) VALUES ",
                             values);
 
-                    if(list_error == null)
-                        queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir),string.Empty, "Ошибка записи в БД данных" ));
+                    if (list_error == null)
+                        queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), string.Empty, "Ошибка записи в БД данных"));
                     else
                     {
-                        foreach(int i in list_error) //добавляем в список ошибочных записи не загрузившиеся в БД
+                        foreach (int i in list_error) //добавляем в список ошибочных записи не загрузившиеся в БД
                         {
                             tblLine_failed.Add(new clsLibrary.Id_row(i + 1, tblLines[i]));
                         }
@@ -298,7 +298,7 @@ namespace WindowsFormsApplication3
                     File.Move((string)dir, old_file);
 
                     row_newrec = row_rec - tblLine_failed.Count; //колличество записей загруженных
-                    queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir),"записей принято " + (string)(row_newrec).ToString() + " из " + row_rec.ToString(), "Загружен")); 
+                    queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), "записей принято " + (string)(row_newrec).ToString() + " из " + row_rec.ToString(), "Загружен"));
                     if (tblLine_failed.Count > 0) // при наличии ошибочных записей создаем одноименный текстовый файл с префиксом error
                     {
                         string file_error_first = Path.GetDirectoryName(dir) + @"\err" + Path.GetFileName((string)dir);
@@ -306,7 +306,7 @@ namespace WindowsFormsApplication3
                         clsLibrary.createFileTXT_FromListAndId(tblLine_failed, file_error_first);
                         if (File.Exists(file_error_last)) File.Delete(file_error_last);
                         File.Move(file_error_first, file_error_last);
-                        queue_status.Enqueue(new Log_status(file_error_last, "записей " + tblLine_failed.Count().ToString(), "Выгружены ошибки")); 
+                        queue_status.Enqueue(new Log_status(file_error_last, "записей " + tblLine_failed.Count().ToString(), "Выгружены ошибки"));
                     }
                     //Обновляем данные по числу в файле строк и принятых
                     clsLibrary.execQuery(
@@ -317,13 +317,13 @@ namespace WindowsFormsApplication3
                 }
                 catch // ошибка чтения файла
                 {
-                    queue_status.Enqueue(new Log_status(dir, string.Empty, "Ошибка чтения")); 
+                    queue_status.Enqueue(new Log_status(dir, string.Empty, "Ошибка чтения"));
                 }
             } //цикл обхода файлов
-            //--------------------------------------------------
-#endregion
-#region Обработка файлов
-            foreach(clsLibrary.Id_row list_file in list_fileId) //обходим все загруженные файлы
+              //--------------------------------------------------
+            #endregion
+            #region Обработка файлов
+            foreach (clsLibrary.Id_row list_file in list_fileId) //обходим все загруженные файлы
             {
                 string smo_sender = list_file.row.Substring(3, 5);
                 int result_int = 0; //результат выполнения запроса, определяет какая выполнилась комманда в запросе по очереди
@@ -351,7 +351,7 @@ namespace WindowsFormsApplication3
                 int result_list_count = result_list.Count();
                 if (!(result_list_count > 0)) //если нет ошибок то тело ФЛК будет N
                     result_list.Add("N");
-                if (clsLibrary.createFileTXT_FromList(result_list, 
+                if (clsLibrary.createFileTXT_FromList(result_list,
                     //String.Format(@"{0}{1}\LO1{2}.csv", folder_out, smo_sender, list_file.row.Substring(3))
                     Path.Combine(folder_out/*, smo_sender*/, String.Format("LO1{0}.csv", list_file.row.Substring(3)))
                     ))
@@ -370,15 +370,15 @@ namespace WindowsFormsApplication3
                             String.Format("Ошибка формирования файла ФЛК на {0}", list_file.row)));
             }
 
-#endregion
+            #endregion
 
             state = Thread_state.finished;
         }
-        
+
         public void control_inostr()
         // Контроль окончания срока права на ОМС у иностр.
         {
-            state = Thread_state.starting; 
+            state = Thread_state.starting;
             int CloseInostrDays = 30; //контролируются предыдущие 30 дней
             int result_int = 2; //результат выполнения запроса, определяет сколько закрыто иностранцев шаг начинается с 2+1
             try
@@ -395,23 +395,23 @@ namespace WindowsFormsApplication3
                 }
                 else
                     if (result_int > 2) //есть результирующие записи
-                    {
-                        queue_status.Enqueue(
-                            new Log_status(
-                                gate_nametask,
-                                 String.Format("иностранцы - {0}", (result_int-2).ToString()),
-                                "Закрытие страхования"));
-                    }
-                    /*else 
-                    {
-                        queue_status.Enqueue(
-                            new Log_status(
-                                gate_nametask,"не найдено","Закрытие страхования"));
-                    }*/
+                {
+                    queue_status.Enqueue(
+                        new Log_status(
+                            gate_nametask,
+                             String.Format("иностранцы - {0}", (result_int - 2).ToString()),
+                            "Закрытие страхования"));
+                }
+                /*else 
+                {
+                    queue_status.Enqueue(
+                        new Log_status(
+                            gate_nametask,"не найдено","Закрытие страхования"));
+                }*/
                 state = Thread_state.finished;
             }
             catch
-            { 
+            {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
@@ -462,14 +462,14 @@ namespace WindowsFormsApplication3
                             ENP3 = gznValues[4];
                             VS3 = gznValues[5];
                             //string Value = "";
-                            if (ENP1.Length == 16 && VS1.Length == 11) { count_row++; list.Add(clsLibrary.string_Apostrophe(ENP1) + "," + clsLibrary.string_Apostrophe(VS1));}
-                            if (ENP2.Length == 16 && VS2.Length == 11) { count_row++; list.Add(clsLibrary.string_Apostrophe(ENP2) + "," + clsLibrary.string_Apostrophe(VS2));}
-                            if (ENP3.Length == 16 && VS3.Length == 11) { count_row++; list.Add(clsLibrary.string_Apostrophe(ENP3) + "," + clsLibrary.string_Apostrophe(VS3));}
+                            if (ENP1.Length == 16 && VS1.Length == 11) { count_row++; list.Add(clsLibrary.string_Apostrophe(ENP1) + "," + clsLibrary.string_Apostrophe(VS1)); }
+                            if (ENP2.Length == 16 && VS2.Length == 11) { count_row++; list.Add(clsLibrary.string_Apostrophe(ENP2) + "," + clsLibrary.string_Apostrophe(VS2)); }
+                            if (ENP3.Length == 16 && VS3.Length == 11) { count_row++; list.Add(clsLibrary.string_Apostrophe(ENP3) + "," + clsLibrary.string_Apostrophe(VS3)); }
                         }
                     }
                     if (list.Count > 0)
                     {
-                        if(!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;", "INSERT INTO tmpForSRZ.dbo.GOZNAK (ENP, BLANK) VALUES ", list))
+                        if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;", "INSERT INTO tmpForSRZ.dbo.GOZNAK (ENP, BLANK) VALUES ", list))
                             queue_status.Enqueue(
                                 new Log_status(
                                     gate_nametask,
@@ -491,9 +491,9 @@ namespace WindowsFormsApplication3
                     //File.Copy((string)dir, @"D:\Tmp\" + Path.GetFileName((string)dir), true);
                     File.Copy((string)file, folder_out + @"\28004\" + Path.GetFileName((string)file), true);
                     File.Delete((string)file);
-                    
+
                 }
-                catch 
+                catch
                 {
                     state = Thread_state.error;
                     error = GateError.errorPerformanceMetod;
@@ -501,7 +501,7 @@ namespace WindowsFormsApplication3
             }
             state = Thread_state.finished;
         }
-        
+
         public void import_military()
         // Загрузка данных о военнослужащих, получивших МП от МО ОМС
         {
@@ -539,7 +539,7 @@ namespace WindowsFormsApplication3
                         queue_status.Enqueue(new Log_status(gate_nametask, "вставка данных в базу", "ошибка"));
 
                     File.Copy(file, folder_in + @"ok\" + Path.GetFileName(file), true);
-                    File.Delete(file);                
+                    File.Delete(file);
                 }
                 catch
                 {
@@ -558,7 +558,7 @@ namespace WindowsFormsApplication3
             {
                 int count = clsLibrary.execQuery_getInt("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;", "DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.military_close SELECT 'Return Value' = @return_value");
                 if (count == -1) throw new ArgumentException("Ошибка");
-                if(count > 0) queue_status.Enqueue(new Log_status(gate_nametask, String.Format("случаев - {0}", count.ToString()), "Закрытие страхования военнослужащих"));
+                if (count > 0) queue_status.Enqueue(new Log_status(gate_nametask, String.Format("случаев - {0}", count.ToString()), "Закрытие страхования военнослужащих"));
                 state = Thread_state.finished;
             }
             catch
@@ -613,7 +613,7 @@ namespace WindowsFormsApplication3
                     "DECLARE @return_value int EXEC @return_value = dbo.GATE_find_narushsrokov SELECT @return_value",
                     wait_interval
                     );
-                if ((int) parameters < 2) //ошибка выполнения
+                if ((int)parameters < 2) //ошибка выполнения
                 {
                     state = Thread_state.error;
                     error = GateError.errorPerformanceMetod;
@@ -651,7 +651,7 @@ namespace WindowsFormsApplication3
 
                     System.Data.DataTable table = new System.Data.DataTable();
                     //добавляем колонки в таблицу
-                    table.Columns.AddRange(new DataColumn[] { 
+                    table.Columns.AddRange(new DataColumn[] {
                         new DataColumn("col1", typeof(String)),
                         new DataColumn("col2", typeof(String)),
                         new DataColumn("col3", typeof(String)),
@@ -669,13 +669,13 @@ namespace WindowsFormsApplication3
                     bool result = clsLibrary.ExecQurey_GetTable(
                         connectionString + ";database=tmpForSRZ;",
                         //"uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ",
-                        "SELECT ID, CONVERT(varchar(10), dviz, 104) dv, CONVERT(varchar(10), date_income, 104) date_income,CONVERT(varchar,inwork) inwork,CONVERT(varchar,q) q,npol, "+
-                        "CONVERT(varchar(10), dbeg, 104) dbeg, '-' + isnull(enp,'') + '-' enp, isnull(fam,'') fam, isnull(im,'') im,isnull(ot,'') ot, CONVERT(varchar(10), dr, 104) dr,op "+
-                        "FROM tmpForSRZ.dbo.control_polis_incom "+
+                        "SELECT ID, CONVERT(varchar(10), dviz, 104) dv, CONVERT(varchar(10), date_income, 104) date_income,CONVERT(varchar,inwork) inwork,CONVERT(varchar,q) q,npol, " +
+                        "CONVERT(varchar(10), dbeg, 104) dbeg, '-' + isnull(enp,'') + '-' enp, isnull(fam,'') fam, isnull(im,'') im,isnull(ot,'') ot, CONVERT(varchar(10), dr, 104) dr,op " +
+                        "FROM tmpForSRZ.dbo.control_polis_incom " +
                         "where send = 0 order by dviz",
                         ref table,
                         wait_interval);
-                    
+
                     if (!result)
                     {
                         state = Thread_state.error;
@@ -684,10 +684,10 @@ namespace WindowsFormsApplication3
                     }
                     List<string> result_list = new List<string>();
                     string parameter = "";
-                    foreach(DataRow row in table.Rows)
+                    foreach (DataRow row in table.Rows)
                     {
-                        result_list.Add(row[1]+";"+row[2]+";"+row[3]+";"+row[4]+";"+row[5]+";"+row[6]+";"+row[7]+";"+row[8]+";"+row[9]+";"+row[10]+";"+row[11]+";"+row[12]);
-                        parameter += "," + (string) row[0]; 
+                        result_list.Add(row[1] + ";" + row[2] + ";" + row[3] + ";" + row[4] + ";" + row[5] + ";" + row[6] + ";" + row[7] + ";" + row[8] + ";" + row[9] + ";" + row[10] + ";" + row[11] + ";" + row[12]);
+                        parameter += "," + (string)row[0];
                     }
                     parameter = parameter.Substring(1);
                     int result_list_count = result_list.Count();
@@ -719,7 +719,7 @@ namespace WindowsFormsApplication3
                             error = GateError.errorPerformanceMetod;
                         }
                     }
-                    else 
+                    else
                         state = Thread_state.finished;
                 }
                 catch
@@ -747,16 +747,16 @@ namespace WindowsFormsApplication3
                 clsLibrary.get_stringSplitPos(ref connection1, reglament_connections, ';', 1);
                 clsLibrary.get_stringSplitPos(ref connection2, reglament_connections, ';', 2);
 
-                string connectionString0 = @link_connections.Find(x => x.name 
+                string connectionString0 = @link_connections.Find(x => x.name
                     == connection0
                     ).connectionString + ";database=tmpForSRZ";
-                string connectionString1 = @link_connections.Find(x => x.name 
+                string connectionString1 = @link_connections.Find(x => x.name
                     == connection1
                     ).connectionString + ";database=GATE";
-                string connectionString2 = @link_connections.Find(x => x.name 
+                string connectionString2 = @link_connections.Find(x => x.name
                     == connection2
                     ).connectionString + ";database=SRZ_SUPPORT";
-                
+
                 list = clsLibrary.execQuery_getListString(
                         connectionString2,
                         "select top 1 convert(varchar,ID)+';'+ convert(varchar,BIDDER)+ ';' + convert(varchar,TYP) + ';' + convert(varchar,USER_ID) from SRZ_SUPPORT.dbo.QUERY_USERS where ACCEPT=0 order by ID"
@@ -766,26 +766,26 @@ namespace WindowsFormsApplication3
                     if (!String.IsNullOrEmpty(row)) //есть в строке значения 
                     {
                         string[] columns = row.Split(';');
-                        if(clsLibrary.execQuery_getInt(
+                        if (clsLibrary.execQuery_getInt(
                             connectionString0,
-                            String.Format("DECLARE @return_value int EXEC @return_value = dbo.createQUERY_USER_ANSWER {0}, {1}, {2}, {3} SELECT @return_value",columns[1], columns[2], columns[3], columns[0])
-                        ) == -1) 
-                        {
-                            throw new Exception();
-                        }
-
-                        if(clsLibrary.execQuery_getInt(
-                            connectionString1,
-                            String.Format("DECLARE @return_value int EXEC @return_value = dbo.createFile_QUERY_USER_ANSER {0}, {1}, {2}, {3} SELECT @return_value",columns[1], columns[2], columns[3], columns[0])
+                            String.Format("DECLARE @return_value int EXEC @return_value = dbo.createQUERY_USER_ANSWER {0}, {1}, {2}, {3} SELECT @return_value", columns[1], columns[2], columns[3], columns[0])
                         ) == -1)
                         {
                             throw new Exception();
                         }
-                        
 
-                        if(clsLibrary.execQuery_getInt(
+                        if (clsLibrary.execQuery_getInt(
+                            connectionString1,
+                            String.Format("DECLARE @return_value int EXEC @return_value = dbo.createFile_QUERY_USER_ANSER {0}, {1}, {2}, {3} SELECT @return_value", columns[1], columns[2], columns[3], columns[0])
+                        ) == -1)
+                        {
+                            throw new Exception();
+                        }
+
+
+                        if (clsLibrary.execQuery_getInt(
                             connectionString2,
-                            String.Format("set dateformat dmy update QUERY_USERS set ACCEPT=1, ACCEPT_DATE='{0}' where ID={1} SELECT @@ROWCOUNT",DateTime.Now.ToString(), columns[0])
+                            String.Format("set dateformat dmy update QUERY_USERS set ACCEPT=1, ACCEPT_DATE='{0}' where ID={1} SELECT @@ROWCOUNT", DateTime.Now.ToString(), columns[0])
                         ) == -1)
                         {
                             throw new Exception();
@@ -909,7 +909,7 @@ namespace WindowsFormsApplication3
                     sqlConnection1.Open();
                     cmd_db.ExecuteNonQuery();
                     sqlConnection1.Close();
-                    File.Move((string)file, folder_out+ @"28004\" + Path.GetFileName((string)file));
+                    File.Move((string)file, folder_out + @"28004\" + Path.GetFileName((string)file));
                     queue_status.Enqueue(
                         new Log_status(
                             "error_21_22",
@@ -943,7 +943,7 @@ namespace WindowsFormsApplication3
             else
                 state = Thread_state.finished;
             //Thread.Sleep(1000);
-      
+
         }
 
         public void identification_gate()
@@ -953,7 +953,7 @@ namespace WindowsFormsApplication3
             int limit_transaction = 10000;
             if (
                 clsLibrary.execQuery_getInt(
-                    ref link_connections,reglament_connections,
+                    ref link_connections, reglament_connections,
                     "tmpForSRZ",
                     string.Format("DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.GATE_Identification {0} SELECT @return_value", limit_transaction)
                     ) == -1
@@ -973,7 +973,7 @@ namespace WindowsFormsApplication3
             int limit_transaction = 300;
             if (
                 clsLibrary.execQuery_getInt(
-                    ref link_connections,reglament_connections,
+                    ref link_connections, reglament_connections,
                     "tmpForSRZ",
                     string.Format("DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.GATE_Identification_History {0} SELECT @return_value", limit_transaction)
                     ) == -1
@@ -1023,7 +1023,7 @@ namespace WindowsFormsApplication3
             }
             else
             {
-                if(response.Count() != 0)
+                if (response.Count() != 0)
                 {
                     if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
                         "INSERT INTO Gate_IdentificationPeople (subsystem, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys/*, actual*/) VALUES ", response, 1))
@@ -1043,17 +1043,16 @@ namespace WindowsFormsApplication3
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
                         }
-                       else state = Thread_state.finished;
+                        else state = Thread_state.finished;
                     }
                 }
-                else state = Thread_state.finished;       
+                else state = Thread_state.finished;
             }
         }
 
         public void gate_get_request_identification_from_eir()
         // Получение запросов на идентификацию
         {
-
             state = Thread_state.starting;
             int limit_transaction = 5000;
             List<string[]> response = new List<string[]>();
@@ -1072,13 +1071,6 @@ namespace WindowsFormsApplication3
             {
                 if (response.Count() != 0)
                 {
-                    /*queue_status.Enqueue(new Log_status("gate_get_request_identification_from_eir",
-                            string.Empty,
-                            clsLibrary.execQuery_insertList_string("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                        "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, actual, actual_pid) VALUES ", response, 1))
-                        );                    
-                    */
-
                     if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
                         "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, actual, actual_pid) VALUES ", response, 10))
                     {
@@ -1093,7 +1085,7 @@ namespace WindowsFormsApplication3
                             ref link_connections
                             , "postgres"
                             , string.Format("Update identy.identifications set identification_state = 1, identification_date = '{0}' where id in ({1});", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
-                            ,wait_interval))
+                            , wait_interval))
                         {
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
@@ -1147,7 +1139,7 @@ namespace WindowsFormsApplication3
                     clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_updateList_varResult(ref link_connections, null, "postgres", ref values, 100, wait_interval);
                     if (!varResult.result)
                     {
-                        queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir",string.Empty, varResult.comment));
+                        queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir", string.Empty, varResult.comment));
                         state = Thread_state.error;
                         error = GateError.errorPerformanceMetod;
                     }
@@ -1157,10 +1149,10 @@ namespace WindowsFormsApplication3
                         foreach (string[] row in response) values.Add(row[0]);
                         varResult = clsLibrary.execQuery_VarResult(ref link_connections, reglament_connections, "tmpForSRZ",
                              string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray())), wait_interval);
-                        if (!varResult.result)                           
-                            //"uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
-                            //, string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray()))
-                            
+                        if (!varResult.result)
+                        //"uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
+                        //, string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray()))
+
                         {
                             queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir", string.Empty, varResult.comment));
                             state = Thread_state.error;
@@ -1180,7 +1172,7 @@ namespace WindowsFormsApplication3
             state = Thread_state.starting;
             int limit_time = 24;
             if (!clsLibrary.execQuery(
-                    ref link_connections,reglament_connections,"tmpForSRZ",
+                    ref link_connections, reglament_connections, "tmpForSRZ",
                     string.Format("EXEC dbo.GATE_cleaner_IdentificationPeople {0}", limit_time)
                     )
                 )
@@ -1247,7 +1239,7 @@ namespace WindowsFormsApplication3
         public void eir_event_flk()
         // 
         {
-            state = Thread_state.starting;            
+            state = Thread_state.starting;
             if (clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres", "select buf_checking.event_flk();", wait_interval) == -1)
             {
                 //queue_status.Enqueue(new Log_status("eir_event_flk", string.Empty, wait_interval.ToString()));
@@ -1292,7 +1284,7 @@ namespace WindowsFormsApplication3
         }
         public void eir_event_import()
         // Импортируем из буфера SI
-        {            
+        {
             state = Thread_state.starting;
             clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_varResult(ref link_connections, "postgres", "select result, comment, code from import.import();", wait_interval);
             if (varResult == null)
@@ -1304,52 +1296,46 @@ namespace WindowsFormsApplication3
             {
                 if (!varResult.result)
                 {
-                    queue_status.Enqueue(new Log_status("eir_event_import",string.Empty,varResult.comment));
+                    queue_status.Enqueue(new Log_status("eir_event_import", string.Empty, varResult.comment));
                     state = Thread_state.error;
                 }
                 else
                     state = Thread_state.finished;
             }
-                
+
         }
 
         public void gate_get_info_from_eir()
         //отправка информации по результатам загрузки пакетов /пока только SI
         {
             state = Thread_state.starting;
-            // заглушка
-            state = Thread_state.finished;
-            return;
             try
             {
-                List<string[]> response = new List<string[]>();
-                if (clsLibrary.execQuery_getListString(
-                     ref response
-                    , ref link_connections
-                    , reglament_connections
-                    , "eir"
-                    , "EXEC [dbo].[get_readyToInfo]")
-                    &&
-                    response.Count > 0)
+                string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
+                if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
+                List<string[]> requests = new List<string[]>();
+                if (clsLibrary.ExecQurey_PGR_GetListStrings(
+                        ref link_connections, null, "postgres"
+                        , "select id, mnemonics, filename, info_content from buf_eir.request where state::int >= 100 and info isnull and info_content is not null limit 10;"
+                        , ref requests
+                    )
+                )
                 {
-                    //static_createRefresheble();
-                    for (int i = 1; i < 100000; i++) ;
-                        foreach (string[] Request in response)
-                        {
-                            List<string> list2 = new List<string>();
-                            list2 = clsLibrary.execQuery_getListString(
-                                ref link_connections, ref reglament_connections, "eir",
-                                string.Format("EXEC [statistics_ProfilacticsPlan] '{0}', {1}", Request[1], Request[2]));
-                            clsLibrary.createFileTXT_FromList(list2, string.Format(@"w:\info{0}.txt", Request[1]));
-                            clsLibrary.execQuery(
-                                ref link_connections, reglament_connections, "eir",
-                                string.Format("update request set info = '{0}' where id = '{1}'", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), Request[0]));
-                        }
+                    foreach (string[] request in requests)
+                    {
+                        List<string> response = new List<string>();
+                        response.Add(request[3]);
+                        clsLibrary.createFileTXT_FromList(response, Path.Combine(folders[1], string.Format("info{0}-{1}.txt", request[1], request[2])));
+                        clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres"
+                            , String.Format("update buf_eir.request set info = '{0}' where id = '{1}';", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), request[0])
+                            , 120000);
+                    }
                 }
                 state = Thread_state.finished;
             }
-            catch
+            catch (Exception e)
             {
+                queue_status.Enqueue(new Log_status("gate_get_prt_from_eir", string.Empty, e.Message));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
@@ -1357,199 +1343,197 @@ namespace WindowsFormsApplication3
 
         public void gate_get_prt_from_eir()
         // Выгрузка прикладной проверки
+
         {
-            state = Thread_state.starting;
-            // заглушка
-            state = Thread_state.finished;
-            return;
             try
             {
-                List<string[]> idRequests = new List<string[]>();
-                if (
-                    clsLibrary.execQuery_getListString(
-                    ref idRequests 
-                    , ref link_connections
-                    , reglament_connections
-                    , "eir"
-                    ,"select id, mnemonics from request where PRT_CHECK = 1 and IMPORTING is not null and PRT_RESPONSE is null")
-                && idRequests.Count > 0)
+                state = Thread_state.starting;
+                string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
+                if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
+                string prefix = "";
+                string response_id = "";
+                string response_filename = "";
+                List<string[]> requests = new List<string[]>();
+                if (clsLibrary.ExecQurey_PGR_GetListStrings(
+                        ref link_connections, null, "postgres"
+                        , "select id, mnemonics, schema_name, filename, count_row, prt_error_count from buf_eir.request where state::int >= 100 and prt_response isnull limit 10;"
+                        , ref requests
+                    )
+                    && requests.Count > 0)
                 {
-                    foreach (string[] idRequest in idRequests)
+                    foreach (string[] request in requests)
                     {
-                        List<string[]> response_file = new List<string[]>();
-                        if (clsLibrary.execQuery_getListString(
-                            ref response_file 
-                            , ref link_connections
-                            , reglament_connections
-                            , "eir"
-                            , string.Format("EXEC	[dbo].[create_ResponseFileItem] '{0}','sf_schema','{1}','SF'", idRequest[1], idRequest[0]), 120000)
+                        switch (request[2])
+                        {
+                            /*case "zldn_schema_2_1":
+                                prefix = "DN";
+                                break;*/
+                            default:
+                                prefix = "";
+                                break;
+                        }
+                        response_filename = prefix + "SF" + "T" + request[1] + "_" + DateTime.Now.ToString("yyMMdd");
+                        string numbe_file = "000" + clsLibrary.execQuery_PGR_getString(
+                                ref link_connections, null, "postgres"
+                                , "with recursive r as(select 1 as i union select i+1 as i from r where exists(select id from buf_eir.response where filename = '" + response_filename + "'||right('000'||i::text,3)||'.XML')) select i from r order by i desc limit 1;");
+                        response_filename += numbe_file.Substring(numbe_file.Length - 3) + ".XML";
+                        Schemes_AOFOMS.sf_schema.HEADER header = new Schemes_AOFOMS.sf_schema.HEADER()
+                        {
+                            VERS = "1.0",
+                            FNAME = response_filename,
+                            FNAME_1 = request[3],
+                            NRECORDS = request[4],
+                            FAILS = request[5]
+                        };
+                        //header.FAILS = file_item[4];
+                        List<Schemes_AOFOMS.sf_schema.FLK_PRES> body = new List<Schemes_AOFOMS.sf_schema.FLK_PRES>();
+                        List<string[]> response_row = new List<string[]>();
+                        if (clsLibrary.ExecQurey_PGR_GetListStrings(
+                            ref link_connections, null, "postgres"
+                            , string.Format("select * from buf_eir.get_prt_content('{0}', '{1}');", request[0], request[2])
+                            , ref response_row
+                            , 120000
+                            )
                             &&
-                            response_file.Count > 0)
+                            response_row.Count > 0)
                         {
-                            string[] file_item = response_file[0];
-                            Schemes_AOFOMS.sf_schema.FLK_P response = new Schemes_AOFOMS.sf_schema.FLK_P();
-                            Schemes_AOFOMS.sf_schema.HEADER header = new Schemes_AOFOMS.sf_schema.HEADER();
-                            header.VERS = "1.0";
-                            header.FNAME = file_item[1];
-                            header.FNAME_1 = file_item[2];
-                            header.NRECORDS = file_item[3];
-                            header.FAILS = file_item[4];
-                            List<Schemes_AOFOMS.sf_schema.FLK_PRES> body = new List<Schemes_AOFOMS.sf_schema.FLK_PRES>();
-                            List<string[]> list = new List<string[]>();
-                            if (clsLibrary.execQuery_getListString(
-                                ref list
-                                , ref link_connections
-                                , reglament_connections
-                                , "eir"
-                                , string.Format("EXEC [dbo].[get_prtResponseBody] '{0}'", idRequest[0]), 120000)
-                                &&
-                                list.Count > 0)
+                            foreach (string[] row in response_row)
                             {
-                                foreach (string[] item in list)
+                                body.Add(new Schemes_AOFOMS.sf_schema.FLK_PRES
                                 {
-                                    body.Add(new Schemes_AOFOMS.sf_schema.FLK_PRES
-                                    {
-                                        NREC = item[0],
-                                        RESUL = item[1],
-                                        COMMENT = item[2]
-                                    });
-                                }
+                                    NREC = row[0],
+                                    RESUL = row[1],
+                                    COMMENT = row[2]
+                                });
                             }
-                            response.HEADER = header;
-                            response.RES = body.ToArray();
-                            clsLibrary.SaveXML_prt(response, string.Format(@"w:\{0}", file_item[1]));
-                            clsLibrary.execQuery(
-                                ref link_connections
-                                , reglament_connections
-                                , "eir"
-                                ,string.Format("update response set HEADER = '{0}', DATE_SEND = '{1}' where ID = '{2}'",
-                                XmlHelper.SerializeTo<Schemes_AOFOMS.sf_schema.HEADER>(header as Schemes_AOFOMS.sf_schema.HEADER),
-                                DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), file_item[0]), 120000);
-                            clsLibrary.execQuery(
-                                ref link_connections
-                                , reglament_connections
-                                , "eir"
-                                , string.Format("update request set PRT_RESPONSE = '{0}' where ID = '{1}'",
-                                file_item[0], idRequest[0]), 120000);
                         }
-                        else
-                        {
-                            //проблема в формировании файлв
-                        }
+                        Schemes_AOFOMS.sf_schema.FLK_P response_rows = new Schemes_AOFOMS.sf_schema.FLK_P();
+                        response_rows.HEADER = header;
+                        response_rows.RES = body.ToArray();
+                        clsLibrary.SaveXML_prt(response_rows, Path.Combine(folders[1], response_filename));
+                        response_id = Guid.NewGuid().ToString();
+                        clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres"
+                                , String.Format("insert into buf_eir.response (id, mnemonics, schema_name, id_request, header, filename, date_send) values ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');",
+                                    response_id, request[1], request[2], request[0],
+                                    XmlHelper.SerializeTo<Schemes_AOFOMS.sf_schema.HEADER>(header as Schemes_AOFOMS.sf_schema.HEADER),
+                                    response_filename,
+                                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                                , 120000)
+                            );
+                        clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres"
+                            , String.Format("update buf_eir.request set prt_response = '{0}' where id = '{1}';", response_id, request[0])
+                            , 120000);
                     }
-                } 
+                }
+                state = Thread_state.finished;
             }
-            catch
+            catch (Exception e)
             {
+                queue_status.Enqueue(new Log_status("gate_get_prt_from_eir", string.Empty, e.Message));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
-                return;
             }
-            state = Thread_state.finished;
-
         }
 
         public void gate_get_flk_from_eir()
-        // Выгрузка прикладной проверки
+        // Выгрузка flk проверки
         {
             state = Thread_state.starting;
-            // заглушка
-            state = Thread_state.finished;
-            return;
             try
             {
-                List<string[]> idRequests = new List<string[]>();
-                if (
-                    clsLibrary.execQuery_getListString(
-                    ref idRequests
-                    , ref link_connections
-                    , reglament_connections
-                    , "eir"
-                    , "select id, mnemonics from request where PRT_CHECK = 1 and IMPORTING is not null and FLK_RESPONSE is null")
-                && idRequests.Count > 0)
+                string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
+                if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
+                string prefix = "";
+                string response_id = "";
+                string response_filename = "";
+                List<string[]> requests = new List<string[]>();
+                if (clsLibrary.ExecQurey_PGR_GetListStrings(
+                        ref link_connections, null, "postgres"
+                        , "select id, mnemonics, schema_name, filename, count_row from buf_eir.request where state::int >= 1 and flk_response isnull limit 10;"
+                        , ref requests
+                    )
+                    && requests.Count > 0)
                 {
-                    foreach (string[] idRequest in idRequests)
+                    foreach (string[] request in requests)
                     {
-                        List<string[]> response_file = new List<string[]>();
-                        if (clsLibrary.execQuery_getListString(
-                            ref response_file
-                            , ref link_connections
-                            , reglament_connections
-                            , "eir"
-                            , string.Format("EXEC [dbo].[create_ResponseFileItem] '{0}','sf_schema','{1}','SP'", idRequest[1], idRequest[0]), 120000)
+                        switch (request[2])
+                        {
+                            /*case "zldn_schema_2_1":
+                                prefix = "DN";
+                                break;*/
+                            default:
+                                prefix = "";
+                                break;
+                        }
+                        response_filename = prefix + "SP" + "T" + request[1] + "_" + DateTime.Now.ToString("yyMMdd");
+                        string numbe_file = "000" + clsLibrary.execQuery_PGR_getString(
+                                ref link_connections, null, "postgres"
+                                , "with recursive r as(select 1 as i union select i+1 as i from r where exists(select id from buf_eir.response where filename = '" + response_filename + "'||right('000'||i::text,3)||'.XML')) select i from r order by i desc limit 1;");
+                        response_filename += numbe_file.Substring(numbe_file.Length - 3) + ".XML";
+                        Schemes_AOFOMS.sp_schema.HEADER header = new Schemes_AOFOMS.sp_schema.HEADER()
+                        {
+                            VERS = "1.0",
+                            FNAME = response_filename,
+                            FNAME_1 = request[3],
+                            NRECORDS = request[4]
+                        };
+                        //header.FAILS = file_item[4];
+                        List<Schemes_AOFOMS.sp_schema.FLK_POSH> body = new List<Schemes_AOFOMS.sp_schema.FLK_POSH>();
+                        List<string[]> response_row = new List<string[]>();
+                        if (clsLibrary.ExecQurey_PGR_GetListStrings(
+                            ref link_connections, null, "postgres"
+                            , string.Format("select * from buf_eir.get_flk_content('{0}', '{1}');", request[0], request[2])
+                            , ref response_row
+                            , 120000
+                            )
                             &&
-                            response_file.Count > 0)
+                            response_row.Count > 0)
                         {
-                            string[] file_item = response_file[0];
-                            Schemes_AOFOMS.sp_schema.FLK_P response = new Schemes_AOFOMS.sp_schema.FLK_P();
-                            Schemes_AOFOMS.sp_schema.HEADER header = new Schemes_AOFOMS.sp_schema.HEADER();
-                            header.VERS = "1.0";
-                            header.FNAME = file_item[1];
-                            header.FNAME_1 = file_item[2];
-                            header.NRECORDS = file_item[3];
-                            //header.FAILS = file_item[4];
-                            List<Schemes_AOFOMS.sp_schema.FLK_POSH> body = new List<Schemes_AOFOMS.sp_schema.FLK_POSH>();
-                            List<string[]> list = new List<string[]>();
-                            if (clsLibrary.execQuery_getListString(
-                                ref list
-                                , ref link_connections
-                                , reglament_connections
-                                , "eir"
-                                , string.Format("EXEC [dbo].[get_flkResponseBody] '{0}'", idRequest[0]), 120000)
-                                &&
-                                list.Count > 0)
+                            foreach (string[] row in response_row)
                             {
-                                foreach (string[] item in list)
+                                body.Add(new Schemes_AOFOMS.sp_schema.FLK_POSH
                                 {
-                                    body.Add(new Schemes_AOFOMS.sp_schema.FLK_POSH
-                                    {
-                                        NREC = item[0],
-                                        OSHIB = item[1],
-                                        COMMENT = item[2]
-                                    });
-                                }
+                                    NREC = row[0],
+                                    OSHIB = row[1],
+                                    COMMENT = row[2]
+                                });
                             }
-                            response.HEADER = header;
-                            response.OSH = body.ToArray();
-                            clsLibrary.SaveXML_flk(response, string.Format(@"w:\{0}", file_item[1]));
-                            clsLibrary.execQuery(
-                                ref link_connections
-                                , reglament_connections
-                                , "eir"
-                                , string.Format("update response set HEADER = '{0}', DATE_SEND = '{1}' where ID = '{2}'",
-                                XmlHelper.SerializeTo<Schemes_AOFOMS.sp_schema.HEADER>(header as Schemes_AOFOMS.sp_schema.HEADER),
-                                DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), file_item[0]), 120000);
-                            clsLibrary.execQuery(
-                                ref link_connections
-                                , reglament_connections
-                                , "eir"
-                                , string.Format("update request set FLK_RESPONSE = '{0}' where ID = '{1}'",
-                                file_item[0], idRequest[0]), 120000);
                         }
-                        else
-                        {
-                            //проблема в формировании файлв
-                        }
+                        Schemes_AOFOMS.sp_schema.FLK_P response_rows = new Schemes_AOFOMS.sp_schema.FLK_P();
+                        response_rows.HEADER = header;
+                        response_rows.OSH = body.ToArray();
+                        clsLibrary.SaveXML_flk(response_rows, Path.Combine(folders[1], response_filename));
+                        response_id = Guid.NewGuid().ToString();
+                        clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres"
+                                , String.Format("insert into buf_eir.response (id, mnemonics, schema_name, id_request, header, filename, date_send) values ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');",
+                                    response_id, request[1], request[2], request[0],
+                                    XmlHelper.SerializeTo<Schemes_AOFOMS.sp_schema.HEADER>(header as Schemes_AOFOMS.sp_schema.HEADER),
+                                    response_filename,
+                                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                                , 120000));
+
+                        clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres"
+                            , String.Format("update buf_eir.request set flk_response = '{0}' where id = '{1}';", response_id, request[0])
+                            , 120000);
                     }
                 }
+                state = Thread_state.finished;
             }
-            catch
+            catch (Exception e)
             {
+                queue_status.Enqueue(new Log_status("gate_get_flk_from_eir", string.Empty, e.Message));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
-                return;
             }
-            state = Thread_state.finished;
-
         }
-        
+
 
         public void gateBackup()
         // Резервное копирование Gate
         {
             state = Thread_state.starting;
             string file = clsLibrary.execQuery_getString(ref link_connections, reglament_connections, "gate", "exec dbo.create_Backup");
-            if(file != null)
+            if (file != null)
             {
                 state = Thread_state.finished;
                 queue_status.Enqueue(new Log_status("Резервное копирование. Gate", string.Empty, file));
@@ -1566,7 +1550,7 @@ namespace WindowsFormsApplication3
         {
             state = Thread_state.starting;
             string file = clsLibrary.execQuery_getString(ref link_connections, reglament_connections, "eir", "exec dbo.create_Backup");
-            if(file != null)
+            if (file != null)
             {
                 state = Thread_state.finished;
                 queue_status.Enqueue(new Log_status("Резервное копирование. EIR", string.Empty, file));
@@ -1583,7 +1567,7 @@ namespace WindowsFormsApplication3
         // Резервное копирование Gate
         {
             state = Thread_state.starting;
-            
+
             //
             string nameForMessage = string.Empty;
             clsLibrary.unpack("*");
@@ -1593,7 +1577,6 @@ namespace WindowsFormsApplication3
                 string result_comment = String.Empty;
                 bool ignore;
                 string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
-
                 if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
 
                 List<string> files = new List<string>(Directory.GetFiles(folders[0], "*.XML"));
@@ -1601,7 +1584,7 @@ namespace WindowsFormsApplication3
                 int count_row = -1;
                 if (files.Count() > 0)
                 {
-                    ReglamentLinker reglamentLinker =new ReglamentLinker();
+                    ReglamentLinker reglamentLinker = new ReglamentLinker();
                     files.Sort();
                     foreach (string file in files)
                     {
@@ -1653,13 +1636,13 @@ namespace WindowsFormsApplication3
                             string subFolder = (result) ? "ok" : "fail";
                             if (!clsLibrary.moveFile(file, Path.Combine(folders[0], subFolder), out result_comment)) throw new Exception(result_comment);
                             ++count;
-                        }                            
+                        }
                         if (count >= 10) break;
                     }
                 }
                 state = Thread_state.finished;
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 queue_status.Enqueue(new Log_status(nameForMessage, string.Empty, exception.Message));
                 state = Thread_state.error;
@@ -1677,11 +1660,11 @@ namespace WindowsFormsApplication3
                 string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
 
                 if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
-                string filename = String.Format("ZLDNT{0}_{1}.xml","28004", DateTime.Now.ToString("yyyyMMdd-HHmmss"));
+                string filename = String.Format("ZLDNT{0}_{1}.xml", "28004", DateTime.Now.ToString("yyyyMMdd-HHmmss"));
                 clsLibrary.createFileTXT_FromList(
                     clsLibrary.execQuery_getListString(
-                        ref link_connections, 
-                        ref reglament_connections, 
+                        ref link_connections,
+                        ref reglament_connections,
                         "tmpForSRZ", String.Format("EXEC [dbo].[get_tmpZLDNforSMO] '{0}', '{1}'", "28004", filename)),
                     Path.Combine(folders[1], filename)
                 );
@@ -1693,8 +1676,8 @@ namespace WindowsFormsApplication3
                         ref reglament_connections,
                         "tmpForSRZ", String.Format("EXEC [dbo].[get_tmpZLDNforSMO] '{0}', '{1}'", "28001", filename)),
                     Path.Combine(folders[1], filename)
-                );          
-                
+                );
+
                 state = Thread_state.finished;
             }
             catch
@@ -1703,14 +1686,14 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
             }
         }
-               
 
 
 
 
 
 
-//----- СМЭВ -------
+
+        //----- СМЭВ -------
         public void responseAsync_SMEV()
         // Отправка ответов на Асинхронные запросы СМЭВ 
         {
@@ -1737,7 +1720,7 @@ namespace WindowsFormsApplication3
                             //sendResponse_Polis(request_row);
                             break;
                         case "USLUGI":
-                            //result = reglamentSMEV.sendResponse_USLUGI(request, link_connections, folders, out result_comment); break;
+                        //result = reglamentSMEV.sendResponse_USLUGI(request, link_connections, folders, out result_comment); break;
                         case "FATALZP":
                         case "ROGDZP":
                         case "PERNAMEZP":
