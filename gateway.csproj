@@ -89,6 +89,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\release\dll\lib_classesErrors.dll</HintPath>
     </Reference>
+    <Reference Include="lib_classesLinker">
+      <HintPath>..\..\..\..\release\dll\lib_classesLinker.dll</HintPath>
+    </Reference>
     <Reference Include="lib_classesLogining, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\release\dll\lib_classesLogining.dll</HintPath>
@@ -104,6 +107,9 @@
     <Reference Include="metods_reglamentAOFOMS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\release\dll\metods_reglamentAOFOMS.dll</HintPath>
+    </Reference>
+    <Reference Include="metods_reglamentFFOMS">
+      <HintPath>..\..\..\..\release\dll\metods_reglamentFFOMS.dll</HintPath>
     </Reference>
     <Reference Include="metods_reglamentSMEV, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

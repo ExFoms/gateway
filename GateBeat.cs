@@ -1377,7 +1377,7 @@ namespace WindowsFormsApplication3
                                 ref link_connections, null, "postgres"
                                 , "with recursive r as(select 1 as i union select i+1 as i from r where exists(select id from buf_eir.response where filename = '" + response_filename + "'||right('000'||i::text,3)||'.XML')) select i from r order by i desc limit 1;");
                         response_filename += numbe_file.Substring(numbe_file.Length - 3) + ".XML";
-                        Schemes_AOFOMS.sf_schema.HEADER header = new Schemes_AOFOMS.sf_schema.HEADER()
+                        sf_schema.HEADER header = new sf_schema.HEADER()
                         {
                             VERS = "1.0",
                             FNAME = response_filename,
@@ -1386,7 +1386,7 @@ namespace WindowsFormsApplication3
                             FAILS = request[5]
                         };
                         //header.FAILS = file_item[4];
-                        List<Schemes_AOFOMS.sf_schema.FLK_PRES> body = new List<Schemes_AOFOMS.sf_schema.FLK_PRES>();
+                        List<sf_schema.FLK_PRES> body = new List<sf_schema.FLK_PRES>();
                         List<string[]> response_row = new List<string[]>();
                         if (clsLibrary.ExecQurey_PGR_GetListStrings(
                             ref link_connections, null, "postgres"
@@ -1399,7 +1399,7 @@ namespace WindowsFormsApplication3
                         {
                             foreach (string[] row in response_row)
                             {
-                                body.Add(new Schemes_AOFOMS.sf_schema.FLK_PRES
+                                body.Add(new sf_schema.FLK_PRES
                                 {
                                     NREC = row[0],
                                     RESUL = row[1],
@@ -1407,7 +1407,7 @@ namespace WindowsFormsApplication3
                                 });
                             }
                         }
-                        Schemes_AOFOMS.sf_schema.FLK_P response_rows = new Schemes_AOFOMS.sf_schema.FLK_P();
+                        sf_schema.FLK_P response_rows = new sf_schema.FLK_P();
                         response_rows.HEADER = header;
                         response_rows.RES = body.ToArray();
                         clsLibrary.SaveXML_prt(response_rows, Path.Combine(folders[1], response_filename));
@@ -1415,7 +1415,7 @@ namespace WindowsFormsApplication3
                         clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres"
                                 , String.Format("insert into buf_eir.response (id, mnemonics, schema_name, id_request, header, filename, date_send) values ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');",
                                     response_id, request[1], request[2], request[0],
-                                    XmlHelper.SerializeTo<Schemes_AOFOMS.sf_schema.HEADER>(header as Schemes_AOFOMS.sf_schema.HEADER),
+                                    XmlHelper.SerializeTo<sf_schema.HEADER>(header as sf_schema.HEADER),
                                     response_filename,
                                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                                 , 120000)
@@ -1470,7 +1470,7 @@ namespace WindowsFormsApplication3
                                 ref link_connections, null, "postgres"
                                 , "with recursive r as(select 1 as i union select i+1 as i from r where exists(select id from buf_eir.response where filename = '" + response_filename + "'||right('000'||i::text,3)||'.XML')) select i from r order by i desc limit 1;");
                         response_filename += numbe_file.Substring(numbe_file.Length - 3) + ".XML";
-                        Schemes_AOFOMS.sp_schema.HEADER header = new Schemes_AOFOMS.sp_schema.HEADER()
+                        sp_schema.HEADER header = new sp_schema.HEADER()
                         {
                             VERS = "1.0",
                             FNAME = response_filename,
@@ -1478,7 +1478,7 @@ namespace WindowsFormsApplication3
                             NRECORDS = request[4]
                         };
                         //header.FAILS = file_item[4];
-                        List<Schemes_AOFOMS.sp_schema.FLK_POSH> body = new List<Schemes_AOFOMS.sp_schema.FLK_POSH>();
+                        List<sp_schema.FLK_POSH> body = new List<sp_schema.FLK_POSH>();
                         List<string[]> response_row = new List<string[]>();
                         if (clsLibrary.ExecQurey_PGR_GetListStrings(
                             ref link_connections, null, "postgres"
@@ -1491,7 +1491,7 @@ namespace WindowsFormsApplication3
                         {
                             foreach (string[] row in response_row)
                             {
-                                body.Add(new Schemes_AOFOMS.sp_schema.FLK_POSH
+                                body.Add(new sp_schema.FLK_POSH
                                 {
                                     NREC = row[0],
                                     OSHIB = row[1],
@@ -1499,7 +1499,7 @@ namespace WindowsFormsApplication3
                                 });
                             }
                         }
-                        Schemes_AOFOMS.sp_schema.FLK_P response_rows = new Schemes_AOFOMS.sp_schema.FLK_P();
+                        sp_schema.FLK_P response_rows = new sp_schema.FLK_P();
                         response_rows.HEADER = header;
                         response_rows.OSH = body.ToArray();
                         clsLibrary.SaveXML_flk(response_rows, Path.Combine(folders[1], response_filename));
@@ -1507,7 +1507,7 @@ namespace WindowsFormsApplication3
                         clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres"
                                 , String.Format("insert into buf_eir.response (id, mnemonics, schema_name, id_request, header, filename, date_send) values ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');",
                                     response_id, request[1], request[2], request[0],
-                                    XmlHelper.SerializeTo<Schemes_AOFOMS.sp_schema.HEADER>(header as Schemes_AOFOMS.sp_schema.HEADER),
+                                    XmlHelper.SerializeTo<sp_schema.HEADER>(header as sp_schema.HEADER),
                                     response_filename,
                                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                                 , 120000));
@@ -1599,7 +1599,12 @@ namespace WindowsFormsApplication3
                             result = false; //по умолчанию ошибка обработки                            
                             switch (reglamentLinker.link.reglament_owner)
                             {
-                                // ----------------- Обработка пакетов Регаментов АОФОМС
+                                // ----------------- Обработка пакетов Регламентов АОФОМС
+                                case Reglament_owner.FFOMS:
+                                    result = reglamentFFOMS.handling_file(file, link_connections, folders, reglamentLinker, out result_comment);
+                                    queue_status.Enqueue(new Log_status(filename, string.Empty, result_comment));
+                                    break;
+                                // ----------------- Обработка пакетов АОФОМС
                                 case Reglament_owner.AOFOMS:
                                     // проверяем наличие необходимых соединений
                                     result = reglamentAOFOMS.handling_file(file, link_connections, folders, reglamentLinker, out result_comment, out count_row);
