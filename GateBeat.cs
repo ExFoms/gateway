@@ -126,15 +126,17 @@ namespace WindowsFormsApplication3
                 case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
                 case "responseAsync_SMEV": thread = new Thread(responseAsync_SMEV) { IsBackground = true, Name = gate_nametask }; break;
 
-                //Gate 
+                // ----------------------- Gate 
                 case "gate_handling_files": thread = new Thread(gate_handling_files) { IsBackground = true }; break;
                 case "gate_get_flk_from_eir": thread = new Thread(gate_get_flk_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_FLK
                 case "gate_get_prt_from_eir": thread = new Thread(gate_get_prt_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_PRT
                 case "gate_get_info_from_eir": thread = new Thread(gate_get_info_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_sendRequestHandlingInfo
+
                 case "gate_get_request_identification_from_eir": thread = new Thread(gate_get_request_identification_from_eir) { IsBackground = true, Name = gate_nametask }; break;
                 case "gate_send_response_identification_to_eir": thread = new Thread(gate_send_response_identification_to_eir) { IsBackground = true, Name = gate_nametask }; break; //ServerE_unload_identification
-
-                //EIR
+                    // Reports --------
+                case "gate_report_si_schema_1_0": thread = new Thread(gate_report_si_schema_1_0) { IsBackground = true, Name = gate_nametask }; break;
+                // ----------------------- EIR
                 case "eir_event_flk": thread = new Thread(eir_event_flk) { IsBackground = true, Name = gate_nametask }; break;
                 case "eir_event_identy": thread = new Thread(eir_event_identy) { IsBackground = true, Name = gate_nametask }; break; //new
                 case "eir_event_prt": thread = new Thread(eir_event_prt) { IsBackground = true, Name = gate_nametask }; break; //new
@@ -1526,7 +1528,55 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
             }
         }
+        public void gate_report_si_schema_1_0()
+        //отправка информации по результатам загрузки пакетов /пока только SI
+        {
+            state = Thread_state.starting;
+            try
+            {
+                string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
+                if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
+                List<string[]> requests = new List<string[]>();
+                if (clsLibrary.ExecQurey_PGR_GetListStrings(
+                        ref link_connections, null, "postgres",
+                            "with lst_pln as ( select smocode, content->> 0 mcode, form, content->> 1 cnt from( " +
+                            "select content#>>'{form}' form, content#>>'{parent}' smocode, jsonb_array_elements(content#>'{content}') as content from ( " +
+			                "select jsonb_array_elements(content) as content from statistic.control_benchmarks where year = 2019 and schema_name = 'si_schema_1_0' ) rows ) row ), " + 
+	                        "lst_fct as (select smocode, mcode, form, count(1) cnt from prod_eir.plan_profilactics where old = false group by smocode, mcode, form) " +
+                            "select pln.mcode, lib.nam_mok, pln.smocode, pln.form, pln.cnt, coalesce(fct.cnt, 0), case when pln.cnt::int = fct.cnt then 'Ok' else '' end from lst_pln pln " +
+                            "left outer join lst_fct fct on fct.smocode = pln.smocode and fct.mcode = pln.mcode and fct.form::text = pln.form " +
+                            "left outer join library.f003 lib on lib.mcod = pln.mcode " +
+                            "where pln.mcode <> 'total' and pln.smocode <> 'total' " +
+                            "order by pln.mcode, pln.smocode, pln.form; "
+                        , ref requests
+                    )
+                )
+                {
+                    List<string> response = new List<string>();
+                    response.Add("МО; Наименование; СМО; Форма; План; Факт; Результат");
+                    foreach (string[] request in requests)
+                    {
 
+                        string row = string.Empty;
+                        for(int col_numb = 0; col_numb < 7; col_numb++)
+                        {
+                            if (col_numb != 0) row += ";";
+                            row += (string.IsNullOrEmpty(request[col_numb])) ? string.Empty : (request[col_numb]);
+                        }
+                        response.Add(row);
+                        
+                    }
+                    clsLibrary.createFileTXT_FromList(response, Path.Combine(folders[1], string.Format("report_si_schema_1_0_{0}.csv", DateTime.Now.ToString("yyyyMMdd-HHmm"))));
+                }
+                state = Thread_state.finished;
+            }
+            catch (Exception e)
+            {
+                queue_status.Enqueue(new Log_status("gate_reports_si_schecma_report_0_1", string.Empty, e.Message));
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+        }
 
         public void gateBackup()
         // Резервное копирование Gate
