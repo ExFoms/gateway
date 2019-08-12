@@ -128,13 +128,18 @@ namespace WindowsFormsApplication3
 
                 // ----------------------- Gate 
                 case "gate_handling_files": thread = new Thread(gate_handling_files) { IsBackground = true }; break;
-                case "gate_get_flk_from_eir": thread = new Thread(gate_get_flk_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_FLK
-                case "gate_get_prt_from_eir": thread = new Thread(gate_get_prt_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_unload_PRT
-                case "gate_get_info_from_eir": thread = new Thread(gate_get_info_from_eir) { IsBackground = true, Name = gate_nametask }; break; //serverE_sendRequestHandlingInfo
+                case "gate_create_response_on_eir": thread = new Thread(gate_create_response_on_eir) { IsBackground = true, Name = gate_nametask }; break;
+                case "gate_send_response_from_eir": thread = new Thread(gate_send_response_from_eir) { IsBackground = true, Name = gate_nametask }; break;
+
+                case "gate_get_flk_from_eir": thread = new Thread(gate_get_flk_from_eir) { IsBackground = true, Name = gate_nametask }; break;
+                case "gate_get_prt_from_eir": thread = new Thread(gate_get_prt_from_eir) { IsBackground = true, Name = gate_nametask }; break;
+                case "gate_get_info_from_eir": thread = new Thread(gate_get_info_from_eir) { IsBackground = true, Name = gate_nametask }; break;
 
                 case "gate_get_request_identification_from_eir": thread = new Thread(gate_get_request_identification_from_eir) { IsBackground = true, Name = gate_nametask }; break;
-                case "gate_send_response_identification_to_eir": thread = new Thread(gate_send_response_identification_to_eir) { IsBackground = true, Name = gate_nametask }; break; //ServerE_unload_identification
-                    // Reports --------
+                case "gate_send_response_identification_to_eir": thread = new Thread(gate_send_response_identification_to_eir) { IsBackground = true, Name = gate_nametask }; break;
+
+                case "gate_send_pids_to_eir": thread = new Thread(gate_send_pids_to_eir) { IsBackground = true, Name = gate_nametask }; break;
+                                                                                                                                                                                     // Reports --------
                 case "gate_report_si_schema_1_0": thread = new Thread(gate_report_si_schema_1_0) { IsBackground = true, Name = gate_nametask }; break;
                 // ----------------------- EIR
                 case "eir_event_flk": thread = new Thread(eir_event_flk) { IsBackground = true, Name = gate_nametask }; break;
@@ -162,34 +167,26 @@ namespace WindowsFormsApplication3
             string[] dirs = null;
             string folder_in;
             string folder_out;
+            //queue_status.Enqueue(new Log_status("import_prikreplenie", string.Empty, "Начали!"));
             try
             {
                 folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
                 folder_in = folders[0];
                 folder_out = folders[1];
                 dirs = Directory.GetFiles(folder_in, "MO128*.csv");
-                //queue_status.Enqueue(new Log_status("Прикрепление", string.Empty, string.Format("Найдено файлов: {0}", dirs.Count())));
-            }
-            catch
-            {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-                return;
-            }
-            if (dirs.Count() == 0)
-            {
-                state = Thread_state.finished;
-                //queue_status.Enqueue(new Log_status("Прикрепление", string.Empty, "Закрыт из условия"));
-                return;
-            }
-
-            #region Загрузка файлов
-            #region
-            List<clsLibrary.Id_row> list_fileId = new List<clsLibrary.Id_row>();
-            //создаём таблицу
-            System.Data.DataTable table = new System.Data.DataTable();
-            //добавляем колонки в таблицу
-            table.Columns.AddRange(new DataColumn[] {
+                if (dirs.Count() == 0)
+                {
+                    state = Thread_state.finished;
+                    return;
+                }
+                //queue_status.Enqueue(new Log_status("import_prikreplenie", dirs.Count().ToString(), "Файлов найдено"));
+                #region Загрузка файлов
+                #region
+                List<clsLibrary.Id_row> list_fileId = new List<clsLibrary.Id_row>();
+                //создаём таблицу
+                System.Data.DataTable table = new System.Data.DataTable();
+                //добавляем колонки в таблицу
+                table.Columns.AddRange(new DataColumn[] {
                 new DataColumn("NREC", typeof(String)), new DataColumn("MO_LOG", typeof(String)), new DataColumn("OP", typeof(String)), new DataColumn("TDOC", typeof(String)),
                 new DataColumn("SPOL", typeof(String)), new DataColumn("NPOL", typeof(String)), new DataColumn("ENP", typeof(String)), new DataColumn("FAM", typeof(String)),
                 new DataColumn("IM", typeof(String)), new DataColumn("OT", typeof(String)), new DataColumn("DR", typeof(String)), new DataColumn("MR", typeof(String)),
@@ -198,183 +195,191 @@ namespace WindowsFormsApplication3
                 new DataColumn("LPUTYPE", typeof(String)), new DataColumn("LPUDT", typeof(String)), new DataColumn("LPUDX", typeof(String)), new DataColumn("OID", typeof(String)),
                 new DataColumn("SUBDIV", typeof(String)), new DataColumn("DISTRICT", typeof(String)), new DataColumn("SS_DOCTOR", typeof(String)), new DataColumn("KATEG", typeof(String)),
                 new DataColumn("DOCDATE", typeof(String))});
-            #endregion
+                #endregion
 
-            foreach (string dir in dirs) //перебираем файлы
-            {
-
-                string smo_sender = Path.GetFileNameWithoutExtension(dir).Substring(3, 5);
-                int MO_LOG = clsLibrary.InsertNameFile(Path.GetFileName(dir));
-
-                if (MO_LOG == -1)
+                foreach (string dir in dirs) //перебираем файлы
                 {
-                    string file_back = folder_in + smo_sender + @"\exist" + Path.GetFileName((string)dir);
-                    if (File.Exists(file_back)) File.Delete(file_back);
-                    File.Move(dir, file_back);
-                    queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), string.Empty, "загружен ранее, возвращен"));
-                    continue;
-                }
-                DataRow row = null;
-                int row_rec = 0;
-                int row_newrec = 0;
-                string[] tblValues = null;
-                string[] tblLines = null;
-                List<clsLibrary.Id_row> tblLine_failed = new List<clsLibrary.Id_row>();
-
-                try //контроль ошибки чтения файла
-                {
-                    tblLines = File.ReadAllLines((string)dir, Encoding.Default);
-                    table.Rows.Clear();
-                    for (int i = 0; i < tblLines.Length; i++)
+                    //queue_status.Enqueue(new Log_status("import_prikreplenie", "начали файл - ", Path.GetFileName(dir)));
+                    string smo_sender = Path.GetFileNameWithoutExtension(dir).Substring(3, 5);
+                    int MO_LOG = clsLibrary.InsertNameFile(Path.GetFileName(dir));
+                    //queue_status.Enqueue(new Log_status("import_prikreplenie", MO_LOG.ToString(), "Вставка имени файла"));
+                    if (MO_LOG == -1)
                     {
-                        row_rec++;
-                        try //контроль на ошибки в строках 
+                        string file_back = folder_in + smo_sender + @"\exist" + Path.GetFileName((string)dir);
+                        if (File.Exists(file_back)) File.Delete(file_back);
+                        File.Move(dir, file_back);
+                        queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), string.Empty, "загружен ранее, возвращен"));
+                        continue;
+                    }
+                    DataRow row = null;
+                    int row_rec = 0;
+                    int row_newrec = 0;
+                    string[] tblValues = null;
+                    string[] tblLines = null;
+                    List<clsLibrary.Id_row> tblLine_failed = new List<clsLibrary.Id_row>();
+                    //queue_status.Enqueue(new Log_status("import_prikreplenie", string.Empty, "Начинаем чтение"));
+                    try //контроль ошибки чтения файла
+                    {
+                        tblLines = File.ReadAllLines((string)dir, Encoding.Default);
+                        //queue_status.Enqueue(new Log_status("import_prikreplenie", tblLines.Length.ToString(),"Записей - "));
+                        
+                        table.Rows.Clear();
+                        for (int i = 0; i < tblLines.Length; i++)
                         {
-                            #region
-                            tblValues = tblLines[i].Split(';');
-                            string SPOL = "", NPOL = tblValues[2];
-                            int index = NPOL.IndexOf("№");
-                            if (index >= 0)
+                            row_rec++;
+                            try //контроль на ошибки в строках 
                             {
-                                SPOL = NPOL.Substring(0, index);
-                                NPOL = NPOL.Substring(index + 1);
+                                #region
+                                tblValues = tblLines[i].Split(';');
+                                string SPOL = "", NPOL = tblValues[2];
+                                int index = NPOL.IndexOf("№");
+                                if (index >= 0)
+                                {
+                                    SPOL = NPOL.Substring(0, index);
+                                    NPOL = NPOL.Substring(index + 1);
+                                }
+                                row = table.NewRow();
+                                row["NREC"] = row_rec; row["MO_LOG"] = MO_LOG; row["OP"] = clsLibrary.string_ForDB(tblValues[0]);
+                                row["TDOC"] = clsLibrary.string_ForDB(tblValues[1]); row["SPOL"] = clsLibrary.string_ForDB(SPOL); row["NPOL"] = clsLibrary.string_ForDB(NPOL);
+                                row["ENP"] = clsLibrary.string_ForDB(tblValues[3]); row["FAM"] = clsLibrary.string_ForDB(tblValues[4]); row["IM"] = clsLibrary.string_ForDB(tblValues[5]);
+                                row["OT"] = clsLibrary.string_ForDB(tblValues[6]); row["DR"] = clsLibrary.string_ForDB(tblValues[7]); row["MR"] = clsLibrary.string_ForDB(tblValues[8]);
+                                row["DOCTP"] = clsLibrary.string_ForDB(tblValues[9]); row["DOCS"] = clsLibrary.string_ForDB(string.Empty); row["DOCN"] = clsLibrary.string_ForDB(tblValues[10]);
+                                row["DOCDT"] = clsLibrary.string_ForDB(tblValues[11]); row["DOCORG"] = clsLibrary.string_ForDB(tblValues[12]); row["SS"] = clsLibrary.string_ForDB(tblValues[13]);
+                                row["LPU"] = clsLibrary.string_ForDB(tblValues[14]); row["LPUAUTO"] = clsLibrary.string_ForDB(tblValues[15]); row["LPUTYPE"] = clsLibrary.string_ForDB(tblValues[16]);
+                                row["LPUDT"] = clsLibrary.string_ForDB(tblValues[17]); row["LPUDX"] = clsLibrary.string_ForDB(tblValues[18]); row["OID"] = clsLibrary.string_ForDB(tblValues[19]);
+                                row["SUBDIV"] = clsLibrary.string_ForDB(tblValues[20]); row["DISTRICT"] = clsLibrary.string_ForDB(tblValues[21]); row["SS_DOCTOR"] = clsLibrary.string_ForDB(tblValues[22]);
+                                if (tblValues.Count() >= 24) row["KATEG"] = clsLibrary.string_ForDB(tblValues[23]); else row["KATEG"] = clsLibrary.string_ForDB(string.Empty);
+                                if (tblValues.Count() >= 25) row["DOCDATE"] = clsLibrary.string_ForDB(tblValues[24]); else row["DOCDATE"] = clsLibrary.string_ForDB(string.Empty);
+                                table.Rows.Add(row);
+                                #endregion
                             }
-                            row = table.NewRow();
-                            row["NREC"] = row_rec; row["MO_LOG"] = MO_LOG; row["OP"] = clsLibrary.string_ForDB(tblValues[0]);
-                            row["TDOC"] = clsLibrary.string_ForDB(tblValues[1]); row["SPOL"] = clsLibrary.string_ForDB(SPOL); row["NPOL"] = clsLibrary.string_ForDB(NPOL);
-                            row["ENP"] = clsLibrary.string_ForDB(tblValues[3]); row["FAM"] = clsLibrary.string_ForDB(tblValues[4]); row["IM"] = clsLibrary.string_ForDB(tblValues[5]);
-                            row["OT"] = clsLibrary.string_ForDB(tblValues[6]); row["DR"] = clsLibrary.string_ForDB(tblValues[7]); row["MR"] = clsLibrary.string_ForDB(tblValues[8]);
-                            row["DOCTP"] = clsLibrary.string_ForDB(tblValues[9]); row["DOCS"] = clsLibrary.string_ForDB(string.Empty); row["DOCN"] = clsLibrary.string_ForDB(tblValues[10]);
-                            row["DOCDT"] = clsLibrary.string_ForDB(tblValues[11]); row["DOCORG"] = clsLibrary.string_ForDB(tblValues[12]); row["SS"] = clsLibrary.string_ForDB(tblValues[13]);
-                            row["LPU"] = clsLibrary.string_ForDB(tblValues[14]); row["LPUAUTO"] = clsLibrary.string_ForDB(tblValues[15]); row["LPUTYPE"] = clsLibrary.string_ForDB(tblValues[16]);
-                            row["LPUDT"] = clsLibrary.string_ForDB(tblValues[17]); row["LPUDX"] = clsLibrary.string_ForDB(tblValues[18]); row["OID"] = clsLibrary.string_ForDB(tblValues[19]);
-                            row["SUBDIV"] = clsLibrary.string_ForDB(tblValues[20]); row["DISTRICT"] = clsLibrary.string_ForDB(tblValues[21]); row["SS_DOCTOR"] = clsLibrary.string_ForDB(tblValues[22]);
-                            if (tblValues.Count() >= 24) row["KATEG"] = clsLibrary.string_ForDB(tblValues[23]); else row["KATEG"] = clsLibrary.string_ForDB(string.Empty);
-                            if (tblValues.Count() >= 25) row["DOCDATE"] = clsLibrary.string_ForDB(tblValues[24]); else row["DOCDATE"] = clsLibrary.string_ForDB(string.Empty);
-                            table.Rows.Add(row);
-                            #endregion
+                            catch(Exception e) //добавляем в список ошибочных записи
+                            {
+                                //queue_status.Enqueue(new Log_status("import_prikreplenie", "Ошибка в записи - ", tblLines[i]));
+                                tblLine_failed.Add(new clsLibrary.Id_row(i + 1, tblLines[i]));
+                                //queue_status.Enqueue(new Log_status(dir, string.Empty, "Ошибка чтения"));
+                            }
                         }
-                        catch //добавляем в список ошибочных записи
+                        #region
+                        List<string> values = new List<string>();
+                        foreach (DataRow new_row in table.Rows)
                         {
-                            tblLine_failed.Add(new clsLibrary.Id_row(i + 1, tblLines[i]));
+                            values.Add(
+                                new_row["NREC"].ToString() + "," + new_row["MO_LOG"].ToString() + "," + clsLibrary.string_Apostrophe(new_row["OP"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["TDOC"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SPOL"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["NPOL"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["ENP"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["FAM"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["IM"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["OT"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["DR"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["MR"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["DOCTP"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["DOCS"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["DOCN"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["DOCDT"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["DOCORG"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SS"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPU"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["LPUAUTO"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPUTYPE"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPUDT"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["LPUDX"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["OID"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SUBDIV"].ToString()) + "," +
+                                clsLibrary.string_Apostrophe(new_row["DISTRICT"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SS_DOCTOR"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["KATEG"].ToString())
+                            //+ "," + clsLibrary.string_Apostrophe(new_row["DOCDT"].ToString())
+                            );
                         }
-                    }
-                    #region
-                    List<string> values = new List<string>();
-                    foreach (DataRow new_row in table.Rows)
-                    {
-                        values.Add(
-                            new_row["NREC"].ToString() + "," + new_row["MO_LOG"].ToString() + "," + clsLibrary.string_Apostrophe(new_row["OP"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["TDOC"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SPOL"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["NPOL"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["ENP"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["FAM"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["IM"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["OT"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["DR"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["MR"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["DOCTP"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["DOCS"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["DOCN"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["DOCDT"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["DOCORG"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SS"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPU"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["LPUAUTO"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPUTYPE"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["LPUDT"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["LPUDX"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["OID"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SUBDIV"].ToString()) + "," +
-                            clsLibrary.string_Apostrophe(new_row["DISTRICT"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["SS_DOCTOR"].ToString()) + "," + clsLibrary.string_Apostrophe(new_row["KATEG"].ToString())
-                        //+ "," + clsLibrary.string_Apostrophe(new_row["DOCDT"].ToString())
-                        );
-                    }
-                    #endregion
-                    List<int> list_error =
-                            clsLibrary.execQuery_insertList_list(
-                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                            "INSERT INTO srz3_00.dbo.MO_BUFFER ([NREC],[MO_LOG],[OP],[TDOC],[SPOL],[NPOL],[ENP],[FAM],[IM],[OT],[DR],[MR],[DOCTP],[DOCS],[DOCN],[DOCDT],[DOCORG],[SS],[LPU],[LPUAUTO],[LPUTYPE],[LPUDT],[LPUDX],[OID],[SUBDIV],[DISTRICT],[SS_DOCTOR],[KATEG]) VALUES ",
-                            values);
+                        #endregion
+                        List<int> list_error =
+                                clsLibrary.execQuery_insertList_list(
+                                "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
+                                "INSERT INTO srz3_00.dbo.MO_BUFFER ([NREC],[MO_LOG],[OP],[TDOC],[SPOL],[NPOL],[ENP],[FAM],[IM],[OT],[DR],[MR],[DOCTP],[DOCS],[DOCN],[DOCDT],[DOCORG],[SS],[LPU],[LPUAUTO],[LPUTYPE],[LPUDT],[LPUDX],[OID],[SUBDIV],[DISTRICT],[SS_DOCTOR],[KATEG]) VALUES ",
+                                values);
 
-                    if (list_error == null)
-                        queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), string.Empty, "Ошибка записи в БД данных"));
+                        if (list_error == null)
+                            queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), string.Empty, "Ошибка записи в БД данных"));
+                        else
+                        {
+                            foreach (int i in list_error) //добавляем в список ошибочных записи не загрузившиеся в БД
+                            {
+                                tblLine_failed.Add(new clsLibrary.Id_row(i + 1, tblLines[i]));
+                            }
+                        }
+                        tblLine_failed = tblLine_failed.OrderBy(a => a.id).ToList();
+                        string old_file = Path.GetDirectoryName(dir) + @"\ok\" + Path.GetFileName((string)dir);
+                        if (File.Exists(old_file))
+                            File.Move(old_file, Path.GetDirectoryName(old_file) + "/" + Path.GetFileNameWithoutExtension(old_file) + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + Path.GetExtension(old_file));
+                        File.Move((string)dir, old_file);
+
+                        row_newrec = row_rec - tblLine_failed.Count; //колличество записей загруженных
+                        queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), "записей принято " + (string)(row_newrec).ToString() + " из " + row_rec.ToString(), "Загружен"));
+                        if (tblLine_failed.Count > 0) // при наличии ошибочных записей создаем одноименный текстовый файл с префиксом error
+                        {
+                            string file_error_first = Path.GetDirectoryName(dir) + @"\err" + Path.GetFileName((string)dir);
+                            string file_error_last = folder_out /*+ smo_sender + @"\" */+ Path.GetFileName((string)file_error_first);
+                            clsLibrary.createFileTXT_FromListAndId(tblLine_failed, file_error_first);
+                            if (File.Exists(file_error_last)) File.Delete(file_error_last);
+                            File.Move(file_error_first, file_error_last);
+                            queue_status.Enqueue(new Log_status(file_error_last, "записей " + tblLine_failed.Count().ToString(), "Выгружены ошибки"));
+                        }
+                        //Обновляем данные по числу в файле строк и принятых
+                        clsLibrary.execQuery(
+                                "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
+                                "UPDATE srz3_00.dbo.MO_LOG SET NREC = " + row_newrec.ToString() + ", NERR = 0 WHERE ID = " + MO_LOG.ToString()
+                            );
+                        list_fileId.Add(new clsLibrary.Id_row(MO_LOG, Path.GetFileNameWithoutExtension(dir))); //добавляем ссылку на загруженный файл
+                    }
+                    catch // ошибка чтения файла
+                    {
+                        queue_status.Enqueue(new Log_status(dir, string.Empty, "Ошибка чтения"));
+                    }
+                } //цикл обхода файлов
+                  //--------------------------------------------------
+                #endregion
+                #region Обработка файлов
+                foreach (clsLibrary.Id_row list_file in list_fileId) //обходим все загруженные файлы
+                {
+                    string smo_sender = list_file.row.Substring(3, 5);
+                    int result_int = 0; //результат выполнения запроса, определяет какая выполнилась комманда в запросе по очереди
+                    try
+                    {
+                        result_int = clsLibrary.execQuery_getInt(
+                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
+                            String.Format("DECLARE @return_value int EXEC @return_value = dbo.gate_upload_prikreplenie @MO_LOG={0} SELECT @return_value", list_file.id)
+                            );
+                    }
+                    catch
+                    { // нет лога ошибки процесса выполнения запроса
+                        queue_status.Enqueue(
+                            new Log_status(
+                                list_file.row.Substring(3),
+                                "",
+                                "Ошибка проведения идентификации"
+                                ));
+                    }
+                    if (result_int < 7 /*колличество задач в процессе*/ ) continue; //идем к началу цикла
+                    List<string> result_list = new List<string>(clsLibrary.execQuery_getListString(
+                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=srz3_00;",
+                            String.Format("select convert(varchar,NREC)+';'+ENP+';'+CASE WHEN PEOPLE IS NULL THEN '404' else RINTECHERR END RINTECHERR from MO_BUFFER where MO_LOG={0} AND (isnull(RINTECHERR,'')<>'' OR PEOPLE IS NULL) ORDER BY NREC", list_file.id)
+                        ));
+                    int result_list_count = result_list.Count();
+                    if (!(result_list_count > 0)) //если нет ошибок то тело ФЛК будет N
+                        result_list.Add("N");
+                    if (clsLibrary.createFileTXT_FromList(result_list,
+                        Path.Combine(folder_out, String.Format("LO1{0}.csv", list_file.row.Substring(3)))
+                        ))
+                        queue_status.Enqueue(
+                            new Log_status(
+                                Path.Combine(folder_out, String.Format("LO1{0}.csv", list_file.row.Substring(3))),
+                                "записей - " + result_list_count.ToString(),
+                                String.Format("Сформирован файл ФЛК на {0}", list_file.row)));
                     else
-                    {
-                        foreach (int i in list_error) //добавляем в список ошибочных записи не загрузившиеся в БД
-                        {
-                            tblLine_failed.Add(new clsLibrary.Id_row(i + 1, tblLines[i]));
-                        }
-                    }
-                    tblLine_failed = tblLine_failed.OrderBy(a => a.id).ToList();
-                    string old_file = Path.GetDirectoryName(dir) + @"\ok\" + Path.GetFileName((string)dir);
-                    if (File.Exists(old_file))
-                        File.Move(old_file, Path.GetDirectoryName(old_file) + "/" + Path.GetFileNameWithoutExtension(old_file) + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + Path.GetExtension(old_file));
-                    File.Move((string)dir, old_file);
-
-                    row_newrec = row_rec - tblLine_failed.Count; //колличество записей загруженных
-                    queue_status.Enqueue(new Log_status(Path.GetFileName((string)dir), "записей принято " + (string)(row_newrec).ToString() + " из " + row_rec.ToString(), "Загружен"));
-                    if (tblLine_failed.Count > 0) // при наличии ошибочных записей создаем одноименный текстовый файл с префиксом error
-                    {
-                        string file_error_first = Path.GetDirectoryName(dir) + @"\err" + Path.GetFileName((string)dir);
-                        string file_error_last = folder_out /*+ smo_sender + @"\" */+ Path.GetFileName((string)file_error_first);
-                        clsLibrary.createFileTXT_FromListAndId(tblLine_failed, file_error_first);
-                        if (File.Exists(file_error_last)) File.Delete(file_error_last);
-                        File.Move(file_error_first, file_error_last);
-                        queue_status.Enqueue(new Log_status(file_error_last, "записей " + tblLine_failed.Count().ToString(), "Выгружены ошибки"));
-                    }
-                    //Обновляем данные по числу в файле строк и принятых
-                    clsLibrary.execQuery(
-                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                            "UPDATE srz3_00.dbo.MO_LOG SET NREC = " + row_newrec.ToString() + ", NERR = 0 WHERE ID = " + MO_LOG.ToString()
-                        );
-                    list_fileId.Add(new clsLibrary.Id_row(MO_LOG, Path.GetFileNameWithoutExtension(dir))); //добавляем ссылку на загруженный файл
+                        queue_status.Enqueue(
+                            new Log_status(
+                                Path.Combine(folder_out, String.Format("LO1{0}.csv", list_file.row.Substring(3))),
+                                "записей - 0",
+                                String.Format("Ошибка формирования файла ФЛК на {0}", list_file.row)));
                 }
-                catch // ошибка чтения файла
-                {
-                    queue_status.Enqueue(new Log_status(dir, string.Empty, "Ошибка чтения"));
-                }
-            } //цикл обхода файлов
-              //--------------------------------------------------
-            #endregion
-            #region Обработка файлов
-            foreach (clsLibrary.Id_row list_file in list_fileId) //обходим все загруженные файлы
-            {
-                string smo_sender = list_file.row.Substring(3, 5);
-                int result_int = 0; //результат выполнения запроса, определяет какая выполнилась комманда в запросе по очереди
-                try
-                {
-                    result_int = clsLibrary.execQuery_getInt(
-                        "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                        String.Format("DECLARE @return_value int EXEC @return_value = dbo.gate_upload_prikreplenie @MO_LOG={0} SELECT @return_value", list_file.id)
-                        );
-                }
-                catch
-                { // нет лога ошибки процесса выполнения запроса
-                    queue_status.Enqueue(
-                        new Log_status(
-                            list_file.row.Substring(3),
-                            "",
-                            "Ошибка проведения идентификации"
-                            ));
-                }
-                if (result_int < 7 /*колличество задач в процессе*/ ) continue; //идем к началу цикла
-                List<string> result_list = new List<string>(clsLibrary.execQuery_getListString(
-                        "uid=sa;pwd=Cvbqwe2!;server=server-r;database=srz3_00;",
-                        String.Format("select convert(varchar,NREC)+';'+ENP+';'+CASE WHEN PEOPLE IS NULL THEN '404' else RINTECHERR END RINTECHERR from MO_BUFFER where MO_LOG={0} AND (isnull(RINTECHERR,'')<>'' OR PEOPLE IS NULL) ORDER BY NREC", list_file.id)
-                    ));
-                int result_list_count = result_list.Count();
-                if (!(result_list_count > 0)) //если нет ошибок то тело ФЛК будет N
-                    result_list.Add("N");
-                if (clsLibrary.createFileTXT_FromList(result_list,
-                    //String.Format(@"{0}{1}\LO1{2}.csv", folder_out, smo_sender, list_file.row.Substring(3))
-                    Path.Combine(folder_out/*, smo_sender*/, String.Format("LO1{0}.csv", list_file.row.Substring(3)))
-                    ))
-                    queue_status.Enqueue(
-                        new Log_status(
-                            //String.Format(@"{0}{1}\LO1{2}.csv", folder_out, smo_sender, list_file.row.Substring(3)),
-                            Path.Combine(folder_out/*, smo_sender*/, String.Format("LO1{0}.csv", list_file.row.Substring(3))),
-                            "записей - " + result_list_count.ToString(),
-                            String.Format("Сформирован файл ФЛК на {0}", list_file.row)));
-                else
-                    queue_status.Enqueue(
-                        new Log_status(
-                            //String.Format(@"{0}{1}\LO1{2}.csv", folder_out, smo_sender, list_file.row.Substring(3)),
-                            Path.Combine(folder_out/*, smo_sender*/, String.Format("LO1{0}.csv", list_file.row.Substring(3))),
-                            "записей - 0",
-                            String.Format("Ошибка формирования файла ФЛК на {0}", list_file.row)));
+                #endregion
+                state = Thread_state.finished;
             }
-
-            #endregion
-
-            state = Thread_state.finished;
+            catch(Exception e)
+            {
+                queue_status.Enqueue(
+                            new Log_status("import_prikreplenie", string.Empty,e.Message));
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+                return;
+            }            
         }
 
         public void control_inostr()
@@ -992,63 +997,78 @@ namespace WindowsFormsApplication3
         // Идентификация с учетом исторических данных
         {
             state = Thread_state.starting;
-            int limit_transaction = 5000;
-            if (
-                clsLibrary.execQuery_getInt(
-                    ref link_connections, reglament_connections,
-                    "tmpForSRZ",
-                    string.Format("DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.GATE_Identification_Create_Response_01 {0} SELECT @return_value", limit_transaction)
-                    ) == -1
-                )
+            try
+            {
+                int limit_transaction = 5000;
+                if (
+                    clsLibrary.execQuery_getInt(
+                        ref link_connections, reglament_connections,
+                        "tmpForSRZ",
+                        string.Format("DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.GATE_Identification_Create_Response_01 {0} SELECT @return_value", limit_transaction)
+                        ) == -1
+                    )
+                {
+                    state = Thread_state.error;
+                    error = GateError.errorPerformanceMetod;
+                }
+                else
+                    state = Thread_state.finished;
+            }
+            catch
             {
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
-            else
-                state = Thread_state.finished;
         }
 
         public void serverC_get_request_idetification()
         // Получение запросов на идентификацию
         {
-
             state = Thread_state.starting;
-            int limit_transaction = 5000;
-            List<string[]> response = new List<string[]>();
-            if (!clsLibrary.ExecQurey_PGR_GetListStrings(
-                "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;",
-                //string.Format("select '{0}' from public.identifications where state = 0 order by id desc limit {1}", "Server-c", limit_transaction), ref response, 0, "'"))
-                string.Format("SET enable_seqscan TO on; select '{0}', id, fam, im, ot, to_char(dr,'YYYY-MM-DD'), snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys/*, coalesce(actual,0)*/ from static.identifications where state = 0 order by id desc limit {1}", "Server-c", limit_transaction), ref response, 0, "'"))
+            try
             {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }
-            else
-            {
-                if (response.Count() != 0)
+                int limit_transaction = 5000;
+                List<string[]> response = new List<string[]>();
+                if (!clsLibrary.ExecQurey_PGR_GetListStrings(
+                    "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;",
+                    //string.Format("select '{0}' from public.identifications where state = 0 order by id desc limit {1}", "Server-c", limit_transaction), ref response, 0, "'"))
+                    string.Format("SET enable_seqscan TO on; select '{0}', id, fam, im, ot, to_char(dr,'YYYY-MM-DD'), snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys/*, coalesce(actual,0)*/ from static.identifications where state = 0 order by id desc limit {1}", "Server-c", limit_transaction), ref response, 0, "'"))
                 {
-                    if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                        "INSERT INTO Gate_IdentificationPeople (subsystem, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys/*, actual*/) VALUES ", response, 1))
+                    state = Thread_state.error;
+                    error = GateError.errorPerformanceMetod;
+                }
+                else
+                {
+                    if (response.Count() != 0)
                     {
-                        state = Thread_state.error;
-                        error = GateError.errorPerformanceMetod;
-                    }
-                    else
-                    {
-                        List<string> values = new List<string>();
-                        foreach (string[] row in response) values.Add(row[1]);
-                        if (!clsLibrary.execQuery_PGR_Update(
-                            "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
-                            , string.Format("SET enable_seqscan TO on; Update static.identifications set state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
-                            ))
+                        if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
+                            "INSERT INTO Gate_IdentificationPeople (subsystem, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys/*, actual*/) VALUES ", response, 1))
                         {
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
                         }
-                        else state = Thread_state.finished;
+                        else
+                        {
+                            List<string> values = new List<string>();
+                            foreach (string[] row in response) values.Add(row[1]);
+                            if (!clsLibrary.execQuery_PGR_Update(
+                                "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
+                                , string.Format("SET enable_seqscan TO on; Update static.identifications set state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                                ))
+                            {
+                                state = Thread_state.error;
+                                error = GateError.errorPerformanceMetod;
+                            }
+                            else state = Thread_state.finished;
+                        }
                     }
+                    else state = Thread_state.finished;
                 }
-                else state = Thread_state.finished;
+            }
+            catch
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
             }
         }
 
@@ -1056,47 +1076,55 @@ namespace WindowsFormsApplication3
         // Получение запросов на идентификацию
         {
             state = Thread_state.starting;
-            int limit_transaction = 5000;
-            List<string[]> response = new List<string[]>();
-            if (!clsLibrary.ExecQurey_PGR_GetListStrings(
-                ref link_connections
-                , null
-                , "postgres"
-                , string.Format("select '{0}', scheme, id, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys, 0, actual_pid from identy.identifications where identification_state = 0 order by DATE_SYS limit {1};", "eir", limit_transaction)
-                , ref response
-                ))
+            try
             {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }
-            else
-            {
-                if (response.Count() != 0)
+                int limit_transaction = 5000;
+                List<string[]> response = new List<string[]>();
+                if (!clsLibrary.ExecQurey_PGR_GetListStrings(
+                    ref link_connections
+                    , null
+                    , "postgres"
+                    , string.Format("select '{0}', scheme, id, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys, pid, request from identy.identifications where identification_state = 0 order by DATE_SYS limit {1};", "eir", limit_transaction)
+                    , ref response
+                    ))
                 {
-                    if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                        "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, actual, actual_pid) VALUES ", response, 10))
+                    state = Thread_state.error;
+                    error = GateError.errorPerformanceMetod;
+                }
+                else
+                {
+                    if (response.Count() != 0)
                     {
-                        state = Thread_state.error;
-                        error = GateError.errorPerformanceMetod;
-                    }
-                    else
-                    {
-                        List<string> values = new List<string>();
-                        foreach (string[] row in response) values.Add(row[2]);
-                        if (!clsLibrary.execQuery_PGR(
-                            ref link_connections
-                            , "postgres"
-                            , string.Format("Update identy.identifications set identification_state = 1, identification_date = '{0}' where id in ({1});", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
-                            , wait_interval))
+                        if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
+                            "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, pid, request) VALUES ", response, 10))
                         {
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
                         }
-                        else state = Thread_state.finished;
+                        else
+                        {
+                            List<string> values = new List<string>();
+                            foreach (string[] row in response) values.Add(row[2]);
+                            if (!clsLibrary.execQuery_PGR(
+                                ref link_connections
+                                , "postgres"
+                                , string.Format("Update identy.identifications set identification_state = 1, identification_date = '{0}' where id in ({1});", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                                , wait_interval))
+                            {
+                                state = Thread_state.error;
+                                error = GateError.errorPerformanceMetod;
+                            }
+                            else state = Thread_state.finished;
+                        }
                     }
+                    else
+                        state = Thread_state.finished;
                 }
-                else
-                    state = Thread_state.finished;
+            }
+            catch
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
             }
         }
 
@@ -1104,69 +1132,104 @@ namespace WindowsFormsApplication3
         // Выгрузка запросов на идентификацию
         {
             state = Thread_state.starting;
-            string _date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            int limit_transaction = 5000;
-            List<string[]> response = new List<string[]>();
-            if (!clsLibrary.execQuery_getListString(
-                ref response, ref link_connections, reglament_connections, "tmpForSRZ"
-                , string.Format("SELECT TOP {0} [ID], PID, KEYS_RESULT, RESPONSE, clientId FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id", limit_transaction, "eir"),
-                wait_interval
-                ))
+            try
             {
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }
-            else
-            {
-                if (response.Count() != 0)
+                string _date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                int limit_transaction = 5000;
+                List<string[]> response = new List<string[]>();
+                if (!clsLibrary.execQuery_getListString(
+                    ref response, ref link_connections, reglament_connections, "tmpForSRZ"
+                    , string.Format("SELECT TOP {0} [ID], PID, isnull(KEYS_RESULT,'none'), RESPONSE, clientId FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id", limit_transaction, "eir"),
+                    wait_interval
+                    ))
                 {
-                    List<string> values = new List<string>();
-                    IdentificationResponse_01.IdentificationResponse_01Type response_ = new IdentificationResponse_01.IdentificationResponse_01Type();
+                    state = Thread_state.error;
+                    error = GateError.errorPerformanceMetod;
+                }
+                else
+                {
+                    if (response.Count() != 0)
+                    {
+                        List<string> values = new List<string>();
+                        IdentificationResponse_01.IdentificationResponse_01Type response_ = new IdentificationResponse_01.IdentificationResponse_01Type();
 
-                    foreach (string[] row in response)
-                    {
-                        //response_ = null;                        
-                        //    XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationResponse_01.IdentificationResponse_01Type));
-                        //    StringReader stringReader = new StringReader(row[2]);
-                        //    response_ = (IdentificationResponse_01.IdentificationResponse_01Type)xmlSerializer.Deserialize(stringReader);*/
-                        values.Add(string.Format("update identy.identifications set pid = {0}, KEYS_RESULT = '{1}', RESPONSE = '{2}', identification_state = 99, identification_date = '{3}' where id = {4};"
-                            , row[1]
-                            , row[2]
-                            , row[3]
-                            , _date
-                            , row[4]
-                            )
-                        );
-                    }
-                    clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_updateList_varResult(ref link_connections, null, "postgres", ref values, 100, wait_interval);
-                    if (!varResult.result)
-                    {
-                        queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir", string.Empty, varResult.comment));
-                        state = Thread_state.error;
-                        error = GateError.errorPerformanceMetod;
-                    }
-                    else
-                    {
-                        values.Clear();
-                        foreach (string[] row in response) values.Add(row[0]);
-                        varResult = clsLibrary.execQuery_VarResult(ref link_connections, reglament_connections, "tmpForSRZ",
-                             string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray())), wait_interval);
+                        foreach (string[] row in response)
+                        {
+                            //response_ = null;                        
+                            //    XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationResponse_01.IdentificationResponse_01Type));
+                            //    StringReader stringReader = new StringReader(row[2]);
+                            //    response_ = (IdentificationResponse_01.IdentificationResponse_01Type)xmlSerializer.Deserialize(stringReader);*/
+                            values.Add(string.Format("update identy.identifications set pid = {0}, KEYS_RESULT = '{1}', RESPONSE = '{2}', identification_state = 99, identification_date = '{3}' where id = {4};"
+                                , row[1]
+                                , row[2]
+                                , row[3]
+                                , _date
+                                , row[4]
+                                )
+                            );
+                        }
+                        clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_updateList_varResult(ref link_connections, null, "postgres", ref values, 100, wait_interval);
                         if (!varResult.result)
-                        //"uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
-                        //, string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray()))
-
                         {
                             queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir", string.Empty, varResult.comment));
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
                         }
-                        else state = Thread_state.finished;
+                        else
+                        {
+                            values.Clear();
+                            foreach (string[] row in response) values.Add(row[0]);
+                            varResult = clsLibrary.execQuery_VarResult(ref link_connections, reglament_connections, "tmpForSRZ",
+                                 string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray())), wait_interval);
+                            if (!varResult.result)
+                            //"uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
+                            //, string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", _date, string.Join(",", values.ToArray()))
+
+                            {
+                                queue_status.Enqueue(new Log_status("gate_send_response_identification_to_eir", string.Empty, varResult.comment));
+                                state = Thread_state.error;
+                                error = GateError.errorPerformanceMetod;
+                            }
+                            else state = Thread_state.finished;
+                        }
                     }
+                    else state = Thread_state.finished;
                 }
-                else state = Thread_state.finished;
+            }
+            catch
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            
+        }
+        
+        public void gate_send_pids_to_eir()
+        // Выгрузка запросов на идентификацию
+        {
+            state = Thread_state.starting;
+            string comment = string.Empty;
+            try
+            {
+                if (!reglamentGATE.send_pids_to_eir(ref link_connections, wait_interval, ref comment))
+                {
+                    queue_status.Enqueue(new Log_status("gate_send_pids_to_eir", comment, "error"));
+                    state = Thread_state.error;
+                    error = GateError.errorPerformanceMetod;
+                }
+                else
+                {
+                    state = Thread_state.finished;
+                    queue_status.Enqueue(new Log_status("gate_send_pids_to_eir", comment, "Ok "));
+                }
+            }
+            catch(Exception e)
+            {
+                queue_status.Enqueue(new Log_status("gate_send_pids_to_eir", string.Empty, e.Message));
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
             }
         }
-
 
         public void cleaner_identificationPeople()
         // Зачистка таблицы запросов на идентификацию
@@ -1239,9 +1302,8 @@ namespace WindowsFormsApplication3
         }
 
         public void eir_event_flk()
-        // 
         {
-            state = Thread_state.starting;
+            state = Thread_state.starting;            
             if (clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres", "select buf_checking.event_flk();", wait_interval) == -1)
             {
                 //queue_status.Enqueue(new Log_status("eir_event_flk", string.Empty, wait_interval.ToString()));
@@ -1249,7 +1311,7 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
             }
             else
-                state = Thread_state.finished;
+                state = Thread_state.finished;                
         }
         public void eir_event_identy()
         // 
@@ -1318,7 +1380,8 @@ namespace WindowsFormsApplication3
                 List<string[]> requests = new List<string[]>();
                 if (clsLibrary.ExecQurey_PGR_GetListStrings(
                         ref link_connections, null, "postgres"
-                        , "select id, mnemonics, filename, info_content from buf_eir.request where state::int >= 100 and info isnull and info_content is not null limit 10;"
+                        , "select id, mnemonics, filename, info_content from buf_eir.request where state::int >= 100 and info isnull and info_content is not null and " +
+                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'INFO' = any (events)order by \"order\" limit 10;"
                         , ref requests
                     )
                 )
@@ -1358,7 +1421,8 @@ namespace WindowsFormsApplication3
                 List<string[]> requests = new List<string[]>();
                 if (clsLibrary.ExecQurey_PGR_GetListStrings(
                         ref link_connections, null, "postgres"
-                        , "select id, mnemonics, schema_name, filename, count_row, prt_error_count from buf_eir.request where state::int >= 100 and prt_response isnull limit 10;"
+                        , "select id, mnemonics, schema_name, filename, count_row, prt_error_count from buf_eir.request where state::int >= 100 and prt_response isnull and " +
+                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'PRT' = any (events) order by \"order\" limit 10;"
                         , ref requests
                     )
                     && requests.Count > 0)
@@ -1451,7 +1515,8 @@ namespace WindowsFormsApplication3
                 List<string[]> requests = new List<string[]>();
                 if (clsLibrary.ExecQurey_PGR_GetListStrings(
                         ref link_connections, null, "postgres"
-                        , "select id, mnemonics, schema_name, filename, count_row from buf_eir.request where state::int >= 1 and flk_response isnull limit 10;"
+                        , "select id, mnemonics, schema_name, filename, count_row from buf_eir.request where state::int >= 1 and flk_response isnull and " +
+                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'FLK' = any (events) order by \"order\" limit 10;"
                         , ref requests
                     )
                     && requests.Count > 0)
@@ -1704,8 +1769,28 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
             }
         }
-
-
+        public void gate_create_response_on_eir()
+        {
+            state = Thread_state.starting;
+            if (clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres", "select buf_checking.event_create_response();", wait_interval) == -1)
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            else
+                state = Thread_state.finished;
+        }
+        public void gate_send_response_from_eir()
+        {
+            state = Thread_state.starting;
+            /*if (clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres", "select buf_checking.event_create_response();", wait_interval) == -1)
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            else*/
+                state = Thread_state.finished;
+        }
         public void unloading_ZLDNforSMO()
         // Резервное копирование Gate
         {

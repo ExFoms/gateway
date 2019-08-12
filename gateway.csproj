@@ -111,6 +111,9 @@
     <Reference Include="metods_reglamentFFOMS">
       <HintPath>..\..\..\..\release\dll\metods_reglamentFFOMS.dll</HintPath>
     </Reference>
+    <Reference Include="metods_reglamentGATE">
+      <HintPath>..\..\..\..\release\dll\metods_reglamentGATE.dll</HintPath>
+    </Reference>
     <Reference Include="metods_reglamentSMEV, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\release\dll\metods_reglamentSMEV.dll</HintPath>
