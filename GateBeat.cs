@@ -1381,7 +1381,7 @@ namespace WindowsFormsApplication3
                 if (clsLibrary.ExecQurey_PGR_GetListStrings(
                         ref link_connections, null, "postgres"
                         , "select id, mnemonics, filename, info_content from buf_eir.request where state::int >= 100 and info isnull and info_content is not null and " +
-                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'INFO' = any (events)order by \"order\" limit 10;"
+                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'INFO' = any (events)) order by \"order\" limit 10;"
                         , ref requests
                     )
                 )
@@ -1400,15 +1400,14 @@ namespace WindowsFormsApplication3
             }
             catch (Exception e)
             {
-                queue_status.Enqueue(new Log_status("gate_get_prt_from_eir", string.Empty, e.Message));
+                queue_status.Enqueue(new Log_status("gate_get_info_from_eir", string.Empty, e.Message));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
         }
 
         public void gate_get_prt_from_eir()
-        // Выгрузка прикладной проверки
-
+        // Выгрузка прикладной проверки, файл SF 
         {
             try
             {
@@ -1422,7 +1421,7 @@ namespace WindowsFormsApplication3
                 if (clsLibrary.ExecQurey_PGR_GetListStrings(
                         ref link_connections, null, "postgres"
                         , "select id, mnemonics, schema_name, filename, count_row, prt_error_count from buf_eir.request where state::int >= 100 and prt_response isnull and " +
-                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'PRT' = any (events) order by \"order\" limit 10;"
+                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'PRT' = any (events)) order by \"order\" limit 10;"
                         , ref requests
                     )
                     && requests.Count > 0)
@@ -1502,7 +1501,7 @@ namespace WindowsFormsApplication3
         }
 
         public void gate_get_flk_from_eir()
-        // Выгрузка flk проверки
+        // Выгрузка flk проверки, файл SP
         {
             state = Thread_state.starting;
             try
@@ -1516,7 +1515,7 @@ namespace WindowsFormsApplication3
                 if (clsLibrary.ExecQurey_PGR_GetListStrings(
                         ref link_connections, null, "postgres"
                         , "select id, mnemonics, schema_name, filename, count_row from buf_eir.request where state::int >= 1 and flk_response isnull and " +
-                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'FLK' = any (events) order by \"order\" limit 10;"
+                            "schema_name in (select unnest(schemas_table) schema_name from buf_eir.config_tables where 'FLK' = any (events)) order by \"order\" limit 10;"
                         , ref requests
                     )
                     && requests.Count > 0)
@@ -1783,13 +1782,27 @@ namespace WindowsFormsApplication3
         public void gate_send_response_from_eir()
         {
             state = Thread_state.starting;
-            /*if (clsLibrary.execQuery_PGR_function_bool(ref link_connections, "postgres", "select buf_checking.event_create_response();", wait_interval) == -1)
+            string comment = string.Empty;
+            try
             {
+                if (!reglamentGATE.send_response_from_eir(ref link_connections, wait_interval, ref comment))
+                {
+                    queue_status.Enqueue(new Log_status("gate_send_response_from_eir", comment, "error"));
+                    state = Thread_state.error;
+                    error = GateError.errorPerformanceMetod;
+                }
+                else
+                {
+                    state = Thread_state.finished;
+                    //queue_status.Enqueue(new Log_status("gate_send_response_from_eir", comment, "Ok "));
+                }
+            }
+            catch (Exception e)
+            {
+                queue_status.Enqueue(new Log_status("gate_send_response_from_eir", string.Empty, e.Message));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
-            }
-            else*/
-                state = Thread_state.finished;
+            }           
         }
         public void unloading_ZLDNforSMO()
         // Резервное копирование Gate
