@@ -123,7 +123,7 @@ namespace WindowsFormsApplication3
                 case "ServerC_unload_identification": thread = new Thread(ServerC_unload_identification) { IsBackground = true, Name = gate_nametask }; break;
                 case "gateBackup": thread = new Thread(gateBackup) { IsBackground = true, Name = gate_nametask }; break;
                 case "eirBackup": thread = new Thread(eirBackup) { IsBackground = true, Name = gate_nametask }; break;
-                case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
+                //удален case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
                 case "responseAsync_SMEV": thread = new Thread(responseAsync_SMEV) { IsBackground = true, Name = gate_nametask }; break;
 
                 // ----------------------- Gate 
@@ -139,13 +139,17 @@ namespace WindowsFormsApplication3
                 case "gate_send_response_identification_to_eir": thread = new Thread(gate_send_response_identification_to_eir) { IsBackground = true, Name = gate_nametask }; break;
 
                 case "gate_send_pids_to_eir": thread = new Thread(gate_send_pids_to_eir) { IsBackground = true, Name = gate_nametask }; break;
-                                                                                                                                                                                     // Reports --------
+                // ----------------------- Reports                                                                                                                                                                     // Reports --------
                 case "gate_report_si_schema_1_0": thread = new Thread(gate_report_si_schema_1_0) { IsBackground = true, Name = gate_nametask }; break;
+                case "gate_report_zldn_schema_2_1": thread = new Thread(gate_report_zldn_schema_2_1) { IsBackground = true, Name = gate_nametask }; break;
                 // ----------------------- EIR
                 case "eir_event_flk": thread = new Thread(eir_event_flk) { IsBackground = true, Name = gate_nametask }; break;
                 case "eir_event_identy": thread = new Thread(eir_event_identy) { IsBackground = true, Name = gate_nametask }; break; //new
                 case "eir_event_prt": thread = new Thread(eir_event_prt) { IsBackground = true, Name = gate_nametask }; break; //new
                 case "eir_event_import": thread = new Thread(eir_event_import) { IsBackground = true, Name = gate_nametask }; break;
+                // ----------------------- temporary
+                case "emulation_REQUEST_ZLDN_SCHEMA_SMO_2_0": thread = new Thread(emulation_REQUEST_ZLDN_SCHEMA_SMO_2_0) { IsBackground = true, Name = gate_nametask }; break;
+
 
                 default: result = false; break;
             }
@@ -401,7 +405,7 @@ namespace WindowsFormsApplication3
                     error = GateError.errorPerformanceMetod;
                 }
                 else
-                    if (result_int > 2) //есть результирующие записи
+                if (result_int > 2) //есть результирующие записи
                 {
                     queue_status.Enqueue(
                         new Log_status(
@@ -409,12 +413,6 @@ namespace WindowsFormsApplication3
                              String.Format("иностранцы - {0}", (result_int - 2).ToString()),
                             "Закрытие страхования"));
                 }
-                /*else 
-                {
-                    queue_status.Enqueue(
-                        new Log_status(
-                            gate_nametask,"не найдено","Закрытие страхования"));
-                }*/
                 state = Thread_state.finished;
             }
             catch
@@ -556,7 +554,6 @@ namespace WindowsFormsApplication3
             }
             state = Thread_state.finished;
         }
-
         public void handling_military()
         // Обработка данных о военнослужащих, получивших МП от МО ОМС
         {
@@ -574,7 +571,6 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
             }
         }
-
         public void unloading_protocols_military()
         // Выгрузка протоколов обработки данных о военнослужащих, получивших МП от МО ОМС
         {
@@ -641,7 +637,6 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
             }
         }
-
         public void unloading_narushsrokov()
         // Выгрузка найденых случаев нарушения сроков представления сведений
         {
@@ -933,6 +928,7 @@ namespace WindowsFormsApplication3
             state = Thread_state.finished;
         }
 
+        //Нужен ли!?
         public void identification_smev_mp()
         // Идентификация
         {
@@ -958,8 +954,7 @@ namespace WindowsFormsApplication3
         {
             state = Thread_state.starting;
             int limit_transaction = 10000;
-            if (
-                clsLibrary.execQuery_getInt(
+            if (clsLibrary.execQuery_getInt(
                     ref link_connections, reglament_connections,
                     "tmpForSRZ",
                     string.Format("DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.GATE_Identification {0} SELECT @return_value", limit_transaction)
@@ -978,8 +973,7 @@ namespace WindowsFormsApplication3
         {
             state = Thread_state.starting;
             int limit_transaction = 300;
-            if (
-                clsLibrary.execQuery_getInt(
+            if (clsLibrary.execQuery_getInt(
                     ref link_connections, reglament_connections,
                     "tmpForSRZ",
                     string.Format("DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.GATE_Identification_History {0} SELECT @return_value", limit_transaction)
@@ -1000,8 +994,7 @@ namespace WindowsFormsApplication3
             try
             {
                 int limit_transaction = 5000;
-                if (
-                    clsLibrary.execQuery_getInt(
+                if (clsLibrary.execQuery_getInt(
                         ref link_connections, reglament_connections,
                         "tmpForSRZ",
                         string.Format("DECLARE @return_value int EXEC @return_value = tmpForSRZ.dbo.GATE_Identification_Create_Response_01 {0} SELECT @return_value", limit_transaction)
@@ -1025,14 +1018,17 @@ namespace WindowsFormsApplication3
         // Получение запросов на идентификацию
         {
             state = Thread_state.starting;
+            string comment = "";
             try
             {
                 int limit_transaction = 5000;
                 List<string[]> response = new List<string[]>();
                 if (!clsLibrary.ExecQurey_PGR_GetListStrings(
-                    "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;",
-                    //string.Format("select '{0}' from public.identifications where state = 0 order by id desc limit {1}", "Server-c", limit_transaction), ref response, 0, "'"))
-                    string.Format("SET enable_seqscan TO on; select '{0}', id, fam, im, ot, to_char(dr,'YYYY-MM-DD'), snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys/*, coalesce(actual,0)*/ from static.identifications where state = 0 order by id desc limit {1}", "Server-c", limit_transaction), ref response, 0, "'"))
+                    ref link_connections
+                    , null
+                    , "private_office"
+                    , string.Format("select '{0}', scheme, id, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys from static.identifications where state = 0 order by id limit {1}", "Server-c", limit_transaction)
+                    , ref response))
                 {
                     state = Thread_state.error;
                     error = GateError.errorPerformanceMetod;
@@ -1041,19 +1037,27 @@ namespace WindowsFormsApplication3
                 {
                     if (response.Count() != 0)
                     {
+                        queue_status.Enqueue(new Log_status("Server-c Request Identification", string.Empty, response.Count().ToString()));
                         if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
-                            "INSERT INTO Gate_IdentificationPeople (subsystem, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys/*, actual*/) VALUES ", response, 1))
+                            "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys) VALUES ", response, 1))
                         {
+                            string l = "";
+                            for(int i = 0;i<15;i++)
+                            {
+                                l += "; " + response[0][i];
+                            }
                             state = Thread_state.error;
                             error = GateError.errorPerformanceMetod;
                         }
                         else
                         {
                             List<string> values = new List<string>();
-                            foreach (string[] row in response) values.Add(row[1]);
-                            if (!clsLibrary.execQuery_PGR_Update(
-                                "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
-                                , string.Format("SET enable_seqscan TO on; Update static.identifications set state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                            foreach (string[] row in response) values.Add(row[2]);
+                            if (!clsLibrary.execQuery_PGR(
+                                ref link_connections
+                                , "private_office"
+                                //"Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;",                                
+                                , string.Format("Update static.identifications set state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
                                 ))
                             {
                                 state = Thread_state.error;
@@ -1062,7 +1066,8 @@ namespace WindowsFormsApplication3
                             else state = Thread_state.finished;
                         }
                     }
-                    else state = Thread_state.finished;
+                    else
+                        state = Thread_state.finished;                    
                 }
             }
             catch
@@ -1095,6 +1100,7 @@ namespace WindowsFormsApplication3
                 {
                     if (response.Count() != 0)
                     {
+                        queue_status.Enqueue(new Log_status("Server-e.eir Request Identification", string.Empty, response.Count().ToString()));
                         if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
                             "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys, pid, request) VALUES ", response, 10))
                         {
@@ -1220,7 +1226,7 @@ namespace WindowsFormsApplication3
                 else
                 {
                     state = Thread_state.finished;
-                    queue_status.Enqueue(new Log_status("gate_send_pids_to_eir", comment, "Ok "));
+                    //queue_status.Enqueue(new Log_status("gate_send_pids_to_eir", comment, "Ok "));
                 }
             }
             catch(Exception e)
@@ -1276,7 +1282,8 @@ namespace WindowsFormsApplication3
                             , row[1])
                         );
                     if (!clsLibrary.execQuery_PGR_updateList(
-                        "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
+                        //"Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
+                        "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=private_office;"
                         , values, 1, 1000000))
                     {
                         state = Thread_state.error;
@@ -1368,6 +1375,30 @@ namespace WindowsFormsApplication3
             }
 
         }
+
+        public void emulation_REQUEST_ZLDN_SCHEMA_SMO_2_0()
+        // Импортируем из буфера SI
+        {
+            state = Thread_state.starting;
+            if (!clsLibrary.execQuery_PGR(
+                                 ref link_connections
+                                 , "postgres"
+                                 , "insert into buf_eir.request (id, state, mnemonics, schema_name, filename) values (uuid_generate_v4(), 1, '28001', 'zldn_schema_smo_2_0', 'NONAME');"
+                                 , wait_interval)
+                ||
+                !clsLibrary.execQuery_PGR(
+                                 ref link_connections
+                                 , "postgres"
+                                 , "insert into buf_eir.request (id, state, mnemonics, schema_name, filename) values (uuid_generate_v4(), 1, '28004', 'zldn_schema_smo_2_0', 'NONAME');"
+                                 , wait_interval)
+                )
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            else state = Thread_state.finished;
+
+        }        
 
         public void gate_get_info_from_eir()
         //отправка информации по результатам загрузки пакетов /пока только SI
@@ -1642,6 +1673,53 @@ namespace WindowsFormsApplication3
             }
         }
 
+        public void gate_report_zldn_schema_2_1()
+        //отправка информации по результатам загрузки пакетов /пока только SI
+        {
+            state = Thread_state.starting;
+            try
+            {
+                string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
+                if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
+                List<string[]> requests = new List<string[]>();
+                if (clsLibrary.ExecQurey_PGR_GetListStrings(
+                        ref link_connections, null, "postgres",
+                            "select lst.mcode, lib.nam_mok, lst.ppl, lst.ds, lst.pln "+
+                            "from( select mcode, count(1) ppl, sum(ds) ds, sum(pln) pln from(  " +
+                                "select obs.income_mcode mcode, obs.pid, count(obs.ds) ds, count(pln.id) pln from prod_eir.people_observe obs  " +
+                                "join identy.pids ppl on ppl.pid = obs.pid  " +
+                                "left outer join prod_eir.plan_observe pln on pln.id_people_observe = obs.id  " +
+                                "where ppl.active = 1  " +
+                                "group by obs.income_mcode, obs.pid  " +
+                                ") lst group by mcode ) lst  " +
+                            "join \"library\".f003 lib on lib.mcod = lst.mcode order by mcode;"
+                        , ref requests
+                    )
+                )
+                {
+                    List<string> response = new List<string>();
+                    response.Add("МО; Наименование; ЗЛ; Диагнозы; Планы");
+                    foreach (string[] request in requests)
+                    {
+                        string row = string.Empty;
+                        for (int col_numb = 0; col_numb < 5; col_numb++)
+                        {
+                            if (col_numb != 0) row += ";";
+                            row += (string.IsNullOrEmpty(request[col_numb])) ? string.Empty : (request[col_numb]);
+                        }
+                        response.Add(row);
+                    }
+                    clsLibrary.createFileTXT_FromList(response, Path.Combine(folders[1], string.Format("report_zldn_schema_2_1_{0}.csv", DateTime.Now.ToString("yyyyMMdd-HHmm"))));
+                }
+                state = Thread_state.finished;
+            }
+            catch (Exception e)
+            {
+                queue_status.Enqueue(new Log_status("gate_report_zldn_schema_2_1", string.Empty, e.Message));
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+        }
         public void gateBackup()
         // Резервное копирование Gate
         {
@@ -1785,7 +1863,10 @@ namespace WindowsFormsApplication3
             string comment = string.Empty;
             try
             {
-                if (!reglamentGATE.send_response_from_eir(ref link_connections, wait_interval, ref comment))
+                string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
+                if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
+
+                if (!reglamentGATE.send_response_from_eir(ref link_connections, folders, wait_interval, ref comment))
                 {
                     queue_status.Enqueue(new Log_status("gate_send_response_from_eir", comment, "error"));
                     state = Thread_state.error;
@@ -1797,51 +1878,13 @@ namespace WindowsFormsApplication3
                     //queue_status.Enqueue(new Log_status("gate_send_response_from_eir", comment, "Ok "));
                 }
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                queue_status.Enqueue(new Log_status("gate_send_response_from_eir", string.Empty, e.Message));
-                state = Thread_state.error;
-                error = GateError.errorPerformanceMetod;
-            }           
-        }
-        public void unloading_ZLDNforSMO()
-        // Резервное копирование Gate
-        {
-            state = Thread_state.starting;
-            try
-            {
-                string[] folders = (string[])@link_connections.Find(x => x.name == folders_connections).ping.ping_resource;
-
-                if (!Directory.Exists(folders[0]) || !Directory.Exists(folders[1])) throw new System.ArgumentException("Не определены или не найдены папки входящих и исходящих файлов");
-                string filename = String.Format("ZLDNT{0}_{1}.xml", "28004", DateTime.Now.ToString("yyyyMMdd-HHmmss"));
-                clsLibrary.createFileTXT_FromList(
-                    clsLibrary.execQuery_getListString(
-                        ref link_connections,
-                        ref reglament_connections,
-                        "tmpForSRZ", String.Format("EXEC [dbo].[get_tmpZLDNforSMO] '{0}', '{1}'", "28004", filename)),
-                    Path.Combine(folders[1], filename)
-                );
-
-                filename = String.Format("ZLDNT{0}_{1}.xml", "28001", DateTime.Now.ToString("yyyyMMdd-HHmmss"));
-                clsLibrary.createFileTXT_FromList(
-                    clsLibrary.execQuery_getListString(
-                        ref link_connections,
-                        ref reglament_connections,
-                        "tmpForSRZ", String.Format("EXEC [dbo].[get_tmpZLDNforSMO] '{0}', '{1}'", "28001", filename)),
-                    Path.Combine(folders[1], filename)
-                );
-
-                state = Thread_state.finished;
-            }
-            catch
-            {
+                queue_status.Enqueue(new Log_status("gate_send_response_from_eir", string.Empty, exception.Message));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }
-        }
-
-
-
+        }   
 
 
 
