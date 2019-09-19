@@ -85,8 +85,6 @@ namespace WindowsFormsApplication3
             return result;
         }
 
-  
-
         public frmGateway()
         {
             InitializeComponent();
@@ -311,7 +309,6 @@ namespace WindowsFormsApplication3
                 ++i;
             }
         }
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -785,8 +782,6 @@ namespace WindowsFormsApplication3
         {
             lstbxLog1.Items.Clear();
         }
-
-
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {

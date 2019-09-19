@@ -1688,8 +1688,8 @@ namespace WindowsFormsApplication3
                             "from( select mcode, count(1) ppl, sum(ds) ds, sum(pln) pln from(  " +
                                 "select obs.income_mcode mcode, obs.pid, count(obs.ds) ds, count(pln.id) pln from prod_eir.people_observe obs  " +
                                 "join identy.pids ppl on ppl.pid = obs.pid  " +
-                                "left outer join prod_eir.plan_observe pln on pln.id_people_observe = obs.id  " +
-                                "where ppl.active = 1  " +
+                                "left outer join prod_eir.plan_observe pln on pln.id_people_observe = obs.id and pln.closed = false " +
+                                "where ppl.active = 1 and obs.outcome_dt is null " +
                                 "group by obs.income_mcode, obs.pid  " +
                                 ") lst group by mcode ) lst  " +
                             "join \"library\".f003 lib on lib.mcod = lst.mcode order by mcode;"
@@ -1915,8 +1915,7 @@ namespace WindowsFormsApplication3
                         case "POLIS":
                             //sendResponse_Polis(request_row);
                             break;
-                        case "USLUGI":
-                        //result = reglamentSMEV.sendResponse_USLUGI(request, link_connections, folders, out result_comment); break;
+                        case "USLUGI":                        
                         case "FATALZP":
                         case "ROGDZP":
                         case "PERNAMEZP":
@@ -1932,8 +1931,9 @@ namespace WindowsFormsApplication3
                 }
                 state = Thread_state.finished;
             }
-            catch
+            catch (Exception e)
             {
+                queue_status.Enqueue(new Log_status("responseAsync_SMEV", "", result_comment + " : " + e.Message));
                 state = Thread_state.error;
                 error = GateError.errorPerformanceMetod;
             }

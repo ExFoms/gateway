@@ -59,7 +59,7 @@ namespace WindowsFormsApplication3
             interval_SetBeats = TimeSpan.FromMinutes(15); 
             dateStart_SetBeats = DateTime.Now - interval_SetBeats;
 
-            interval_cleanBeats = TimeSpan.FromSeconds(10); //180 секунд
+            interval_cleanBeats = TimeSpan.FromSeconds(10);
             dateStart_cleanBeats = DateTime.Now;
 
             active = false;
