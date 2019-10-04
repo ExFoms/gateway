@@ -57,6 +57,9 @@ namespace WindowsFormsApplication3
         //Делегаты Metod_Log объявлен в классе
         //
         public bool ready_finishing = false; //состояние готовности к завершению работы
+        //Потоки
+        public Thread thread_identification_synch;
+
 
         public delegate void Metod();
         #endregion
@@ -209,8 +212,9 @@ namespace WindowsFormsApplication3
                     document++;
                 }
 
-                createLabel_Pings();
-                timer_ping.Enabled = true;    
+                createLabel_Pings(); //
+                timer_ping.Enabled = true;
+                timer_sync_identification.Enabled = true;
             }
             catch
             {
@@ -711,6 +715,26 @@ namespace WindowsFormsApplication3
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if(thread_identification_synch != null) thread_identification_synch.Abort();
+            /*MessageBox.Show(
+                clsLibrary.execQuery_getString(
+                                               ref Gate_Connections,
+                                               null,
+                                               "tmpForSRZ",
+                                               String.Format("select dbo.GATE_Identification_Synch '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}'",
+
+                                              // id, scheme, keys, fam, im, ot, to_char(dr, 'YYYY-MM-DD') dr, w, enp, snils, doctp, docser, docnum, opdoc, spolis, npolis, mr
+
+
+                                              Guid.NewGuid, request[1], request[2], request[3], request[4], request[5], request[6], request[7], request[8],
+                                                   request[9], request[10], request[11], request[12], request[13], request[14], request[15], request[16])
+                                               )
+
+            */
+
+
+
+
             /*int i = MessageBox((IntPtr)0, "123", "My message Box", 0);
             [DllImport("user32.dll", CharSet = CharSet.Auto)]
             public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr IParam);
@@ -719,23 +743,22 @@ namespace WindowsFormsApplication3
 
             //MessageBox.Show(Path.Combine(dir.ToString(),path,filename, ".txt"));
 
-            IdentificationRequest_01.IdentificationRequest_01Type request = new IdentificationRequest_01.IdentificationRequest_01Type();
+            /*IdentificationRequest_01.IdentificationRequest_01Type request = new IdentificationRequest_01.IdentificationRequest_01Type();
             request = new IdentificationRequest_01.IdentificationRequest_01Type
             {
-                orderId = Guid.NewGuid().ToString(),
+                clientId = Guid.NewGuid().ToString(),
                 fam = "Хрущёв",
                 im = "Денис",
                 ot = "Васильевич",
                 dr = DateTime.Now,
                 enp = "2854420828000128",
                 snils = "068-953-068 13",
-                doctp = "14",
+                doctype = "14",
                 docser = "10 00",
                 docnum = "130639",
-                opdoc = "3",
+                vpolis = 3,
                 spolis = "",
-                npolis = "01153188344",
-                keys = "H02:H03:H14:H16"
+                npolis = "01153188344"
             };
             string xmlTextRequest = XmlHelper.SerializeTo<IdentificationRequest_01.IdentificationRequest_01Type>(request, true);
             MessageBox.Show(xmlTextRequest);
@@ -747,12 +770,11 @@ namespace WindowsFormsApplication3
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationRequest_01.IdentificationRequest_01Type));
                 StringReader stringReader = new StringReader(xmlTextRequest);
                 request_2 = (IdentificationRequest_01.IdentificationRequest_01Type)xmlSerializer.Deserialize(stringReader);
-                MessageBox.Show(request_2.keys);
             }
             catch
             {
             }
-            
+
             IdentificationResponse_01.IdentificationResponse_01Type response = new IdentificationResponse_01.IdentificationResponse_01Type();
             response = new IdentificationResponse_01.IdentificationResponse_01Type
             {
@@ -775,7 +797,7 @@ namespace WindowsFormsApplication3
             }
             catch
             {
-            }
+            }*/
         }
 
         private void lnkClear_log_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -1271,7 +1293,43 @@ namespace WindowsFormsApplication3
             }
         }
 
-
+        private void Timer1_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (thread_identification_synch != null)
+                {
+                    //MessageBox.Show(thread_identification_synch.ThreadState.ToString());
+                    if (!thread_identification_synch.IsAlive)
+                    {
+                        btnIdentification.BackColor = Color.Red;
+                        
+                        logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "stopped!!!"));
+                        thread_identification_synch.Abort();
+                        thread_identification_synch = null;
+                        
+                    }
+                    else
+                    {
+                        btnIdentification.BackColor = Color.FromArgb(0, 0, 20);
+                    }
+                }
+                else
+                {
+                    thread_identification_synch = new Thread(new ParameterizedThreadStart(clsBeat.gate_identification_synch))
+                    { IsBackground = true, Name = "thread_identification_synch" };
+                    thread_identification_synch.Start(Gate_Connections);
+                    //MessageBox.Show("Процесс запущен");
+                    logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "started"));
+                }                
+            }
+            catch(Exception ex)
+            {
+                //MessageBox.Show(ex.Message);
+                logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, "thread_identification_synch started : " + ex.Message));
+            }
+            
+        }
     }
 
    

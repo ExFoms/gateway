@@ -39,7 +39,7 @@
             this.lnkStartBeats = new System.Windows.Forms.LinkLabel();
             this.timer_ping = new System.Windows.Forms.Timer(this.components);
             this.lstbxLog = new System.Windows.Forms.ListBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnIdentification = new System.Windows.Forms.Button();
             this.pnlPing = new System.Windows.Forms.Panel();
             this.button5 = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -81,6 +81,7 @@
             this.timer_Logining = new System.Windows.Forms.Timer(this.components);
             this.timer_showBeats = new System.Windows.Forms.Timer(this.components);
             this.timer_Finishing = new System.Windows.Forms.Timer(this.components);
+            this.timer_sync_identification = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.pnlPing.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -165,22 +166,22 @@
             this.lstbxLog.Size = new System.Drawing.Size(686, 689);
             this.lstbxLog.TabIndex = 17;
             // 
-            // button2
+            // btnIdentification
             // 
-            this.button2.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.button2.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.button2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(120)))));
-            this.button2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(70)))));
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(255)))));
-            this.button2.Location = new System.Drawing.Point(452, 16);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(128, 23);
-            this.button2.TabIndex = 19;
-            this.button2.Text = "Кнопка";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnIdentification.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnIdentification.BackColor = System.Drawing.Color.Red;
+            this.btnIdentification.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.btnIdentification.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(120)))));
+            this.btnIdentification.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(70)))));
+            this.btnIdentification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnIdentification.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(255)))));
+            this.btnIdentification.Location = new System.Drawing.Point(452, 16);
+            this.btnIdentification.Name = "btnIdentification";
+            this.btnIdentification.Size = new System.Drawing.Size(128, 23);
+            this.btnIdentification.TabIndex = 19;
+            this.btnIdentification.Text = "Идентификация";
+            this.btnIdentification.UseVisualStyleBackColor = false;
+            this.btnIdentification.Click += new System.EventHandler(this.button2_Click);
             // 
             // pnlPing
             // 
@@ -203,7 +204,7 @@
             this.pnlPing.Controls.Add(this.button4);
             this.pnlPing.Controls.Add(this.button3);
             this.pnlPing.Controls.Add(this.button1);
-            this.pnlPing.Controls.Add(this.button2);
+            this.pnlPing.Controls.Add(this.btnIdentification);
             this.pnlPing.Controls.Add(this.label22);
             this.pnlPing.Controls.Add(this.label1);
             this.pnlPing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.23F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -359,11 +360,12 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(26, 40);
+            this.label19.Location = new System.Drawing.Point(21, 40);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(57, 13);
+            this.label19.Size = new System.Drawing.Size(62, 13);
             this.label19.TabIndex = 2;
-            this.label19.Text = "процессы";
+            this.label19.Text = "синхроные";
+            this.label19.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // fllpnl1
             // 
@@ -452,6 +454,7 @@
             this.label18.Size = new System.Drawing.Size(59, 13);
             this.label18.TabIndex = 1;
             this.label18.Text = "транспорт";
+            this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label10
             // 
@@ -461,6 +464,7 @@
             this.label10.Size = new System.Drawing.Size(67, 13);
             this.label10.TabIndex = 0;
             this.label10.Text = "соединения";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblTimeShedule
             // 
@@ -767,6 +771,11 @@
             this.timer_Finishing.Interval = 1000;
             this.timer_Finishing.Tick += new System.EventHandler(this.timer_Finishing_Tick);
             // 
+            // timer_sync_identification
+            // 
+            this.timer_sync_identification.Interval = 6000;
+            this.timer_sync_identification.Tick += new System.EventHandler(this.Timer1_Tick);
+            // 
             // frmGateway
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -814,7 +823,7 @@
         private System.Windows.Forms.LinkLabel lnkStartBeats;
         private System.Windows.Forms.Timer timer_ping;
         private System.Windows.Forms.ListBox lstbxLog;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnIdentification;
         private System.Windows.Forms.Panel pnlPing;
         private System.Windows.Forms.Timer timer_Step_TransferFiles;
         private System.Windows.Forms.Label label19;
@@ -856,6 +865,7 @@
         private System.Windows.Forms.Timer timer_showBeats;
         private System.Windows.Forms.Timer timer_Finishing;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Timer timer_sync_identification;
     }
 }
 

@@ -147,6 +147,10 @@ namespace WindowsFormsApplication3
                 case "eir_event_identy": thread = new Thread(eir_event_identy) { IsBackground = true, Name = gate_nametask }; break; //new
                 case "eir_event_prt": thread = new Thread(eir_event_prt) { IsBackground = true, Name = gate_nametask }; break; //new
                 case "eir_event_import": thread = new Thread(eir_event_import) { IsBackground = true, Name = gate_nametask }; break;
+
+                case "eir_clear_identification_synch": thread = new Thread(eir_clear_identification_synch) { IsBackground = true, Name = gate_nametask }; break;
+
+
                 // ----------------------- temporary
                 case "emulation_REQUEST_ZLDN_SCHEMA_SMO_2_0": thread = new Thread(emulation_REQUEST_ZLDN_SCHEMA_SMO_2_0) { IsBackground = true, Name = gate_nametask }; break;
 
@@ -1263,7 +1267,7 @@ namespace WindowsFormsApplication3
             List<string[]> response = new List<string[]>();
             if (!clsLibrary.execQuery_getListString(
                 ref response, ref link_connections, reglament_connections, "tmpForSRZ"
-                , string.Format("SELECT TOP {0} [ID],[CLIENTID],[PID],[KEYS_RESULT] FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id desc", limit_transaction, "Server-c")
+                , string.Format("SELECT TOP {0} [ID],[CLIENTID],[PID],[KEYS_RESULT],[RESPONSE] FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id desc", limit_transaction, "Server-c")
                 ))
             {
                 state = Thread_state.error;
@@ -1275,11 +1279,12 @@ namespace WindowsFormsApplication3
                 {
                     List<string> values = new List<string>();
                     foreach (string[] row in response)
-                        values.Add(string.Format("SET enable_seqscan TO on; Update static.identifications set pid = {0}, state = 99, identification_date = '{1}', KEYS_RESULT = '{2}' where id = {3}"
+                        values.Add(string.Format("SET enable_seqscan TO on; Update static.identifications set pid = {0}, state = 99, identification_date = '{1}', KEYS_RESULT = '{2}', RESPONSE = '{4}' where id = {3}"
                             , row[2]
                             , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
                             , row[3]
-                            , row[1])
+                            , row[1]
+                            , row[4])
                         );
                     if (!clsLibrary.execQuery_PGR_updateList(
                         //"Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
@@ -1374,6 +1379,19 @@ namespace WindowsFormsApplication3
                     state = Thread_state.finished;
             }
 
+        }
+
+        public void eir_clear_identification_synch()
+        // Импортируем из буфера SI
+        {
+            state = Thread_state.starting;
+            if (!clsLibrary.execQuery_PGR(ref link_connections, "postgres", "delete from identy.identifications_synch where extract(minute from now()-date_sys) >=10;", wait_interval))
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            else
+                state = Thread_state.finished;
         }
 
         public void emulation_REQUEST_ZLDN_SCHEMA_SMO_2_0()
@@ -1791,7 +1809,7 @@ namespace WindowsFormsApplication3
                             result = false; //по умолчанию ошибка обработки                            
                             switch (reglamentLinker.link.reglament_owner)
                             {
-                                // ----------------- Обработка пакетов Регламентов АОФОМС
+                                // ----------------- Обработка пакетов Регламентов ФФОМС
                                 case Reglament_owner.FFOMS:
                                     result = reglamentFFOMS.handling_file(file, link_connections, folders, reglamentLinker, out result_comment);
                                     queue_status.Enqueue(new Log_status(filename, string.Empty, result_comment));
@@ -1916,16 +1934,20 @@ namespace WindowsFormsApplication3
                             //sendResponse_Polis(request_row);
                             break;
                         case "USLUGI":                        
-                        case "FATALZP":
+                        case "FATALZP-4.0.0":
+                        case "FATALZP-4.0.1":
                         case "ROGDZP":
                         case "PERNAMEZP":
                             result = reglamentSMEV.sendResponse(request, ref link_connections, ref folders, out result_comment);
+                            break;
+                        default:
+                            result_comment = "Unknown tipdata";
                             break;
                     }
                     if (result)
                         queue_status.Enqueue(new Log_status(request[1], "", "Send Response / " + request[2]));
                     else
-                        queue_status.Enqueue(new Log_status(request[1], "", result_comment));
+                        queue_status.Enqueue(new Log_status(request[1], "Error create Response", result_comment));
                     clsLibrary.execQuery(ref link_connections, null, "srz3_00_adapter",
                         String.Format("update SMEV_MESSAGES set STATE = '{0}' where ID = '{1}'", (result) ? 99 : 5, request[0]));
                 }
@@ -1944,7 +1966,83 @@ namespace WindowsFormsApplication3
 
         // ------------------- Сопутствующие методы -----------------------
 
-
+        public static void gate_identification_synch(object _link_connections)
+        // Получение запросов на идентификацию
+        {
+            bool finish = false;
+            string comments = string.Empty;
+            List<clsConnections> link_connections = (List<clsConnections>)_link_connections;
+            DateTime _date;
+            string response = string.Empty;
+            int limit_transaction = 200;
+            List<string> values = new List<string>();
+           
+            while (!finish)
+            {
+                try
+                {
+                    //throw new Exception("Broken");
+                    List<string[]> requests = new List<string[]>();
+                    if (!clsLibrary.ExecQurey_PGR_GetListStrings(
+                        ref link_connections
+                        , null
+                        , "postgres"
+                        , //string.Format("select id, scheme, keys, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, w, enp, snils, doctp, docser, docnum, opdoc, spolis, npolis, mr from identy.identifications_synch where identification_state = 0 order by DATE_SYS limit {0};", limit_transaction)
+                        string.Format(
+                            "select id, scheme, keys " + 
+                            ", (xpath('//fam/text()', request))[1]::text fam, (xpath('//im/text()', request))[1]::text im, (xpath('//ot/text()', request))[1]::text ot " +
+                            ", (xpath('//dr/text()',request))[1]::text dr, (xpath('//w/text()', request))[1]::text w, (xpath('//enp/text()', request))[1]::text enp " +
+                            ", replace(replace((xpath('//snils/text()', request))[1]::text, '-', ''), ' ', '') snils, (xpath('//doctype/text()', request))[1]::text doctp " +
+                            ", (xpath('//docser/text()', request))[1]::text docser, (xpath('//docnum/text()', request))[1]::text docnum, (xpath('//vpolis/text()', request))[1]::text opdoc " +
+                            ", (xpath('//spolis/text()', request))[1]::text spolis, (xpath('//npolis/text()', request))[1]::text npolis, '' mr,  (xpath('//clientId/text()', request))[1]::text clientId " +
+                            "from identy.identifications_synch where identification_state = 0 order by id limit {0};" 
+                            , limit_transaction)
+                        , ref requests
+                        ))
+                    {
+                        finish = true;
+                        comments = "Не удалось получить запрос";
+                    }
+                    else
+                    {
+                        if (requests.Count() != 0)
+                        {
+                            values.Clear();
+                           _date = DateTime.Now; 
+                            foreach (string[] request in requests)
+                            {                                
+                                response = clsLibrary.execQuery_getString(
+                                    ref link_connections,
+                                    null,
+                                    "tmpForSRZ",
+                                    String.Format("select dbo.GATE_Identification_Synch ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}')",
+                                        request[17], request[1], request[2], request[3], request[4], request[5], request[6], request[7], request[8],
+                                        request[9], request[10], request[11], request[12], request[13], request[14], request[15], request[16])
+                                );
+                                values.Add(string.Format("update identy.identifications_synch set response = '{0}', identification_state = 99, identification_date = '{1}' where id = '{2}';"
+                                    , response
+                                    , _date
+                                    , request[0]
+                                    )
+                                );
+                            }
+                            clsLibrary.VarResult varResult = clsLibrary.execQuery_PGR_updateList_varResult(ref link_connections, null, "postgres", ref values, limit_transaction);
+                            if (!varResult.result)
+                            {
+                                finish = true;
+                                comments = "Не удалось вернуть результат";
+                            }
+                        }
+                    }               
+                    Thread.Sleep(100);
+                }
+                catch (Exception e)
+                {
+                    finish = true;
+                    comments = e.Message;
+                }
+            }
+        }
 
 
 
