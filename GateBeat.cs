@@ -1934,10 +1934,9 @@ namespace WindowsFormsApplication3
                             //sendResponse_Polis(request_row);
                             break;
                         case "USLUGI":                        
-                        case "FATALZP-4.0.0":
-                        case "FATALZP-4.0.1":
-                        case "ROGDZP":
-                        case "PERNAMEZP":
+                        case "FATALZP-4.0.0":case "FATALZP-4.0.1":
+                        case "ROGDZP-4.0.0":case "ROGDZP-4.0.1":
+                        case "PERNAMEZP-4.0.0":case "PERNAMEZP-4.0.1":
                             result = reglamentSMEV.sendResponse(request, ref link_connections, ref folders, out result_comment);
                             break;
                         default:

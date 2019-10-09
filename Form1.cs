@@ -213,8 +213,7 @@ namespace WindowsFormsApplication3
                 }
 
                 createLabel_Pings(); //
-                timer_ping.Enabled = true;
-                timer_sync_identification.Enabled = true;
+                timer_ping.Enabled = true;                
             }
             catch
             {
@@ -561,6 +560,9 @@ namespace WindowsFormsApplication3
                         ++id;
                     }
             }
+            lnkIdentificationSynch.LinkColor = (timer_sync_identification.Enabled) ? clsVisualControls.clrPingEnable : clsVisualControls.clrPingDisable;
+            lnkIdentificationSynch.Text = (timer_sync_identification.Enabled) ? "u" : "w";
+            if (!timer_sync_identification.Enabled) lblIdentificationSynch.ForeColor = clsVisualControls.clrText;
         }
         public void show_log()
         {
@@ -713,92 +715,7 @@ namespace WindowsFormsApplication3
             lnkStartBeats.Enabled = true;
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if(thread_identification_synch != null) thread_identification_synch.Abort();
-            /*MessageBox.Show(
-                clsLibrary.execQuery_getString(
-                                               ref Gate_Connections,
-                                               null,
-                                               "tmpForSRZ",
-                                               String.Format("select dbo.GATE_Identification_Synch '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}'",
-
-                                              // id, scheme, keys, fam, im, ot, to_char(dr, 'YYYY-MM-DD') dr, w, enp, snils, doctp, docser, docnum, opdoc, spolis, npolis, mr
-
-
-                                              Guid.NewGuid, request[1], request[2], request[3], request[4], request[5], request[6], request[7], request[8],
-                                                   request[9], request[10], request[11], request[12], request[13], request[14], request[15], request[16])
-                                               )
-
-            */
-
-
-
-
-            /*int i = MessageBox((IntPtr)0, "123", "My message Box", 0);
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr IParam);
-            public static extern int MessageBox(IntPtr h, string m, string c, int type);
-             * */
-
-            //MessageBox.Show(Path.Combine(dir.ToString(),path,filename, ".txt"));
-
-            /*IdentificationRequest_01.IdentificationRequest_01Type request = new IdentificationRequest_01.IdentificationRequest_01Type();
-            request = new IdentificationRequest_01.IdentificationRequest_01Type
-            {
-                clientId = Guid.NewGuid().ToString(),
-                fam = "Хрущёв",
-                im = "Денис",
-                ot = "Васильевич",
-                dr = DateTime.Now,
-                enp = "2854420828000128",
-                snils = "068-953-068 13",
-                doctype = "14",
-                docser = "10 00",
-                docnum = "130639",
-                vpolis = 3,
-                spolis = "",
-                npolis = "01153188344"
-            };
-            string xmlTextRequest = XmlHelper.SerializeTo<IdentificationRequest_01.IdentificationRequest_01Type>(request, true);
-            MessageBox.Show(xmlTextRequest);
-            xmlTextRequest = "<IdentificationRequest_01><orderId>907a7452-8757-4ea9-b3d0-30234143b431</orderId><fam>Хрущёв</fam><im>Денис</im><ot>Васильевич</ot><dr>2019-02-18T16:49:41.1408466+09:00</dr><enp>2854420828000128</enp><snils>068-953-068 13</snils><doctp>14</doctp><docser>10 00</docser><docnum>130639</docnum><opdoc>3</opdoc><spolis /><npolis>01153188344</npolis><keys>H02:H03:H14:H16</keys></IdentificationRequest_01>";
-
-            IdentificationRequest_01.IdentificationRequest_01Type request_2 = new IdentificationRequest_01.IdentificationRequest_01Type();
-            try
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationRequest_01.IdentificationRequest_01Type));
-                StringReader stringReader = new StringReader(xmlTextRequest);
-                request_2 = (IdentificationRequest_01.IdentificationRequest_01Type)xmlSerializer.Deserialize(stringReader);
-            }
-            catch
-            {
-            }
-
-            IdentificationResponse_01.IdentificationResponse_01Type response = new IdentificationResponse_01.IdentificationResponse_01Type();
-            response = new IdentificationResponse_01.IdentificationResponse_01Type
-            {
-                orderId = "123123123"
-                ,pid = 1234567890
-                ,smo = "28004"
-                ,mo = "280001"
-                ,keys = "H02:H03:H14:H16"
-            };
-            string xmlTextResponse = XmlHelper.SerializeTo<IdentificationResponse_01.IdentificationResponse_01Type>(response, true);
-            MessageBox.Show(xmlTextResponse);
-            xmlTextResponse = "<IdentificationResponse_01><orderId>2c2c9153-69f8-4f7f-9cde-00055cb40637</orderId><pid>79246</pid><keys>H02:H03:H14:H16</keys><smo>28004</smo><mo>280002</mo></IdentificationResponse_01>";
-            IdentificationResponse_01.IdentificationResponse_01Type response_2 = new IdentificationResponse_01.IdentificationResponse_01Type();
-            try
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(IdentificationResponse_01.IdentificationResponse_01Type));
-                StringReader stringReader = new StringReader(xmlTextResponse);
-                response_2 = (IdentificationResponse_01.IdentificationResponse_01Type)xmlSerializer.Deserialize(stringReader);
-                MessageBox.Show(response_2.keys);
-            }
-            catch
-            {
-            }*/
-        }
+    
 
         private void lnkClear_log_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -837,32 +754,6 @@ namespace WindowsFormsApplication3
             }
 
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string connectionString = "Server=192.168.1.4;Port=5432;User Id=gate;Password=Ghnmop0!;Database=main_db;";
-            //string connectionString = "Server=192.168.1.28;Port=5432;User Id=test;Password=1235;Database=postgres;";
-            string sql = "select id_pac from public.personal_info where identification_state = 0 limit 100";
-            Npgsql.NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-            NpgsqlCommand comm = new NpgsqlCommand(sql, connection);
-            try
-            {
-                connection.Open();
-                NpgsqlDataReader reader = comm.ExecuteReader();
-                reader.Read();
-                connection.Close(); //Закрываем соединение.
-                MessageBox.Show("Получилось подключиться к PostgesSQL");
-            }
-            catch
-            {
-                MessageBox.Show("НЕ получилось подключиться к PostgesSQL");
-            }
-            //result = comm.ExecuteScalar().ToString(); //Выполняем нашу команду.
-        }
-
-
-
-
 
         //-------------------------- Старые методы
         void threadReport_prickr()
@@ -1283,16 +1174,6 @@ namespace WindowsFormsApplication3
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            List<string> files = new List<string>(Directory.GetFiles(@"C:\Work\Test\TestData\input", "*.XML"));
-            if (files.Count() > 0)
-            {
-                files.Sort();
-                foreach (string file in files) {/*clsBeat.handling_file(file)*/};
-            }
-        }
-
         private void Timer1_Tick(object sender, EventArgs e)
         {
             try
@@ -1302,16 +1183,10 @@ namespace WindowsFormsApplication3
                     //MessageBox.Show(thread_identification_synch.ThreadState.ToString());
                     if (!thread_identification_synch.IsAlive)
                     {
-                        btnIdentification.BackColor = Color.Red;
-                        
+                        lblIdentificationSynch.ForeColor = clsVisualControls.clrPingDisable;
                         logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "stopped!!!"));
                         thread_identification_synch.Abort();
-                        thread_identification_synch = null;
-                        
-                    }
-                    else
-                    {
-                        btnIdentification.BackColor = Color.FromArgb(0, 0, 20);
+                        thread_identification_synch = null;                        
                     }
                 }
                 else
@@ -1319,16 +1194,56 @@ namespace WindowsFormsApplication3
                     thread_identification_synch = new Thread(new ParameterizedThreadStart(clsBeat.gate_identification_synch))
                     { IsBackground = true, Name = "thread_identification_synch" };
                     thread_identification_synch.Start(Gate_Connections);
-                    //MessageBox.Show("Процесс запущен");
+                    lblIdentificationSynch.ForeColor = clsVisualControls.clrText;
                     logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "started"));
                 }                
             }
             catch(Exception ex)
             {
-                //MessageBox.Show(ex.Message);
-                logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, "thread_identification_synch started : " + ex.Message));
+                logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, "thread_identification_synch try attempt : " + ex.Message));
             }
             
+        }
+
+        private void LinkLabel8_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (thread_identification_synch != null) thread_identification_synch.Abort();
+        }
+
+        private void LinkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            timer_sync_identification.Enabled = !timer_sync_identification.Enabled;
+            if (!timer_sync_identification.Enabled && thread_identification_synch != null)
+            {
+                logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "stopped!!!"));
+                thread_identification_synch.Abort();
+                thread_identification_synch = null;
+            }
+        }
+
+        private void LnklblRefreshBeats_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+        }
+
+        private void Panel1_MouseEnter(object sender, EventArgs e)
+        {
+            panel1.BackColor =  Color.FromArgb(10, 10, 40);
+        }
+
+        private void Panel1_MouseLeave(object sender, EventArgs e)
+        {
+            panel1.BackColor = Color.FromArgb(0, 0, 20);
+        }
+
+        private void PnlHeader_MouseEnter(object sender, EventArgs e)
+        {
+            pnlHeader.BackColor = Color.FromArgb(10, 10, 40);
+        }
+
+        private void PnlHeader_MouseLeave(object sender, EventArgs e)
+        {
+            pnlHeader.BackColor = Color.FromArgb(0, 0, 20);
         }
     }
 
