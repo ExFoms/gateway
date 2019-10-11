@@ -78,6 +78,10 @@ namespace WindowsFormsApplication3
                 new List<clsConfigPrototype>(Gate_Transport_files_inpersonalfolder),
                 new List<clsConfigPrototype>(Gate_Transport_files_email)
             };
+            for(int i = 1; i<4; i++)
+                foreach(clsConfigPrototype prototype in connections_list[i])
+                    prototype.controllerStart();
+
             shedules = new clsShedules(logQueue.Enqueue, ref Gate_Connections);
             lblSetTest_LinkClicked(null, null); //обновляем визуальные элементы по состоянию тест или раб
 
@@ -228,7 +232,8 @@ namespace WindowsFormsApplication3
             foreach (var connection in Gate_Connections)
             {
                 listLabels.Add(new System.Windows.Forms.LinkLabel());
-                listLabels[id].Name = "lnkPing" + id.ToString();
+                listLabels[id].Name = "lnkPC" + id.ToString();
+                connection.nameHandler = listLabels[id].Name;
                 listLabels[id].Text = "g";
                 listLabels[id].Location = new System.Drawing.Point(85 + i * 14, 10);
                 listLabels[id].Visible = true;
@@ -251,7 +256,8 @@ namespace WindowsFormsApplication3
             foreach (var connection in Gate_Transport_files)
             {
                 listLabels.Add(new System.Windows.Forms.LinkLabel());
-                listLabels[id].Name = "lnkPing" + id.ToString();
+                listLabels[id].Name = "lnkTF" + id.ToString();
+                connection.nameHandler = listLabels[id].Name;
                 listLabels[id].Text = "g";
                 listLabels[id].Location = new System.Drawing.Point(85 + i * 14, 25);
                 listLabels[id].Visible = true;
@@ -262,9 +268,9 @@ namespace WindowsFormsApplication3
                 listLabels[id].BackColor = System.Drawing.Color.Transparent;
                 listLabels[id].LinkColor = clsVisualControls.clrPingDisable;
                 listLabels[id].ActiveLinkColor = Color.White;
-                new ToolTip().SetToolTip(listLabels[id], connection.comment);
+                new ToolTip().SetToolTip(listLabels[id], connection.comment); 
                 listLabels[id].Parent = pnlPing;
-                // отключено событие (не проработано) listLabels[id].Click += new System.EventHandler(ReversEnable_Pings);
+                listLabels[id].Click += new System.EventHandler(ReversEnable_Pings);
                 pnlPing.Controls.Add(listLabels[id]);
                 ++id;
                 ++i;
@@ -272,7 +278,8 @@ namespace WindowsFormsApplication3
             foreach (var connection in Gate_Transport_files_inpersonalfolder)
             {
                 listLabels.Add(new System.Windows.Forms.LinkLabel());
-                listLabels[id].Name = "lnkPing" + id.ToString();
+                listLabels[id].Name = "lnkTP" + id.ToString();
+                connection.nameHandler = listLabels[id].Name;
                 listLabels[id].Text = "g";
                 listLabels[id].Location = new System.Drawing.Point(85 + i * 14, 25);
                 listLabels[id].Visible = true;
@@ -285,7 +292,8 @@ namespace WindowsFormsApplication3
                 listLabels[id].ActiveLinkColor = Color.White;
                 new ToolTip().SetToolTip(listLabels[id], connection.comment);
                 listLabels[id].Parent = pnlPing;
-                // отключено событие (не проработано) listLabels[id].Click += new System.EventHandler(ReversEnable_Pings);
+                // отключено событие (не проработано)
+                listLabels[id].Click += new System.EventHandler(ReversEnable_Pings);
                 pnlPing.Controls.Add(listLabels[id]);
                 ++id;
                 ++i;
@@ -293,7 +301,8 @@ namespace WindowsFormsApplication3
             foreach (var connection in Gate_Transport_files_email)
             {
                 listLabels.Add(new System.Windows.Forms.LinkLabel());
-                listLabels[id].Name = "lnkPing" + id.ToString();
+                listLabels[id].Name = "lnkTE" + id.ToString();
+                connection.nameHandler = listLabels[id].Name;
                 listLabels[id].Text = "g";
                 listLabels[id].Location = new System.Drawing.Point(85 + i * 14, 25);
                 listLabels[id].Visible = true;
@@ -306,7 +315,8 @@ namespace WindowsFormsApplication3
                 listLabels[id].ActiveLinkColor = Color.White;
                 new ToolTip().SetToolTip(listLabels[id], connection.comment);
                 listLabels[id].Parent = pnlPing;
-                // отключено событие (не проработано) listLabels[id].Click += new System.EventHandler(ReversEnable_Pings);
+                // отключено событие (не проработано) 
+                listLabels[id].Click += new System.EventHandler(ReversEnable_Pings);
                 pnlPing.Controls.Add(listLabels[id]);
                 ++id;
                 ++i;
@@ -500,37 +510,76 @@ namespace WindowsFormsApplication3
         private void Check_Pings(object sender, EventArgs e)
         {
             // пингуем контрольные точки Шлюза
-            foreach (var connections in connections_list)
-                foreach (clsConfigPrototype connection in connections)
-                {
-                    string destination = @"C:\temp\";
-                    System.IO.Directory.CreateDirectory(destination);
-                    FileStream fileStream = new FileStream(Path.Combine(destination, String.Format("GATE_{0}.log", DateTime.Now.ToString("yyyyMMdd"))), FileMode.Append);
-                    StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
-                    streamWriter.Write(String.Format("{0} | ping | {1}\r\n", DateTime.Now.ToString(), connection.name));
-                    streamWriter.Close();
-                    connection.check();
-                }
+            foreach (clsConfigPrototype connection in connections_list[0])
+                connection.check();
         }
         public void ReversEnable_Pings(object sender, EventArgs e)
         {
+            string message = string.Empty;
+            int index;
             for (int i = 0; i < listLabels.Count; i++)
                 if (sender.GetHashCode() == listLabels[i].GetHashCode())
                 {
-                    if (Gate_Connections[i].enable)
+                    switch (listLabels[i].Name.Substring(0,5))
                     {
-                        if (Gate_Connections[i].ping.connectionType == 4) Gate_Connections[i].ping.stop_program();
-                        Gate_Connections[i].enable = false;
-                        logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, "снято с контроля - " + Gate_Connections[i].comment));
-                    }
-                    else
-                    {
-                        if (Gate_Connections[i].ping.connectionType == 4) Gate_Connections[i].ping.exec_program();
-                        Gate_Connections[i].enable = true;
-                        logQueue.Enqueue(new clsLog(DateTime.Now, 1, "Gate", 0, 0, DateTime.Now, DateTime.Now, "поставлено на контроль - " + Gate_Connections[i].comment));
+                        case "lnkPC":
+                            index = Gate_Connections.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                            if (Gate_Connections[index].enable)
+                            {
+                                if (Gate_Connections[index].ping.connectionType == 4) Gate_Connections[index].ping.stop_program();
+                                Gate_Connections[index].enable = false;
+                                message = "снято с контроля - " + Gate_Connections[index].comment;                               
+                            }
+                            else
+                            {
+                                if (Gate_Connections[index].ping.connectionType == 4) Gate_Connections[index].ping.exec_program();
+                                Gate_Connections[index].enable = true;
+                                message = "поставлено на контроль - " + Gate_Connections[index].comment;
+                            }
+                            break;
+                        case "lnkTF":
+                            index = Gate_Transport_files.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                            if (Gate_Transport_files[index].enable)
+                            {
+                                Gate_Transport_files[index].enable = false;
+                                message = "снято с контроля - " + Gate_Transport_files[index].comment;
+                            }
+                            else
+                            {
+                                Gate_Transport_files[index].enable = true;
+                                message = "поставлено на контроль - " + Gate_Transport_files[index].comment;
+                            }
+                            break;
+                        case "lnkTP":
+                            index = Gate_Transport_files_inpersonalfolder.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                            if (Gate_Transport_files_inpersonalfolder[index].enable)
+                            {                                
+                                Gate_Transport_files_inpersonalfolder[index].enable = false;
+                                message = "снято с контроля - " + Gate_Transport_files_inpersonalfolder[index].comment;
+                            }
+                            else
+                            {
+                                Gate_Transport_files_inpersonalfolder[index].enable = true;
+                                message = "поставлено на контроль - " + Gate_Transport_files_inpersonalfolder[index].comment;
+                            }
+                            break;
+                        case "lnkTE":
+                            index = Gate_Transport_files_email.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                            if (Gate_Transport_files_email[index].enable)
+                            {
+                                Gate_Transport_files_email[index].enable = false;
+                                message = "снято с контроля - " + Gate_Transport_files_email[index].comment;
+                            }
+                            else
+                            {
+                                Gate_Transport_files_email[index].enable = true;
+                                message = "поставлено на контроль - " + Gate_Transport_files_email[index].comment;
+                            }
+                            break;
                     }
                     //if (Gate_Connections[i].active) Gate_Connections[i].change_status = true;
                 }
+            if(message != string.Empty) logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, message));
         }
         private void TestStatus_Pings(object sender, EventArgs e)
         //Проверяем состояние пингов, логиним и меняем цвет индикаторов 
@@ -654,30 +703,31 @@ namespace WindowsFormsApplication3
 
         private void Transfer_Files(object sender, EventArgs e)
         {
-            foreach (clsTransport_files transport_files in Gate_Transport_files)
+            /*foreach (clsTransport_files transport in Gate_Transport_files)
             {
                 FileStream fileStream = new FileStream(String.Format(@"C:\temp\GATE_{0}.log", DateTime.Now.ToString("yyyyMMdd")), FileMode.Append);
                 StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
-                streamWriter.Write(String.Format("{0} | transport | {1}\r\n", DateTime.Now.ToString(), transport_files.name));
+                streamWriter.Write(String.Format("{0} | transport | {1}\r\n", DateTime.Now.ToString(), transport.name));
                 streamWriter.Close();
-                transport_files.start();
+                transport.start();
             }
-            foreach (clsTransport_files_inpersonalfolder transport_files in Gate_Transport_files_inpersonalfolder)
+            foreach (clsTransport_files_inpersonalfolder transport in Gate_Transport_files_inpersonalfolder)
             {
                 FileStream fileStream = new FileStream(String.Format(@"C:\temp\GATE_{0}.log", DateTime.Now.ToString("yyyyMMdd")), FileMode.Append);
                 StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
-                streamWriter.Write(String.Format("{0} | transport personal | {1}\r\n", DateTime.Now.ToString(), transport_files.name));
+                streamWriter.Write(String.Format("{0} | transport personal | {1}\r\n", DateTime.Now.ToString(), transport.name));
                 streamWriter.Close();
-                transport_files.start();
+                transport.start();
             }
-            foreach (clstransport_files_email transport_files in Gate_Transport_files_email)
+            foreach (clstransport_files_email transport in Gate_Transport_files_email)
             {
                 FileStream fileStream = new FileStream(String.Format(@"C:\temp\GATE_{0}.log", DateTime.Now.ToString("yyyyMMdd")), FileMode.Append);
                 StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
-                streamWriter.Write(String.Format("{0} | send email | {1}\r\n", DateTime.Now.ToString(), transport_files.name));
+                streamWriter.Write(String.Format("{0} | send email | {1}\r\n", DateTime.Now.ToString(), transport.name));
                 streamWriter.Close();
-                transport_files.start();
+                transport.start();
             }
+            */
         }
  
         private void listBox1_DrawItem(object sender, DrawItemEventArgs e)

@@ -39,24 +39,28 @@
             this.lnkStartBeats = new System.Windows.Forms.LinkLabel();
             this.timer_ping = new System.Windows.Forms.Timer(this.components);
             this.pnlPing = new System.Windows.Forms.Panel();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.lblHeader = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lstbxLog = new System.Windows.Forms.ListBox();
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.fpnlReglament = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.lblIdentificationSynch = new System.Windows.Forms.Label();
             this.lnkIdentificationSynch = new System.Windows.Forms.LinkLabel();
             this.linkLabel8 = new System.Windows.Forms.LinkLabel();
             this.lnklblReglamentRoll = new System.Windows.Forms.LinkLabel();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.lblCountBeats = new System.Windows.Forms.Label();
             this.lnkClear_log = new System.Windows.Forms.LinkLabel();
-            this.fllpnl1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.lblSetTest = new System.Windows.Forms.LinkLabel();
-            this.lnklblRefreshReglament = new System.Windows.Forms.LinkLabel();
-            this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.label18 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.lblTimeShedule = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
+            this.fllpnl1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblSetTest = new System.Windows.Forms.LinkLabel();
+            this.lnklblRefreshReglament = new System.Windows.Forms.LinkLabel();
+            this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.button3 = new System.Windows.Forms.Button();
             this.label22 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -69,23 +73,19 @@
             this.linkLabel6 = new System.Windows.Forms.LinkLabel();
             this.lnkMinimizer = new System.Windows.Forms.LinkLabel();
             this.lnkRoll = new System.Windows.Forms.LinkLabel();
-            this.lblHeader = new System.Windows.Forms.Label();
             this.pnlHeader = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.fpnlReglament = new System.Windows.Forms.FlowLayoutPanel();
             this.timer_RefreshReglament = new System.Windows.Forms.Timer(this.components);
             this.timer_Logining = new System.Windows.Forms.Timer(this.components);
             this.timer_showBeats = new System.Windows.Forms.Timer(this.components);
             this.timer_Finishing = new System.Windows.Forms.Timer(this.components);
             this.timer_sync_identification = new System.Windows.Forms.Timer(this.components);
             this.panel6 = new System.Windows.Forms.Panel();
-            this.lstbxLog = new System.Windows.Forms.ListBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.pnlPing.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.fllpnl1.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.SuspendLayout();
@@ -187,25 +187,44 @@
             this.pnlPing.Size = new System.Drawing.Size(1763, 826);
             this.pnlPing.TabIndex = 29;
             // 
-            // linkLabel1
+            // lblHeader
             // 
-            this.linkLabel1.ActiveLinkColor = System.Drawing.Color.White;
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
-            this.linkLabel1.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.linkLabel1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.World, ((byte)(100)));
-            this.linkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(0, 20);
-            this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.linkLabel1.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            this.linkLabel1.Location = new System.Drawing.Point(109, 86);
-            this.linkLabel1.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(80, 19);
-            this.linkLabel1.TabIndex = 54;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "РЕГЛАМЕНТ";
-            this.linkLabel1.UseCompatibleTextRendering = true;
+            this.lblHeader.AutoSize = true;
+            this.lblHeader.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            this.lblHeader.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblHeader.Location = new System.Drawing.Point(1344, 808);
+            this.lblHeader.Name = "lblHeader";
+            this.lblHeader.Size = new System.Drawing.Size(44, 14);
+            this.lblHeader.TabIndex = 30;
+            this.lblHeader.Text = "версия";
+            this.lblHeader.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lblHeader.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel8_MouseDown);
+            this.lblHeader.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel8_MouseMove);
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(20)))));
+            this.panel1.Location = new System.Drawing.Point(12, 108);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(78, 714);
+            this.panel1.TabIndex = 56;
+            this.panel1.MouseEnter += new System.EventHandler(this.Panel1_MouseEnter);
+            this.panel1.MouseLeave += new System.EventHandler(this.Panel1_MouseLeave);
+            // 
+            // lstbxLog
+            // 
+            this.lstbxLog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(20)))));
+            this.lstbxLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstbxLog.Font = new System.Drawing.Font("Arial", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lstbxLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            this.lstbxLog.FormattingEnabled = true;
+            this.lstbxLog.Location = new System.Drawing.Point(807, 108);
+            this.lstbxLog.Name = "lstbxLog";
+            this.lstbxLog.Size = new System.Drawing.Size(681, 663);
+            this.lstbxLog.TabIndex = 55;
             // 
             // linkLabel4
             // 
@@ -226,6 +245,49 @@
             this.linkLabel4.TabStop = true;
             this.linkLabel4.Text = " ";
             this.linkLabel4.Visible = false;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.ActiveLinkColor = System.Drawing.Color.White;
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.linkLabel1.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.linkLabel1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.World, ((byte)(100)));
+            this.linkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(0, 20);
+            this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.linkLabel1.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            this.linkLabel1.Location = new System.Drawing.Point(156, 86);
+            this.linkLabel1.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(80, 19);
+            this.linkLabel1.TabIndex = 54;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "РЕГЛАМЕНТ";
+            this.linkLabel1.UseCompatibleTextRendering = true;
+            // 
+            // fpnlReglament
+            // 
+            this.fpnlReglament.AutoScroll = true;
+            this.fpnlReglament.BackColor = System.Drawing.Color.Transparent;
+            this.fpnlReglament.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            this.fpnlReglament.Location = new System.Drawing.Point(109, 108);
+            this.fpnlReglament.Name = "fpnlReglament";
+            this.fpnlReglament.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.fpnlReglament.Size = new System.Drawing.Size(339, 714);
+            this.fpnlReglament.TabIndex = 0;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanel1.Controls.Add(this.lnkStartBeats);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(537, 86);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(28, 19);
+            this.flowLayoutPanel1.TabIndex = 53;
             // 
             // flowLayoutPanel2
             // 
@@ -313,18 +375,6 @@
             this.lnklblReglamentRoll.UseCompatibleTextRendering = true;
             this.lnklblReglamentRoll.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnklblReglamentRoll_LinkClicked);
             // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.flowLayoutPanel1.Controls.Add(this.lnkStartBeats);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(537, 86);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(28, 19);
-            this.flowLayoutPanel1.TabIndex = 53;
-            // 
             // lblCountBeats
             // 
             this.lblCountBeats.AutoSize = true;
@@ -356,6 +406,54 @@
             this.lnkClear_log.Text = " ";
             this.lnkClear_log.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkClear_log_LinkClicked);
             // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(24, 26);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(59, 13);
+            this.label18.TabIndex = 1;
+            this.label18.Text = "транспорт";
+            this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(16, 12);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(67, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "соединения";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // lblTimeShedule
+            // 
+            this.lblTimeShedule.AutoSize = true;
+            this.lblTimeShedule.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.World, ((byte)(0)));
+            this.lblTimeShedule.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            this.lblTimeShedule.Location = new System.Drawing.Point(574, 87);
+            this.lblTimeShedule.Name = "lblTimeShedule";
+            this.lblTimeShedule.Size = new System.Drawing.Size(55, 15);
+            this.lblTimeShedule.TabIndex = 39;
+            this.lblTimeShedule.Text = "00:00:00";
+            // 
+            // button4
+            // 
+            this.button4.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.button4.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.button4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(120)))));
+            this.button4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(70)))));
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(255)))));
+            this.button4.Location = new System.Drawing.Point(1155, 16);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(167, 23);
+            this.button4.TabIndex = 19;
+            this.button4.Text = "Отчет по направлениям";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Visible = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // fllpnl1
             // 
             this.fllpnl1.AutoSize = true;
@@ -364,7 +462,7 @@
             this.fllpnl1.Controls.Add(this.lblSetTest);
             this.fllpnl1.Controls.Add(this.lnklblRefreshReglament);
             this.fllpnl1.Controls.Add(this.linkLabel3);
-            this.fllpnl1.Location = new System.Drawing.Point(190, 80);
+            this.fllpnl1.Location = new System.Drawing.Point(237, 80);
             this.fllpnl1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.fllpnl1.Name = "fllpnl1";
             this.fllpnl1.Size = new System.Drawing.Size(69, 25);
@@ -434,54 +532,6 @@
             this.linkLabel3.TabStop = true;
             this.linkLabel3.Text = " ";
             this.linkLabel3.UseCompatibleTextRendering = true;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(24, 26);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(59, 13);
-            this.label18.TabIndex = 1;
-            this.label18.Text = "транспорт";
-            this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(16, 12);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(67, 13);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "соединения";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // lblTimeShedule
-            // 
-            this.lblTimeShedule.AutoSize = true;
-            this.lblTimeShedule.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.World, ((byte)(0)));
-            this.lblTimeShedule.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            this.lblTimeShedule.Location = new System.Drawing.Point(574, 87);
-            this.lblTimeShedule.Name = "lblTimeShedule";
-            this.lblTimeShedule.Size = new System.Drawing.Size(55, 15);
-            this.lblTimeShedule.TabIndex = 39;
-            this.lblTimeShedule.Text = "00:00:00";
-            // 
-            // button4
-            // 
-            this.button4.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.button4.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.button4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(120)))));
-            this.button4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(70)))));
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(255)))));
-            this.button4.Location = new System.Drawing.Point(1155, 16);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(167, 23);
-            this.button4.TabIndex = 19;
-            this.button4.Text = "Отчет по направлениям";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Visible = false;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -654,21 +704,6 @@
             this.lnkRoll.MouseEnter += new System.EventHandler(this.lnk_MouseEnter);
             this.lnkRoll.MouseLeave += new System.EventHandler(this.lnk_MouseLeave);
             // 
-            // lblHeader
-            // 
-            this.lblHeader.AutoSize = true;
-            this.lblHeader.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            this.lblHeader.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblHeader.Location = new System.Drawing.Point(1344, 808);
-            this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(44, 14);
-            this.lblHeader.TabIndex = 30;
-            this.lblHeader.Text = "версия";
-            this.lblHeader.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.lblHeader.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel8_MouseDown);
-            this.lblHeader.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel8_MouseMove);
-            // 
             // pnlHeader
             // 
             this.pnlHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -688,6 +723,19 @@
             this.pnlHeader.MouseLeave += new System.EventHandler(this.PnlHeader_MouseLeave);
             this.pnlHeader.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel8_MouseMove);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label2.Location = new System.Drawing.Point(30, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(73, 19);
+            this.label2.TabIndex = 57;
+            this.label2.Text = "gateway";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(55)))));
@@ -696,17 +744,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1498, 1);
             this.panel3.TabIndex = 42;
-            // 
-            // fpnlReglament
-            // 
-            this.fpnlReglament.AutoScroll = true;
-            this.fpnlReglament.BackColor = System.Drawing.Color.Transparent;
-            this.fpnlReglament.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            this.fpnlReglament.Location = new System.Drawing.Point(109, 108);
-            this.fpnlReglament.Name = "fpnlReglament";
-            this.fpnlReglament.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.fpnlReglament.Size = new System.Drawing.Size(339, 714);
-            this.fpnlReglament.TabIndex = 0;
             // 
             // timer_RefreshReglament
             // 
@@ -741,43 +778,6 @@
             this.panel6.Size = new System.Drawing.Size(3, 736);
             this.panel6.TabIndex = 34;
             // 
-            // lstbxLog
-            // 
-            this.lstbxLog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(20)))));
-            this.lstbxLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstbxLog.Font = new System.Drawing.Font("Arial", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lstbxLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            this.lstbxLog.FormattingEnabled = true;
-            this.lstbxLog.Location = new System.Drawing.Point(807, 108);
-            this.lstbxLog.Name = "lstbxLog";
-            this.lstbxLog.Size = new System.Drawing.Size(681, 663);
-            this.lstbxLog.TabIndex = 55;
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(20)))));
-            this.panel1.Location = new System.Drawing.Point(12, 108);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(78, 714);
-            this.panel1.TabIndex = 56;
-            this.panel1.MouseEnter += new System.EventHandler(this.Panel1_MouseEnter);
-            this.panel1.MouseLeave += new System.EventHandler(this.Panel1_MouseLeave);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label2.Location = new System.Drawing.Point(30, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 19);
-            this.label2.TabIndex = 57;
-            this.label2.Text = "GATEWAY";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // frmGateway
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -800,10 +800,10 @@
             this.contextMenuStrip1.ResumeLayout(false);
             this.pnlPing.ResumeLayout(false);
             this.pnlPing.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
-            this.flowLayoutPanel2.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.fllpnl1.ResumeLayout(false);
             this.fllpnl1.PerformLayout();
             this.pnlHeader.ResumeLayout(false);

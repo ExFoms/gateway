@@ -5,7 +5,7 @@
     <transport_files comment="ТЕСТ">
       <zap>
         <name>Перенос входящих файлов СМЭВ (схема 1.2)</name>
-        <tick comment="через 10 сек">1000</tick>
+        <tick comment="через 10 сек">1</tick>
         <nrecord>0</nrecord>
         <comment>Простой перенос, входящие сообщения СМЭВ (схема 1.2)</comment>
         <source>C:\testdata\input</source>
@@ -20,7 +20,7 @@
     <transport_files_inpersonalfolder comment="Получатель определяется в маске # имени файла">
       <zap>
         <name>Перенос файлов в персональные папки получателей (СМО)</name>
-        <tick comment="через 10 сек">1000</tick>
+        <tick comment="через 10 сек">1</tick>
         <nrecord>0</nrecord>
         <comment>Перенос файлов в персональные папки получателей (СМО)</comment>
         <source>C:\testdata\input</source>
