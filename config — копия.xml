@@ -1,0 +1,608 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <reglament>
+    <name>reglament</name>
+    <connectionString>Server=192.168.1.4;Port=5432;User Id=gate;Password=Ghnmop0!</connectionString>
+  </reglament>
+  <gateway>
+    <name>gateway</name>
+    <connectionFolders>
+      <folder>Q:\in</folder>
+      <folder>Q:\out</folder>
+    </connectionFolders>
+  </gateway>
+  <connections comment="Контрольные соединения Шлюза, без которых работоспособность должна быть остановлена">
+   <connection>
+      <nrecord>1</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>adapter_smev13</name>
+      <enable>0</enable>
+      <connectionFolders>
+        <folder>R:\in</folder>
+        <folder>R:\out</folder>
+      </connectionFolders>
+      <comments>Папки адаптера СМЭВ (схема 1.3)</comments>
+    </connection>    
+    <connection>
+      <nrecord>2</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>adapter_smev12</name>
+      <enable>0</enable>
+      <connectionFolders>
+        <folder>Q:\in</folder>
+        <folder>Q:\out</folder>
+      </connectionFolders>
+      <comments>Папки адаптера СМЭВ (схема 1.2)</comments>
+    </connection>
+    <connection>
+      <nrecord>3</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-c</name>
+      <enable>0</enable>   
+      <connectionString>Server=192.168.1.4;Port=5432;User Id=gate;Password=Ghnmop0!;pooling=false;</connectionString>
+      <serverIp>192.168.1.4</serverIp>
+      <comments>Cервер МП (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>1</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>private_office</name>
+      <enable>0</enable>   
+      <connectionString>Server=192.168.1.4;Port=5432;User Id=gate;Password=Ghnmop0!;pooling=false;</connectionString>
+      <serverIp>192.168.1.4</serverIp>
+      <comments>Cервер МП (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-c</name>
+      <enable>0</enable>   
+      <serverIp>192.168.1.4</serverIp>
+      <comments>Сервер базы данных реестров МП</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>clouddata</name>
+      <enable>0</enable>   
+      <serverIp>192.168.1.21</serverIp>
+      <comments>CloudData</comments>
+    </connection>
+    <connection>
+      <nrecord>4</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>storage</name>
+      <enable>0</enable>   
+      <connectionFolders>
+        <folder>S:\</folder>
+      </connectionFolders>
+      <comments>Место хранения резервных копий баз данных</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-r</name>
+      <enable>0</enable>   
+      <connectionString>uid=Gate;pwd=Ghzxop0!;server=192.168.1.6</connectionString>
+      <serverIp>192.168.1.6</serverIp>
+      <comments>Cервер СРЗ (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>srz3_00_adapter</name>
+      <enable>0</enable>   
+      <connectionString>uid=Gate;pwd=Ghzxop0!;server=192.168.1.6</connectionString>
+      <serverIp>192.168.1.6</serverIp>
+      <comments>Cервер СРЗ (ip), линк по имени базы (srz3_00_adapter)</comments>
+    </connection>    
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>srz3_00</name>
+      <enable>0</enable>   
+      <connectionString>uid=Gate;pwd=Ghzxop0!;server=192.168.1.6</connectionString>
+      <serverIp>192.168.1.6</serverIp>
+      <comments>Cервер СРЗ (ip), линк по имени базы (srz3_00)</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>tmpForSRZ</name>
+      <enable>0</enable>   
+      <connectionString>uid=Gate;pwd=Ghzxop0!;server=192.168.1.6</connectionString>
+      <serverIp>192.168.1.6</serverIp>
+      <comments>Cервер СРЗ (ip), линк по имени базы (tmpForSRZ)</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>libraries</name>
+      <enable>0</enable>   
+      <connectionString>uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\SQLEXPRESS</connectionString>
+      <serverIp>SERVER-SHRK</serverIp>
+      <comments>Справочная база на сервере ШРК, линк по имени базы (libraries)</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>postgres</name>
+      <enable>0</enable>   
+      <connectionString>User ID=postgres;Password=123OOO321;Host=11.0.0.65;ApplicationName = Gate;Port=5432;pooling=false;</connectionString>
+      <serverIp>11.0.0.65</serverIp>
+      <comments>Сервер ЕИР, линк по имени базы (postgres)</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>my_db</name>
+      <enable>0</enable>   
+      <connectionString>Server=192.168.1.4;Port=5432;ApplicationName = Gate;User Id=gate;Password=Ghnmop0!;pooling=false;</connectionString>
+      <serverIp>192.168.1.4</serverIp>
+      <comments>Сервер данных реестров МП, линк по имени базы (main_db)</comments>
+    </connection>
+    <connection>
+      <nrecord>0</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>private_office</name>
+      <enable>0</enable>   
+      <connectionString>Server=192.168.1.4;Port=5432;ApplicationName = Gate;User Id=gate;Password=Ghnmop0!;pooling=false;</connectionString>
+      <serverIp>192.168.1.4</serverIp>
+      <comments>Сервер данных реестров МП, линк по имени базы (private_office)</comments>
+    </connection>
+    <connection>
+      <nrecord>1</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-e</name>
+      <enable>0</enable>   
+      <connectionString>uid=Sa;pwd=Q1w2e3;server=11.0.0.65</connectionString>
+      <serverIp>11.0.0.65</serverIp>
+      <comments>Cервер ЕИР (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>2</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-shrk</name>
+      <enable>0</enable>   
+      <connectionString>uid=sa;pwd=Wedfzx8!;server=192.168.1.93</connectionString>
+      <serverIp>192.168.1.93</serverIp>
+      <comments>Cервер ШРК (ip)</comments>
+    </connection>
+    <connection>
+      <nrecord>3</nrecord>
+      <connectiontype>1</connectiontype>
+      <name>server-shrk-name</name>
+      <enable>0</enable>   
+      <connectionString>uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\SQLEXPRESS</connectionString>
+      <serverIp>SERVER-SHRK</serverIp>
+      <comments>Сервер ШРК (name)</comments>
+    </connection>
+    <connection>
+      <nrecord>4</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>server-e-folders</name>
+      <enable>0</enable>   
+      <connectionFolders>
+        <folder>O:\</folder>
+      </connectionFolders>
+      <comments>Папки сервера ЕИР</comments>
+    </connection>
+    <connection>
+      <nrecord>5</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>server-shrk-folders</name>
+      <enable>0</enable>   
+      <connectionFolders>
+        <folder>C:\srz_support\current\input\</folder>
+        <folder>C:\srz_support\current\output\</folder>
+      </connectionFolders>
+      <comments>Папки сервера ШРК</comments>
+    </connection>
+    <connection>
+      <nrecord>6</nrecord>
+      <connectiontype>2</connectiontype>
+      <name>cs_folders</name>
+      <enable>0</enable>   
+      <connectionFolders>
+        <folder>\\10.28.160.17\srz\input\</folder>
+        <folder>\\10.28.160.17\srz\reports\</folder>
+      </connectionFolders>
+      <comments>Папки ЦС</comments>
+    </connection>
+    <connection>
+      <nrecord>8</nrecord>
+      <connectiontype>4</connectiontype>
+      <name>scanerp</name>
+      <enable>0</enable>   
+      <restartInterval>180</restartInterval>
+      <program>C:\srz\scanerp\scanerp.exe</program>ents>
+    </connection>    
+    <connection>
+      <nrecord>9</nrecord>
+      <connectiontype>4</connectiontype>
+      <name>VipNetmail</name>
+      <enable>0</enable>   
+      <program>C:\Program Files\InfoTeCS\ViPNet Client\wmail.exe</program>
+      <comments>Деловая почта VIpNet</comments>
+    </connection>
+  </connections>
+  <processes comment="Процессы выполняемые Шлюзом">
+    <transport_files comment="ТЕСТ">
+      <zap>
+        <name>Перенос входящих файлов СМЭВ (схема 1.3)</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, входящие сообщения СМЭВ (схема 1.3)</comment>
+        <source>R:\in\</source>
+        <destination>C:\srz_support\current\input\</destination>
+        <prefix>smev13-</prefix>
+        <masks>
+          <mask comment="Все файлы">*</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос ошибок исходящих файлов СМЭВ (схема 1.3)</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, Ошибки исходящих сообщений СМЭВ (схема 1.3)</comment>
+        <source>R:\out\error</source>
+        <destination>C:\srz_support\current\input\</destination>
+        <prefix>error-smev13-</prefix>
+        <masks>
+          <mask comment="Все файлы">*</mask>
+        </masks>
+        <rewrite>true</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос входящих файлов СМЭВ (схема 1.2)</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, входящие сообщения СМЭВ (схема 1.2)</comment>
+        <source>Q:\in\</source>
+        <destination>C:\srz_support\current\input\</destination>
+        <prefix>smev12-</prefix>
+        <masks>
+          <mask comment="Все файлы">*</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос ошибок исходящих файлов СМЭВ (схема 1.2)</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, Ошибки исходящих сообщений СМЭВ (схема 1.2)</comment>
+        <source>Q:\out\error\</source>
+        <destination>C:\srz_support\current\input\</destination>
+        <prefix>error-smev12-</prefix>
+        <masks>
+          <mask comment="Все файлы">*</mask>
+        </masks>
+        <rewrite>true</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос исходящих файлов для СМЭВ (схема 1.2)</name>
+        <tick comment="через 10 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, исходящие сообщения для СМЭВ (схема 1.2)</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>Q:\out\</destination>
+        <prefix />
+        <masks>
+          <mask comment="Все файлы">smev12-response-*.xml</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос исходящих файлов для СМЭВ (схема 1.3)</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, исходящие сообщения для СМЭВ (схема 1.3)</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>R:\out\</destination>
+        <prefix />
+        <masks>
+          <mask comment="схема 1.2">smev13-response-*.xml</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос резервных копий</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, резервные копии</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>S:\Gate-auto\</destination>
+        <prefix />
+        <masks>
+          <mask comment="Все файлы">*.backup</mask>
+          <mask comment="Все файлы">*.bak</mask>
+          <mask comment="Все файлы">*.bak.zip</mask>
+        </masks>
+        <rewrite>true</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос исходящих файлов СРЗ</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, исходящие файлы программы СРЗ</comment>
+        <source>C:\srz\registr\OUT\</source>
+        <destination>C:\srz_support\current\output\</destination>
+        <prefix />
+        <masks>
+          <mask comment="Все файлы">*</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос файлов из ЦС</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, файлы из ЦС</comment>
+        <source>\\10.28.160.17\srz\reports\</source>
+        <destination>C:\srz_support\current\input\</destination>
+        <prefix />
+        <masks>
+          <mask comment="Все файлы от ЦС">*</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос файлов для ЦС</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, файлы для ЦС</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>\\10.28.160.17\srz\input\</destination>
+        <prefix />
+        <masks>
+          <mask comment="Файлы с персональными данными ЗЛ от СМО">10000-*.uprmes</mask>
+          <mask comment="Файлы с прикреплением ЗЛ к МО">M10000*</mask>
+          <mask comment="Файлы с прикреплением ЗЛ к МР">G10000*</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос файлов для ЕИР</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, файлы для ЕИР</comment>
+        <source>C:\srz_support\current\input\</source>
+        <destination>\\11.0.0.65\currency\input\</destination>
+        <prefix />
+        <masks>
+          <mask>SNM*</mask>
+          <mask>SMM*</mask>
+          <mask>SAM*</mask>
+          <mask>SRM*</mask>
+          <mask>SHM*</mask>
+          <mask>SEM*</mask>
+          <mask>SVM*</mask>
+          <mask>SOM*</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос файлов от ЕИР</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, файлы от ЕИР</comment>
+        <source>\\11.0.0.65\currency\output\</source>
+        <destination>C:\srz_support\current\output\</destination>
+        <prefix />
+        <masks>
+          <mask>*</mask>
+        </masks>
+        <rewrite>false</rewrite>
+       </zap>
+      <zap>
+        <name>Подписки Богомаз О.В</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Простой перенос, файлы для Богомаз О.В.</comment>
+        <source>W:\</source>
+        <destination>W:\FOMS\Bogomaz\</destination>
+        <prefix />
+        <masks>
+          <mask>report_si_schema_*.csv</mask>
+          <mask>report_zldn_schema_*.csv</mask>
+        </masks>
+        <rewrite>false</rewrite>
+       </zap>    
+    </transport_files>
+    <transport_files_inpersonalfolder comment="Получатель определяется в маске # имени файла">
+      <zap>
+        <name>Перенос файлов в персональные папки получателей (СМО)1</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Перенос файлов в персональные папки получателей (СМО) c задержкой, т.к. формируется прям здесь</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>C:\srz_support\current\output\</destination>
+        <recipients>
+          <recipient>28001</recipient>
+          <recipient>28004</recipient>
+          <recipient>28005-test</recipient>
+        </recipients>
+        <prefix />
+        <masks>
+          <mask comment="Протоколы результатов обработки I">P#*.xml</mask>
+          <mask comment="Протоколы ФЛК структуры файлов I">F#*.xml</mask>
+          <mask comment="Закрытие страхования">S#*.xml</mask>
+          <mask comment="Рождение, данные ЗАГС">N#_*.xml</mask>
+	  <mask>ZLDNT#_*.xml</mask>	
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос файлов в персональные папки получателей (СМО)2</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Перенос файлов в персональные папки получателей (СМО)2</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>C:\srz_support\current\output\</destination>
+        <recipients>
+          <recipient>28001</recipient>
+          <recipient>28004</recipient>
+          <recipient>28005-test</recipient>
+        </recipients>
+        <prefix />
+        <masks>
+          <mask comment="Перемена имени, данные ЗАГС">E#_*.xml</mask>
+          <mask comment="Протокол обработки прикрепления ЗЛ">EO1#*.CSV</mask>
+          <mask comment="Протокол обработки прикрепления ЗЛ">LO1#*.CSV</mask>
+          <mask comment="Запрос из СМЭВ о выборе ЗЛ СМО">SMEV-#*.ZIP</mask>
+          <mask comment="Срез данных для СМО">SRZ#-*.xml</mask>
+          <mask comment="Запросы с сайта">S?S#_*.xml</mask>
+	  <mask>ZLDNT#_*.xml</mask>	
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+      <zap>
+        <name>Перенос файлов в персональные папки получателей (МО)</name>
+        <tick comment="через 1 сек">1</tick>
+        <enable>0</enable>   
+        <nrecord>1</nrecord>
+        <comment>Перенос файлов в персональные папки получателей (МО)</comment>
+        <source>C:\srz_support\current\output\</source>
+        <destination>C:\srz_support\current\output\</destination>
+        <recipients>
+          <recipient type="MO">280001</recipient>
+          <recipient type="MO">280002</recipient>
+          <recipient type="MO">280003</recipient>
+          <recipient type="MO">280005</recipient>
+          <recipient type="MO">280007</recipient>
+          <recipient type="MO">280009</recipient>
+          <recipient type="MO">280010</recipient>
+          <recipient type="MO">280012</recipient>
+          <recipient type="MO">280013</recipient>
+          <recipient type="MO">280015</recipient>
+          <recipient type="MO">280017</recipient>
+          <recipient type="MO">280018</recipient>
+          <recipient type="MO">280019</recipient>
+          <recipient type="MO">280020</recipient>
+          <recipient type="MO">280022</recipient>
+          <recipient type="MO">280024</recipient>
+          <recipient type="MO">280025</recipient>
+          <recipient type="MO">280026</recipient>
+          <recipient type="MO">280027</recipient>
+          <recipient type="MO">280028</recipient>
+          <recipient type="MO">280029</recipient>
+          <recipient type="MO">280036</recipient>
+          <recipient type="MO">280037</recipient>
+          <recipient type="MO">280038</recipient>
+          <recipient type="MO">280039</recipient>
+          <recipient type="MO">280040</recipient>
+          <recipient type="MO">280041</recipient>
+          <recipient type="MO">280043</recipient>
+          <recipient type="MO">280052</recipient>
+          <recipient type="MO">280053</recipient>
+          <recipient type="MO">280059</recipient>
+          <recipient type="MO">280061</recipient>
+          <recipient type="MO">280064</recipient>
+          <recipient type="MO">280065</recipient>
+          <recipient type="MO">280066</recipient>
+          <recipient type="MO">280067</recipient>
+          <recipient type="MO">280068</recipient>
+          <recipient type="MO">280069</recipient>
+          <recipient type="MO">280071</recipient>
+          <recipient type="MO">280074</recipient>
+          <recipient type="MO">280075</recipient>
+          <recipient type="MO">280076</recipient>
+          <recipient type="MO">280078</recipient>
+          <recipient type="MO">280080</recipient>
+          <recipient type="MO">280083</recipient>
+          <recipient type="MO">280084</recipient>
+          <recipient type="MO">280085</recipient>
+          <recipient type="MO">280091</recipient>
+          <recipient type="MO">280093</recipient>
+          <recipient type="MO">280095</recipient>
+          <recipient type="MO">280107</recipient>
+          <recipient type="MO">280110</recipient>
+          <recipient type="MO">280112</recipient>
+          <recipient type="MO">280116</recipient>
+          <recipient type="MO">280117</recipient>
+          <recipient type="MO">280118</recipient>
+          <recipient type="MO">280125</recipient>
+          <recipient type="MO">289001</recipient>
+        </recipients>
+        <prefix />
+        <masks>
+          <mask>SNT#*.xml</mask>
+          <mask>SAT#*.xml</mask>
+          <mask>SRT#*.xml</mask>
+          <mask>SHT#*.xml</mask>
+          <mask>SET#*.xml</mask>
+          <mask>SVT#*.xml</mask>
+          <mask>SOT#*.xml</mask>
+          <mask>SPT#*.xml</mask>
+          <mask>SFT#*.xml</mask>
+          <mask>msg#*.txt</mask>
+          <mask>prikr#*.csv</mask>
+          <mask>fail#*.txt</mask>
+          <mask>info#-*.txt</mask>
+          <mask>DNSFT#*.xml</mask>
+          <mask>DNSPT#*.xml</mask>
+        </masks>
+        <rewrite>false</rewrite>
+      </zap>
+    </transport_files_inpersonalfolder>
+    <transport_files_email comment="отправка электронной почтой">
+      <zap>
+        <name>Отправка электронной почтой omo_zdrav@mail.ru в МИНЗДРАВ</name>
+        <tick comment="">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Отправка электронной почтой omo_zdrav@mail.ru в МИНЗДРАВ</comment>
+        <source>W:\minzdrav\omo</source>
+        <!--email>omo_zdrav@mail.ru</email-->
+        <email>evpoddubnova_443@mail.ru</email>
+        <caption>Анализ направлений</caption>
+      </zap>
+      <zap>
+        <name>Уведомление администратора</name>
+        <tick comment="">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>Уведомление администратора</comment>
+        <source>W:\admin\error</source>
+        <email>sa.gate.aofoms@yandex.ru</email>
+        <caption>Ошибка в процессе</caption>
+      </zap>
+      <zap>
+        <name>28004, почта директора</name>
+        <tick comment="">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>28004, почта директора</comment>
+        <source>W:\28004owner</source>
+        <email>dyachkova.elena@sogaz-med.ru</email>
+        <caption>ФОМС (автомат) - Директору СОГАЗ-МЕД</caption>
+      </zap>
+      <zap>
+        <name>ФОМС, начальник управления ИТО</name>
+        <tick comment="">1</tick>
+        <enable>0</enable>   
+        <nrecord>0</nrecord>
+        <comment>ФОМС, начальник управления ИТО</comment>
+        <source>W:\FOMS\email\Sitnikov</source>
+        <email>sitnikov@aofoms.tsl.ru</email>
+        <caption>ФОМС (автомат) - начальнику управления</caption>
+      </zap>
+    </transport_files_email>
+  </processes>
+</configuration>

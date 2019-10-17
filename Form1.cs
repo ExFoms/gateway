@@ -45,6 +45,10 @@ namespace WindowsFormsApplication3
         public Queue<clsLog> logQueue = new Queue<clsLog>();
         public clsLogining Gate_Logining = new clsLogining("uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\\SQLEXPRESS;database=gate;");
         // контрольные точки
+        clsGateConfig.configurationType config = new clsGateConfig.configurationType();
+        //public clsGateConfig.gatewayType Gateway_Connections = new clsGateConfig.gatewayType();
+        //public clsGateConfig.reglamentType Reglament_Connections = new clsGateConfig.reglamentType();
+
         public List<clsConnections> Gate_Connections = new List<clsConnections>();
         public List<clsTransport_files> Gate_Transport_files = new List<clsTransport_files>();
         public List<clsTransport_files_inpersonalfolder> Gate_Transport_files_inpersonalfolder = new List<clsTransport_files_inpersonalfolder>();
@@ -68,8 +72,9 @@ namespace WindowsFormsApplication3
         {
             bool result = true;
 
-            loadConfig();
-            // Запускаем логирование
+
+            loadConfig_new();
+            // Запускаем 
             timer_Logining.Enabled = true;
             connections_list = new List<clsConfigPrototype>[4]
             {
@@ -83,7 +88,14 @@ namespace WindowsFormsApplication3
                     prototype.controllerStart();
 
             shedules = new clsShedules(logQueue.Enqueue, ref Gate_Connections);
-            lblSetTest_LinkClicked(null, null); //обновляем визуальные элементы по состоянию тест или раб
+            //запускаем
+            shedules.test = config.reglament.test;
+            lblSetTest_refresh();
+            if (config.reglament.enable) shedules.Start();
+
+            timer_sync_identification.Enabled = config.gateway.identificationSynch.enable; lnkStartBeats_Refresh();
+
+            //lblSetTest_LinkClicked(null, null); //обновляем визуальные элементы по состоянию тест или раб
 
             timer_Step_TransferFiles.Enabled = true;
             check_StatusLogining.Enabled = true;
@@ -96,8 +108,147 @@ namespace WindowsFormsApplication3
         {
             InitializeComponent();
         }
+        private void loadConfig_new()
+        {
+            string file = Path.Combine(Directory.GetCurrentDirectory(), "config.xml");
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.Load(file);
+            config = XmlHelper.DeserializeFrom<clsGateConfig.configurationType>(xmlDocument.DocumentElement);
+            /*MessageBox.Show(XmlHelper.SerializeClear(config));
+            MessageBox.Show(XmlHelper.SerializeClear(config.connections));
+            MessageBox.Show(XmlHelper.SerializeClear(config.processes));
+            */
+            try
+            {
+                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - gateway"));
+                //Инициализация
+                //config.gateway.identificationSynch.enable;
+                if (config.gateway.identificationSynch.emergencyPuase == 0) config.gateway.identificationSynch.emergencyPuase = 60;
+                if (config.gateway.identificationSynch.limitCountFatalRestarts == 0) config.gateway.identificationSynch.limitCountFatalRestarts = 10;
+                config.gateway.identificationSynch.tick = (config.gateway.identificationSynch.tick != 0) ? config.gateway.identificationSynch.tick : 1;
+                timer_sync_identification.Interval = config.gateway.identificationSynch.tick * 1000;
+                //Gateway_Connections = config.gateway;
+                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - reglament"));
+                //Reglament_Connections = config.reglament;
+                //if (!Gate_Logining.Server_connecting()) MessageBox.Show("Нет соединения с базой Лога!");
+                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - connections"));
+                //------------------ Connections
+                int document = 0;
+                foreach (clsGateConfig.connectionsTypeConnection connection in config.connections)
+                {
+                    Gate_Connections.Add(new clsConnections()
+                    {
+                        nrecord = connection.nrecord,
+                        name = connection.name,
+                        comment = connection.comments,
+                        enable = connection.enable
+                    });
+                    Gate_Connections[document].ping.connectionType = connection.connectiontype;
+                    switch (connection.connectiontype)
+                    {
+                        case 1:
+                            Gate_Connections[document].connectionString = connection.connectionString;
+                            Gate_Connections[document].ping.ping_resource = connection.serverIp;
+                            break;
+                        case 2:
+                            Gate_Connections[document].ping.ping_resource = connection.connectionFolders;
+                            Gate_Connections[document].connectionString = connection.connectionString;
+                            break;
+                        case 4:
+                            Gate_Connections[document].ping.ping_resource = connection.program;
+                            Gate_Connections[document].restartInterval = connection.restartInterval;
+                            if (Gate_Connections[document].restartInterval != 0) Gate_Connections[document].startRestart();
+                            break;
+                    }
+                    logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Connections", 0, 0, DateTime.Now, DateTime.Now, connection.name + " - " + connection.comments));
+                    document++;
+                }
+                
+                //------------------ Processes
+                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
+                //List<string> masks_ = new List<string>();
+                //string comment_;    
+                document = 0;
+                foreach (clsGateConfig.processesTypeZap process in config.processes.transport_files)
+                {
+                    //masks_.Clear(); foreach (XmlNode masks in node["masks"]) masks_.Add(@masks.InnerText);
+                    Gate_Transport_files.Add(new clsTransport_files()
+                    {
+                        name = process.name,
+                        tick = process.tick,
+                        nrecord = process.nrecord,
+                        comment = process.comment,
+                        prefix = process.prefix,
+                        masks = process.masks,
+                        rewrite = process.rewrite,
+                        enable = process.enable
+                        //metod_log = logQueue.Enqueue //передача ссылки на метод публикации Лога
+                    });
+                    Gate_Transport_files[document].ping.connectionType = 2;
+                    Gate_Transport_files[document].ping.ping_resource = new string[] { process.source, process.destination };
+                    logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Transport_files", 0, 0, DateTime.Now, DateTime.Now, process.name + " - " + process.comment));
+                    document++;
+                }
 
-        private void loadConfig()
+                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files_inpersonalfolder", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
+                //List<string> recipients_ = new List<string>();
+                document = 0;
+                foreach (clsGateConfig.processesTypeZap2 process in config.processes.transport_files_inpersonalfolder)
+                {
+                    //masks_.Clear(); foreach (XmlNode masks in node["masks"]) masks_.Add(@masks.InnerText);
+                    //recipients_.Clear(); foreach (XmlNode recipients in node["recipients"]) recipients_.Add(recipients.InnerText);
+                    Gate_Transport_files_inpersonalfolder.Add(new clsTransport_files_inpersonalfolder()
+                    {
+                        name = process.name,
+                        tick = process.tick,
+                        nrecord = process.nrecord,
+                        comment = process.comment,
+                        recipients = process.recipients,
+                        prefix = process.prefix,
+                        masks = process.masks,
+                        rewrite = process.rewrite,
+                        enable = process.enable
+                        //connection_name = node["connection_name"].InnerText,
+                        //metod_log = logQueue.Enqueue //передача ссылки на метод публикации Лога
+                    });
+                    Gate_Transport_files_inpersonalfolder[document].ping.connectionType = 2;
+                    Gate_Transport_files_inpersonalfolder[document].ping.ping_resource = new string[] { process.source, process.destination };
+                    logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Transport_files", 0, 0, DateTime.Now, DateTime.Now, process.name + " - " + process.comment));
+                    document++;
+
+                }
+                
+                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files_email", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
+                document = 0;
+                foreach (clsGateConfig.processesTypeZap5 process in config.processes.transport_files_email)
+                {
+                    Gate_Transport_files_email.Add(new clstransport_files_email()
+                    {
+                        name = process.name,
+                        tick = process.tick,
+                        nrecord = process.nrecord,
+                        comment = process.comment,
+                        folder = process.source, 
+                        email = process.email,
+                        caption = process.caption,
+                        enable = process.enable
+                        //metod_log = logQueue.Enqueue //передача ссылки на метод публикации Лога
+                    });
+                    Gate_Transport_files_email[document].ping.connectionType = 3;
+                    Gate_Transport_files_email[document].ping.ping_resource = new string[] { process.source }; ;
+                    document++;
+                }
+                
+                createLabel_Pings(); //                              
+                timer_ping.Enabled = true;
+
+            }
+            catch
+            {
+                logQueue.Enqueue(new clsLog(DateTime.Now, 2, "Gate", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - Ошибка!"));
+            }
+        }
+        private void loadConfig_old()
         {
             int connectionType;
             XmlDocument doc = new XmlDocument();
@@ -117,6 +268,7 @@ namespace WindowsFormsApplication3
                         nrecord = String.IsNullOrEmpty(node["nrecord"].InnerText) ? 0 : int.Parse(node["nrecord"].InnerText),
                         name = node["name"].InnerText,
                         comment = node["comments"].InnerText
+                        ,enable = false //Convert.ToBoolean(node["enable"].InnerText)
                     });
                     Gate_Connections[document].ping.connectionType = String.IsNullOrEmpty(node["connectiontype"].InnerText) ? 0 : int.Parse(node["connectiontype"].InnerText);
                     switch (connectionType)
@@ -417,6 +569,7 @@ namespace WindowsFormsApplication3
                 thread.Start();
                 timer_Finishing.Enabled = true;
                 this.Enabled = false;
+                saveConfig_new();
                 MessageBox.Show("Ожидаем завершения работавших процессов...");
             }
         }
@@ -516,70 +669,122 @@ namespace WindowsFormsApplication3
         public void ReversEnable_Pings(object sender, EventArgs e)
         {
             string message = string.Empty;
-            int index;
-            for (int i = 0; i < listLabels.Count; i++)
-                if (sender.GetHashCode() == listLabels[i].GetHashCode())
+            int index;          
+
+            if (sender.GetHashCode() == lnkIdentificationSynch.GetHashCode())
+            {
+                if (config.gateway.identificationSynch.enable)
                 {
-                    switch (listLabels[i].Name.Substring(0,5))
+                    if (thread_identification_synch != null)
                     {
-                        case "lnkPC":
-                            index = Gate_Connections.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
-                            if (Gate_Connections[index].enable)
-                            {
-                                if (Gate_Connections[index].ping.connectionType == 4) Gate_Connections[index].ping.stop_program();
-                                Gate_Connections[index].enable = false;
-                                message = "снято с контроля - " + Gate_Connections[index].comment;                               
-                            }
-                            else
-                            {
-                                if (Gate_Connections[index].ping.connectionType == 4) Gate_Connections[index].ping.exec_program();
-                                Gate_Connections[index].enable = true;
-                                message = "поставлено на контроль - " + Gate_Connections[index].comment;
-                            }
-                            break;
-                        case "lnkTF":
-                            index = Gate_Transport_files.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
-                            if (Gate_Transport_files[index].enable)
-                            {
-                                Gate_Transport_files[index].enable = false;
-                                message = "снято с контроля - " + Gate_Transport_files[index].comment;
-                            }
-                            else
-                            {
-                                Gate_Transport_files[index].enable = true;
-                                message = "поставлено на контроль - " + Gate_Transport_files[index].comment;
-                            }
-                            break;
-                        case "lnkTP":
-                            index = Gate_Transport_files_inpersonalfolder.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
-                            if (Gate_Transport_files_inpersonalfolder[index].enable)
-                            {                                
-                                Gate_Transport_files_inpersonalfolder[index].enable = false;
-                                message = "снято с контроля - " + Gate_Transport_files_inpersonalfolder[index].comment;
-                            }
-                            else
-                            {
-                                Gate_Transport_files_inpersonalfolder[index].enable = true;
-                                message = "поставлено на контроль - " + Gate_Transport_files_inpersonalfolder[index].comment;
-                            }
-                            break;
-                        case "lnkTE":
-                            index = Gate_Transport_files_email.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
-                            if (Gate_Transport_files_email[index].enable)
-                            {
-                                Gate_Transport_files_email[index].enable = false;
-                                message = "снято с контроля - " + Gate_Transport_files_email[index].comment;
-                            }
-                            else
-                            {
-                                Gate_Transport_files_email[index].enable = true;
-                                message = "поставлено на контроль - " + Gate_Transport_files_email[index].comment;
-                            }
-                            break;
+                        //message = "снято с контроля - Синхронная идентификация";
+                        thread_identification_synch.Abort();
+                        thread_identification_synch = null;
                     }
-                    //if (Gate_Connections[i].active) Gate_Connections[i].change_status = true;
+                    config.gateway.identificationSynch.enable = false;
                 }
-            if(message != string.Empty) logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, message));
+                else
+                {
+                    config.gateway.identificationSynch.enable = true;
+                    //message = "поставлено на контроль - Синхронная идентификация";
+                }
+                timer_sync_identification.Enabled = config.gateway.identificationSynch.enable;
+            }
+            else if(sender.GetHashCode() == lnkStartBeats.GetHashCode())
+            {
+                /*//bool status;
+                if (shedules.active)
+                {
+                    shedules.Stop();
+                    //status = false;
+                }
+                else
+                {
+                    shedules.Start();
+                    //status = true;
+                }
+                lnkStartBeats_Refresh();
+                */
+                if (config.reglament.enable)
+                    {
+                        shedules.Stop();
+                    //message = "снято с контроля - ...";                        
+                    config.reglament.enable = false;
+                    }
+                    else
+                    {
+                    shedules.Start();
+                    config.reglament.enable = true;
+                        //message = "поставлено на контроль - ...";
+                    }
+                lnkStartBeats_Refresh();
+            }
+            else
+            {
+                for (int i = 0; i < listLabels.Count; i++)
+                    if (sender.GetHashCode() == listLabels[i].GetHashCode())
+                    {
+                        switch (listLabels[i].Name.Substring(0, 5))
+                        {
+                            case "lnkPC":
+                                index = Gate_Connections.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                                if (Gate_Connections[index].enable)
+                                {
+                                    if (Gate_Connections[index].ping.connectionType == 4) Gate_Connections[index].ping.stop_program();
+                                    Gate_Connections[index].enable = false;
+                                    message = "снято с контроля - " + Gate_Connections[index].comment;
+                                }
+                                else
+                                {
+                                    if (Gate_Connections[index].ping.connectionType == 4) Gate_Connections[index].ping.exec_program();
+                                    Gate_Connections[index].enable = true;
+                                    message = "поставлено на контроль - " + Gate_Connections[index].comment;
+                                }
+                                break;
+                            case "lnkTF":
+                                index = Gate_Transport_files.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                                if (Gate_Transport_files[index].enable)
+                                {
+                                    Gate_Transport_files[index].enable = false;
+                                    message = "снято с контроля - " + Gate_Transport_files[index].comment;
+                                }
+                                else
+                                {
+                                    Gate_Transport_files[index].enable = true;
+                                    message = "поставлено на контроль - " + Gate_Transport_files[index].comment;
+                                }
+                                break;
+                            case "lnkTP":
+                                index = Gate_Transport_files_inpersonalfolder.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                                if (Gate_Transport_files_inpersonalfolder[index].enable)
+                                {
+                                    Gate_Transport_files_inpersonalfolder[index].enable = false;
+                                    message = "снято с контроля - " + Gate_Transport_files_inpersonalfolder[index].comment;
+                                }
+                                else
+                                {
+                                    Gate_Transport_files_inpersonalfolder[index].enable = true;
+                                    message = "поставлено на контроль - " + Gate_Transport_files_inpersonalfolder[index].comment;
+                                }
+                                break;
+                            case "lnkTE":
+                                index = Gate_Transport_files_email.FindIndex(s => s.nameHandler.Contains(listLabels[i].Name));
+                                if (Gate_Transport_files_email[index].enable)
+                                {
+                                    Gate_Transport_files_email[index].enable = false;
+                                    message = "снято с контроля - " + Gate_Transport_files_email[index].comment;
+                                }
+                                else
+                                {
+                                    Gate_Transport_files_email[index].enable = true;
+                                    message = "поставлено на контроль - " + Gate_Transport_files_email[index].comment;
+                                }
+                                break;
+                        }
+                        //if (Gate_Connections[i].active) Gate_Connections[i].change_status = true;
+                    }
+            }
+            if(message != string.Empty) logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, message));            
         }
         private void TestStatus_Pings(object sender, EventArgs e)
         //Проверяем состояние пингов, логиним и меняем цвет индикаторов 
@@ -1144,8 +1349,29 @@ namespace WindowsFormsApplication3
         private void lblSetTest_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             shedules.test = !shedules.test;
+            config.reglament.test = shedules.test;
+            config.reglament.enable = false;
             shedules.Stop();
-            lnkStartBeats_Refresh();            
+            lnkStartBeats_Refresh();
+            /*if (shedules.test)
+            {
+                lblSetTest.Image = Pictures.file25_yellow;
+                fpnlReglament.BackColor = clsVisualControls.clrPanelTest;
+                new ToolTip().SetToolTip(this.lblSetTest, "Переход в рабочий режим");
+            }
+            else
+            {
+                lblSetTest.Image = Pictures.file25;
+                fpnlReglament.BackColor = Color.Transparent;
+                new ToolTip().SetToolTip(this.lblSetTest, "Переход в тестовый режим");
+            }
+            */
+            lblSetTest_refresh();
+            lnklblRefreshReglament_LinkClicked(null, null); //Обновляем Регламент
+        }
+
+        private void lblSetTest_refresh()
+        {
             if (shedules.test)
             {
                 lblSetTest.Image = Pictures.file25_yellow;
@@ -1160,7 +1386,6 @@ namespace WindowsFormsApplication3
             }
             lnklblRefreshReglament_LinkClicked(null, null); //Обновляем Регламент
         }
-
         private void lnklblRefreshReglament_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             shedules.dateStart_GetReglament = shedules.dateStart_GetReglament - shedules.intervalSec_GetReglament;
@@ -1181,18 +1406,7 @@ namespace WindowsFormsApplication3
 
         private void lnkStartBeats_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //bool status;
-            if (shedules.active)
-            {
-                shedules.Stop();
-                //status = false;
-            }
-            else
-            {
-                shedules.Start();
-                //status = true;
-            }
-            lnkStartBeats_Refresh();
+            ReversEnable_Pings(sender, null);
         }
         private void lnkStartBeats_Refresh()
         {
@@ -1236,16 +1450,34 @@ namespace WindowsFormsApplication3
                         lblIdentificationSynch.ForeColor = clsVisualControls.clrPingDisable;
                         logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "stopped!!!"));
                         thread_identification_synch.Abort();
-                        thread_identification_synch = null;                        
+                        thread_identification_synch = null;
+                        config.gateway.identificationSynch.countFatalRestarts++;
+                        if (config.gateway.identificationSynch.countFatalRestarts >= config.gateway.identificationSynch.limitCountFatalRestarts)
+                        {
+                            config.gateway.identificationSynch.emergencyPuaseEnable = true;
+                            config.gateway.identificationSynch.emergencyPuaseStart = DateTime.Now;
+                            logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, String.Format("emergency stopped on the {0} second ",config.gateway.identificationSynch.emergencyPuase)));
+                        }
                     }
                 }
                 else
                 {
-                    thread_identification_synch = new Thread(new ParameterizedThreadStart(clsBeat.gate_identification_synch))
-                    { IsBackground = true, Name = "thread_identification_synch" };
-                    thread_identification_synch.Start(Gate_Connections);
-                    lblIdentificationSynch.ForeColor = clsVisualControls.clrText;
-                    logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "started"));
+                    if (config.gateway.identificationSynch.emergencyPuaseEnable)
+                    {
+                        if((DateTime.Now - config.gateway.identificationSynch.emergencyPuaseStart) >= TimeSpan.FromSeconds(config.gateway.identificationSynch.emergencyPuase))
+                        {
+                            config.gateway.identificationSynch.countFatalRestarts = 0;
+                            config.gateway.identificationSynch.emergencyPuaseEnable = false;
+                        }
+                    }
+                    else
+                    {
+                        thread_identification_synch = new Thread(new ParameterizedThreadStart(clsBeat.gate_identification_synch))
+                        { IsBackground = true, Name = "thread_identification_synch" };
+                        thread_identification_synch.Start(Gate_Connections);
+                        lblIdentificationSynch.ForeColor = clsVisualControls.clrText;
+                        logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "started"));
+                    }
                 }                
             }
             catch(Exception ex)
@@ -1262,13 +1494,7 @@ namespace WindowsFormsApplication3
 
         private void LinkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            timer_sync_identification.Enabled = !timer_sync_identification.Enabled;
-            if (!timer_sync_identification.Enabled && thread_identification_synch != null)
-            {
-                logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "stopped!!!"));
-                thread_identification_synch.Abort();
-                thread_identification_synch = null;
-            }
+            
         }
 
         private void LnklblRefreshBeats_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -1294,6 +1520,111 @@ namespace WindowsFormsApplication3
         private void PnlHeader_MouseLeave(object sender, EventArgs e)
         {
             pnlHeader.BackColor = Color.FromArgb(0, 0, 20);
+        }
+
+        private void saveConfig_new()
+        {
+            string file = Path.Combine(Directory.GetCurrentDirectory(), "config.xml");
+            List<clsGateConfig.connectionsTypeConnection> connections = new List<clsGateConfig.connectionsTypeConnection>();
+            foreach(clsConnections connection in Gate_Connections)
+            {
+                connections.Add(new clsGateConfig.connectionsTypeConnection()
+                {
+                    nrecord = connection.nrecord,
+                    name = connection.name,
+                    comments = connection.comment,
+                    enable = connection.enable,
+                    connectiontype = connection.ping.connectionType,
+                    connectionString = connection.connectionString,
+                    serverIp = (connection.ping.connectionType == 1) ? (string) connection.ping.ping_resource : null,
+                    connectionFolders = (connection.ping.connectionType == 2) ? (string[])connection.ping.ping_resource : null,
+                    program = (connection.ping.connectionType == 4) ? (string)connection.ping.ping_resource : null,
+                    restartInterval = connection.restartInterval
+                }
+                );
+            }
+
+            List<clsGateConfig.processesTypeZap> transport_files = new List<clsGateConfig.processesTypeZap>();
+            foreach(clsTransport_files transport in Gate_Transport_files)
+            {
+                transport_files.Add(new clsGateConfig.processesTypeZap()
+                {
+                    name = transport.name,
+                    tick = transport.tick,
+                    nrecord = transport.nrecord,
+                    comment = transport.comment,
+                    prefix = transport.prefix,
+                    masks = transport.masks,
+                    rewrite = transport.rewrite,
+                    enable = transport.enable,
+                    source = ((string[])transport.ping.ping_resource)[0],
+                    destination = ((string[])transport.ping.ping_resource)[1]
+                });
+            }
+            List<clsGateConfig.processesTypeZap2> transport_files_inpersonalfolder = new List<clsGateConfig.processesTypeZap2>();
+            foreach (clsTransport_files_inpersonalfolder transport in Gate_Transport_files_inpersonalfolder)
+            {
+                transport_files_inpersonalfolder.Add(new clsGateConfig.processesTypeZap2()
+                {
+                    name = transport.name,
+                    tick = transport.tick,
+                    nrecord = transport.nrecord,
+                    comment = transport.comment,
+                    recipients = transport.recipients,
+                    prefix = transport.prefix,
+                    masks = transport.masks,
+                    rewrite = transport.rewrite,
+                    enable = transport.enable,
+                    source = ((string[])transport.ping.ping_resource)[0],
+                    destination = ((string[])transport.ping.ping_resource)[1]
+                });
+            }
+            List<clsGateConfig.processesTypeZap5> transport_files_email = new List<clsGateConfig.processesTypeZap5>();
+            foreach (clstransport_files_email transport in Gate_Transport_files_email)
+            {
+                transport_files_email.Add(new clsGateConfig.processesTypeZap5()
+                {
+                    name = transport.name,
+                    tick = transport.tick,
+                    nrecord = transport.nrecord,
+                    comment = transport.comment,
+                    email = transport.email,
+                    caption = transport.caption,
+                    enable = transport.enable,
+                    source = transport.folder
+                });
+            }
+
+            //-------------------------------------
+            config.connections = connections.ToArray();
+            config.processes = new clsGateConfig.processesType()
+            {
+                transport_files = transport_files.ToArray(),
+                transport_files_inpersonalfolder = transport_files_inpersonalfolder.ToArray(),
+                transport_files_email = transport_files_email.ToArray()
+            };
+
+            using(FileStream fileStream = new FileStream(file, FileMode.Create))
+            using (StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.GetEncoding(1251)))
+            {
+                try
+                {
+                    XmlSerializer writer = new XmlSerializer(typeof(clsGateConfig.configurationType));
+                    XmlSerializerNamespaces nameSpaces = new XmlSerializerNamespaces();
+                    writer.Serialize(streamWriter, config);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+                 
+            
+        }
+
+        private void lnkIdentificationSynch_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            ReversEnable_Pings(sender, null);
         }
     }
 

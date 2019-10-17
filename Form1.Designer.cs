@@ -39,6 +39,7 @@
             this.lnkStartBeats = new System.Windows.Forms.LinkLabel();
             this.timer_ping = new System.Windows.Forms.Timer(this.components);
             this.pnlPing = new System.Windows.Forms.Panel();
+            this.btnTest = new System.Windows.Forms.Button();
             this.lblHeader = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lstbxLog = new System.Windows.Forms.ListBox();
@@ -160,6 +161,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlPing.AutoSize = true;
             this.pnlPing.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(20)))));
+            this.pnlPing.Controls.Add(this.btnTest);
             this.pnlPing.Controls.Add(this.lblHeader);
             this.pnlPing.Controls.Add(this.panel1);
             this.pnlPing.Controls.Add(this.lstbxLog);
@@ -186,6 +188,21 @@
             this.pnlPing.Name = "pnlPing";
             this.pnlPing.Size = new System.Drawing.Size(1763, 826);
             this.pnlPing.TabIndex = 29;
+            // 
+            // btnTest
+            // 
+            this.btnTest.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnTest.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.btnTest.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(120)))));
+            this.btnTest.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(70)))));
+            this.btnTest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(255)))));
+            this.btnTest.Location = new System.Drawing.Point(711, 16);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(47, 23);
+            this.btnTest.TabIndex = 57;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
             // 
             // lblHeader
             // 
@@ -331,7 +348,7 @@
             this.lnkIdentificationSynch.TabIndex = 54;
             this.lnkIdentificationSynch.TabStop = true;
             this.lnkIdentificationSynch.Text = "w";
-            this.lnkIdentificationSynch.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel2_LinkClicked);
+            this.lnkIdentificationSynch.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkIdentificationSynch_LinkClicked);
             // 
             // linkLabel8
             // 
@@ -476,7 +493,7 @@
             this.lblSetTest.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblSetTest.Font = new System.Drawing.Font("Wingdings 3", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.World, ((byte)(100)));
             this.lblSetTest.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.lblSetTest.Image = global::WindowsFormsApplication3.Pictures.file25_yellow;
+            this.lblSetTest.Image = global::WindowsFormsApplication3.Pictures.file25;
             this.lblSetTest.LinkArea = new System.Windows.Forms.LinkArea(0, 2);
             this.lblSetTest.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.lblSetTest.LinkColor = System.Drawing.SystemColors.ControlDark;
@@ -867,6 +884,7 @@
         private System.Windows.Forms.ListBox lstbxLog;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnTest;
     }
 }
 

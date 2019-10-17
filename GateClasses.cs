@@ -478,4 +478,1046 @@ namespace WindowsFormsApplication3
  
     }
     #endregion
+
+    public class clsGateConfig
+    {
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlRootAttribute("configuration", Namespace = "", IsNullable = false)]
+        public partial class configurationType
+        {
+
+            private reglamentType reglamentField;
+
+            private gatewayType gatewayField;
+
+            private connectionsTypeConnection[] connectionsField;
+
+            private processesType processesField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public reglamentType reglament
+            {
+                get
+                {
+                    return this.reglamentField;
+                }
+                set
+                {
+                    this.reglamentField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public gatewayType gateway
+            {
+                get
+                {
+                    return this.gatewayField;
+                }
+                set
+                {
+                    this.gatewayField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("connection", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public connectionsTypeConnection[] connections
+            {
+                get
+                {
+                    return this.connectionsField;
+                }
+                set
+                {
+                    this.connectionsField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public processesType processes
+            {
+                get
+                {
+                    return this.processesField;
+                }
+                set
+                {
+                    this.processesField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        public partial class reglamentType
+        {
+
+            private bool enableField;
+
+            private bool testField;
+
+            private string connectionStringField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool enable
+            {
+                get
+                {
+                    return this.enableField;
+                }
+                set
+                {
+                    this.enableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool test
+            {
+                get
+                {
+                    return this.testField;
+                }
+                set
+                {
+                    this.testField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string connectionString
+            {
+                get
+                {
+                    return this.connectionStringField;
+                }
+                set
+                {
+                    this.connectionStringField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        public partial class processesType
+        {
+
+            private processesTypeZap[] transport_filesField;
+
+            private processesTypeZap2[] transport_files_inpersonalfolderField;
+
+            private processesTypeZap5[] transport_files_emailField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("zap", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public processesTypeZap[] transport_files
+            {
+                get
+                {
+                    return this.transport_filesField;
+                }
+                set
+                {
+                    this.transport_filesField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("zap", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+            public processesTypeZap2[] transport_files_inpersonalfolder
+            {
+                get
+                {
+                    return this.transport_files_inpersonalfolderField;
+                }
+                set
+                {
+                    this.transport_files_inpersonalfolderField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("zap", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+            public processesTypeZap5[] transport_files_email
+            {
+                get
+                {
+                    return this.transport_files_emailField;
+                }
+                set
+                {
+                    this.transport_files_emailField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        public partial class processesTypeZap
+        {
+
+            private string nameField;
+
+            private int tickField;
+
+            private bool enableField;
+
+            private int nrecordField;
+
+            private string prefixField;
+
+            private bool rewriteField;
+
+            private string commentField;
+
+            private string sourceField;
+
+            private string destinationField;
+
+            private string[] masksField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string name
+            {
+                get
+                {
+                    return this.nameField;
+                }
+                set
+                {
+                    this.nameField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int tick
+            {
+                get
+                {
+                    return this.tickField;
+                }
+                set
+                {
+                    this.tickField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool enable
+            {
+                get
+                {
+                    return this.enableField;
+                }
+                set
+                {
+                    this.enableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int nrecord
+            {
+                get
+                {
+                    return this.nrecordField;
+                }
+                set
+                {
+                    this.nrecordField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string prefix
+            {
+                get
+                {
+                    return this.prefixField;
+                }
+                set
+                {
+                    this.prefixField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool rewrite
+            {
+                get
+                {
+                    return this.rewriteField;
+                }
+                set
+                {
+                    this.rewriteField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string comment
+            {
+                get
+                {
+                    return this.commentField;
+                }
+                set
+                {
+                    this.commentField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string source
+            {
+                get
+                {
+                    return this.sourceField;
+                }
+                set
+                {
+                    this.sourceField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string destination
+            {
+                get
+                {
+                    return this.destinationField;
+                }
+                set
+                {
+                    this.destinationField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("mask", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+            public string[] masks
+            {
+                get
+                {
+                    return this.masksField;
+                }
+                set
+                {
+                    this.masksField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        public partial class processesTypeZap2
+        {
+
+            private string nameField;
+
+            private int tickField;
+
+            private bool enableField;
+
+            private int nrecordField;
+
+            private string prefixField;
+
+            private bool rewriteField;
+
+            private string commentField;
+
+            private string sourceField;
+
+            private string destinationField;
+
+            private string[] recipientsField;
+
+            private string[] masksField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string name
+            {
+                get
+                {
+                    return this.nameField;
+                }
+                set
+                {
+                    this.nameField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int tick
+            {
+                get
+                {
+                    return this.tickField;
+                }
+                set
+                {
+                    this.tickField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool enable
+            {
+                get
+                {
+                    return this.enableField;
+                }
+                set
+                {
+                    this.enableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int nrecord
+            {
+                get
+                {
+                    return this.nrecordField;
+                }
+                set
+                {
+                    this.nrecordField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string prefix
+            {
+                get
+                {
+                    return this.prefixField;
+                }
+                set
+                {
+                    this.prefixField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool rewrite
+            {
+                get
+                {
+                    return this.rewriteField;
+                }
+                set
+                {
+                    this.rewriteField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string comment
+            {
+                get
+                {
+                    return this.commentField;
+                }
+                set
+                {
+                    this.commentField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string source
+            {
+                get
+                {
+                    return this.sourceField;
+                }
+                set
+                {
+                    this.sourceField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string destination
+            {
+                get
+                {
+                    return this.destinationField;
+                }
+                set
+                {
+                    this.destinationField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("recipient", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string[] recipients
+            {
+                get
+                {
+                    return this.recipientsField;
+                }
+                set
+                {
+                    this.recipientsField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("mask", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+            public string[] masks
+            {
+                get
+                {
+                    return this.masksField;
+                }
+                set
+                {
+                    this.masksField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        public partial class processesTypeZap5
+        {
+
+            private string nameField;
+
+            private int tickField;
+
+            private bool enableField;
+
+            private int nrecordField;
+
+            private string commentField;
+
+            private string sourceField;
+
+            private string emailField;
+
+            private string captionField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string name
+            {
+                get
+                {
+                    return this.nameField;
+                }
+                set
+                {
+                    this.nameField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int tick
+            {
+                get
+                {
+                    return this.tickField;
+                }
+                set
+                {
+                    this.tickField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool enable
+            {
+                get
+                {
+                    return this.enableField;
+                }
+                set
+                {
+                    this.enableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int nrecord
+            {
+                get
+                {
+                    return this.nrecordField;
+                }
+                set
+                {
+                    this.nrecordField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string comment
+            {
+                get
+                {
+                    return this.commentField;
+                }
+                set
+                {
+                    this.commentField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string source
+            {
+                get
+                {
+                    return this.sourceField;
+                }
+                set
+                {
+                    this.sourceField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string email
+            {
+                get
+                {
+                    return this.emailField;
+                }
+                set
+                {
+                    this.emailField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string caption
+            {
+                get
+                {
+                    return this.captionField;
+                }
+                set
+                {
+                    this.captionField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        public partial class gatewayType
+        {
+
+            private gatewayTypeIdentificationSynch identificationSynchField;
+
+            private string[] connectionFoldersField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public gatewayTypeIdentificationSynch identificationSynch
+            {
+                get
+                {
+                    return this.identificationSynchField;
+                }
+                set
+                {
+                    this.identificationSynchField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("folder", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string[] connectionFolders
+            {
+                get
+                {
+                    return this.connectionFoldersField;
+                }
+                set
+                {
+                    this.connectionFoldersField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        public partial class gatewayTypeIdentificationSynch
+        {
+
+            private bool enableField;
+
+            private int tickField;
+
+            private int countFatalRestartsField;
+
+            private int limitCountFatalRestartsField;
+
+            private bool emergencyPuaseEnableField;
+
+            private System.DateTime emergencyPuaseStartField;
+
+            private int emergencyPuaseField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool enable
+            {
+                get
+                {
+                    return this.enableField;
+                }
+                set
+                {
+                    this.enableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int tick
+            {
+                get
+                {
+                    return this.tickField;
+                }
+                set
+                {
+                    this.tickField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int countFatalRestarts
+            {
+                get
+                {
+                    return this.countFatalRestartsField;
+                }
+                set
+                {
+                    this.countFatalRestartsField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int limitCountFatalRestarts
+            {
+                get
+                {
+                    return this.limitCountFatalRestartsField;
+                }
+                set
+                {
+                    this.limitCountFatalRestartsField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool emergencyPuaseEnable
+            {
+                get
+                {
+                    return this.emergencyPuaseEnableField;
+                }
+                set
+                {
+                    this.emergencyPuaseEnableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public System.DateTime emergencyPuaseStart
+            {
+                get
+                {
+                    return this.emergencyPuaseStartField;
+                }
+                set
+                {
+                    this.emergencyPuaseStartField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int emergencyPuase
+            {
+                get
+                {
+                    return this.emergencyPuaseField;
+                }
+                set
+                {
+                    this.emergencyPuaseField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        public partial class connectionsTypeConnection
+        {
+
+            private int nrecordField;
+
+            private int connectiontypeField;
+
+            private bool enableField;
+
+            private string nameField;
+
+            private string connectionStringField;
+
+            private int restartIntervalField;
+
+            private bool restartIntervalFieldSpecified;
+
+            private string serverIpField;
+
+            private string programField;
+
+            private string[] connectionFoldersField;
+
+            private string commentsField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int nrecord
+            {
+                get
+                {
+                    return this.nrecordField;
+                }
+                set
+                {
+                    this.nrecordField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int connectiontype
+            {
+                get
+                {
+                    return this.connectiontypeField;
+                }
+                set
+                {
+                    this.connectiontypeField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool enable
+            {
+                get
+                {
+                    return this.enableField;
+                }
+                set
+                {
+                    this.enableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string name
+            {
+                get
+                {
+                    return this.nameField;
+                }
+                set
+                {
+                    this.nameField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string connectionString
+            {
+                get
+                {
+                    return this.connectionStringField;
+                }
+                set
+                {
+                    this.connectionStringField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public int restartInterval
+            {
+                get
+                {
+                    return this.restartIntervalField;
+                }
+                set
+                {
+                    this.restartIntervalField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlIgnoreAttribute()]
+            public bool restartIntervalSpecified
+            {
+                get
+                {
+                    return this.restartIntervalFieldSpecified;
+                }
+                set
+                {
+                    this.restartIntervalFieldSpecified = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string serverIp
+            {
+                get
+                {
+                    return this.serverIpField;
+                }
+                set
+                {
+                    this.serverIpField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string program
+            {
+                get
+                {
+                    return this.programField;
+                }
+                set
+                {
+                    this.programField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            [System.Xml.Serialization.XmlArrayItemAttribute("folder", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+            public string[] connectionFolders
+            {
+                get
+                {
+                    return this.connectionFoldersField;
+                }
+                set
+                {
+                    this.connectionFoldersField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string comments
+            {
+                get
+                {
+                    return this.commentsField;
+                }
+                set
+                {
+                    this.commentsField = value;
+                }
+            }
+        }
+    }
 }
