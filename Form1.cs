@@ -43,7 +43,7 @@ namespace WindowsFormsApplication3
         public List<LinkLabel> listLabels = new List<LinkLabel>();
         public List<clsPanelReglament> listPanelReglament = new List<clsPanelReglament>();
         public Queue<clsLog> logQueue = new Queue<clsLog>();
-        public clsLogining Gate_Logining = new clsLogining("uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\\SQLEXPRESS;database=gate;");
+        public clsLogining Gate_Logining = null; // new clsLogining();//"uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\\SQLEXPRESS;database=gate;");123
         // контрольные точки
         clsGateConfig.configurationType config = new clsGateConfig.configurationType();
         //public clsGateConfig.gatewayType Gateway_Connections = new clsGateConfig.gatewayType();
@@ -56,7 +56,7 @@ namespace WindowsFormsApplication3
         public List<clsConfigPrototype>[] connections_list = new List<clsConfigPrototype>[3];
         // Список расписания с задачами
         // инициализируются в frmGateway()
-        public clsShedules shedules;
+        public clsShedules shedules = null;
         //Передаем метод работы с Логом в класс
         //Делегаты Metod_Log объявлен в классе
         //
@@ -87,7 +87,7 @@ namespace WindowsFormsApplication3
                 foreach(clsConfigPrototype prototype in connections_list[i])
                     prototype.controllerStart();
 
-            shedules = new clsShedules(logQueue.Enqueue, ref Gate_Connections);
+            shedules = new clsShedules(logQueue.Enqueue, ref Gate_Connections, config.reglament.connectionString);
             //запускаем
             shedules.test = config.reglament.test;
             lblSetTest_refresh();
@@ -120,7 +120,7 @@ namespace WindowsFormsApplication3
             */
             try
             {
-                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - gateway"));
+                //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - gateway"));
                 //Инициализация
                 //config.gateway.identificationSynch.enable;
                 if (config.gateway.identificationSynch.emergencyPuase == 0) config.gateway.identificationSynch.emergencyPuase = 60;
@@ -128,10 +128,14 @@ namespace WindowsFormsApplication3
                 config.gateway.identificationSynch.tick = (config.gateway.identificationSynch.tick != 0) ? config.gateway.identificationSynch.tick : 1;
                 timer_sync_identification.Interval = config.gateway.identificationSynch.tick * 1000;
                 //Gateway_Connections = config.gateway;
-                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - reglament"));
+                //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - reglament"));
                 //Reglament_Connections = config.reglament;
-                //if (!Gate_Logining.Server_connecting()) MessageBox.Show("Нет соединения с базой Лога!");
-                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - connections"));
+                Gate_Logining = new clsLogining(logQueue.Enqueue, config.logining.connectionString, config.gateway.admin.inform, config.gateway.admin.email
+                    ,config.gateway.email.mailServer
+                    ,config.gateway.email.email
+                    ,config.gateway.email.password);
+                if (!Gate_Logining.Server_connecting()) MessageBox.Show("Нет соединения с базой Лога!");
+                //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "connections", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек - connections"));
                 //------------------ Connections
                 int document = 0;
                 foreach (clsGateConfig.connectionsTypeConnection connection in config.connections)
@@ -160,12 +164,12 @@ namespace WindowsFormsApplication3
                             if (Gate_Connections[document].restartInterval != 0) Gate_Connections[document].startRestart();
                             break;
                     }
-                    logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Connections", 0, 0, DateTime.Now, DateTime.Now, connection.name + " - " + connection.comments));
+                    //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Connections", 0, 0, DateTime.Now, DateTime.Now, connection.name + " - " + connection.comments));
                     document++;
                 }
                 
                 //------------------ Processes
-                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
+                //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
                 //List<string> masks_ = new List<string>();
                 //string comment_;    
                 document = 0;
@@ -186,11 +190,11 @@ namespace WindowsFormsApplication3
                     });
                     Gate_Transport_files[document].ping.connectionType = 2;
                     Gate_Transport_files[document].ping.ping_resource = new string[] { process.source, process.destination };
-                    logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Transport_files", 0, 0, DateTime.Now, DateTime.Now, process.name + " - " + process.comment));
+                    //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Transport_files", 0, 0, DateTime.Now, DateTime.Now, process.name + " - " + process.comment));
                     document++;
                 }
 
-                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files_inpersonalfolder", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
+                //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files_inpersonalfolder", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
                 //List<string> recipients_ = new List<string>();
                 document = 0;
                 foreach (clsGateConfig.processesTypeZap2 process in config.processes.transport_files_inpersonalfolder)
@@ -213,12 +217,12 @@ namespace WindowsFormsApplication3
                     });
                     Gate_Transport_files_inpersonalfolder[document].ping.connectionType = 2;
                     Gate_Transport_files_inpersonalfolder[document].ping.ping_resource = new string[] { process.source, process.destination };
-                    logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Transport_files", 0, 0, DateTime.Now, DateTime.Now, process.name + " - " + process.comment));
+                    //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "Gate_Transport_files", 0, 0, DateTime.Now, DateTime.Now, process.name + " - " + process.comment));
                     document++;
 
                 }
                 
-                logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files_email", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
+                //logQueue.Enqueue(new clsLog(DateTime.Now, 9, "transport_files_email", 0, 0, DateTime.Now, DateTime.Now, "Получение файла настроек"));
                 document = 0;
                 foreach (clsGateConfig.processesTypeZap5 process in config.processes.transport_files_email)
                 {
@@ -721,6 +725,7 @@ namespace WindowsFormsApplication3
             }
             else
             {
+                //Ищем в одном списке
                 for (int i = 0; i < listLabels.Count; i++)
                     if (sender.GetHashCode() == listLabels[i].GetHashCode())
                     {
@@ -779,13 +784,33 @@ namespace WindowsFormsApplication3
                                     Gate_Transport_files_email[index].enable = true;
                                     message = "поставлено на контроль - " + Gate_Transport_files_email[index].comment;
                                 }
-                                break;
+                                break;                            
                         }
                         //if (Gate_Connections[i].active) Gate_Connections[i].change_status = true;
                     }
+                //если не найден в предыдущем списке ищем в этом
+                if(message == string.Empty)
+                {
+                    for(int i = 0; i < listPanelReglament.Count(); i++)
+                    {                        
+                        if (sender.GetHashCode() == listPanelReglament[i].lnklblTimer.GetHashCode())
+                        {
+                            bool active = !shedules.shedule[i].shedule_active;
+                            message = ((!active) ? "деактивирована задача - " : "активирована задача - ") + shedules.shedule[i].shedule_name;
+                            if (!clsLibrary.execQuery(config.reglament.connectionString, string.Format("update schedules set active = {0} where id = {1}", Convert.ToInt32(active), shedules.shedule[i].shedule_id)))
+                            {
+                                MessageBox.Show(string.Format("Не удалось изменить регламент!", Convert.ToInt32(active), shedules.shedule[i].shedule_name));
+                            }
+                            lnklblRefreshReglament_LinkClicked(null, null);
+                            break;
+                        }
+                    }
+                }
             }
             if(message != string.Empty) logQueue.Enqueue(new clsLog(DateTime.Now, 0, "Gate", 0, 0, DateTime.Now, DateTime.Now, message));            
         }
+
+
         private void TestStatus_Pings(object sender, EventArgs e)
         //Проверяем состояние пингов, логиним и меняем цвет индикаторов 
         {
@@ -882,12 +907,14 @@ namespace WindowsFormsApplication3
             int id = -1;
             foreach (clsShedule shedul in shedules.shedule)
             {
-                //Создаем панель
+                
                 id++;
+                //Создаем панель
                 //clsPanelReglament
                 listPanelReglament.Add(
-                    new clsPanelReglament(
+                    new clsPanelReglament(                        
                         shedul.reglament_id,
+                        ReversEnable_Pings /*метод контроля клика*/,
                         shedul.shedule_id,
                         shedul.shedule_id_parent,
                         shedul.region_name,
@@ -1476,7 +1503,7 @@ namespace WindowsFormsApplication3
                         { IsBackground = true, Name = "thread_identification_synch" };
                         thread_identification_synch.Start(Gate_Connections);
                         lblIdentificationSynch.ForeColor = clsVisualControls.clrText;
-                        logQueue.Enqueue(new clsLog(DateTime.Now, 0, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "started"));
+                        logQueue.Enqueue(new clsLog(DateTime.Now, 1, "thread_identification_synch", 0, 0, DateTime.Now, DateTime.Now, "started"));
                     }
                 }                
             }

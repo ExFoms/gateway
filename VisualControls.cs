@@ -9,7 +9,7 @@ using System.Drawing;
 
 namespace WindowsFormsApplication3
 {
-
+    public delegate void ReversActive(object sender, EventArgs e);
     public class clsVisualControls
     {
         // ------------- Colors
@@ -98,7 +98,7 @@ namespace WindowsFormsApplication3
         public int reglament_id;
         public int shedule_id;
         Panel pnlReglament_BottomLine = new Panel();
-        LinkLabel 
+        public LinkLabel 
             lnklblRegion = new LinkLabel(),
             lnklblActive = new LinkLabel(),
             lnklblReglament = new LinkLabel(),
@@ -110,7 +110,7 @@ namespace WindowsFormsApplication3
             disposed = false,
             active = false;
 
-        public clsPanelReglament(int reglament_id_, int shedule_id_,
+        public clsPanelReglament(int reglament_id_, ReversActive reversActive, int shedule_id_,
             int parent_,
             string region_,
             string reglament_,
@@ -237,7 +237,7 @@ namespace WindowsFormsApplication3
                     new ToolTip().SetToolTip(lnklblTimer, "Отключен");
                 lnklblTimer.Text = "   ";
                 lnklblTimer.Parent = pnlMiddle;
-                //listLabels[id].Click += new System.EventHandler(ReversEnable_Pings);
+                lnklblTimer.Click += new System.EventHandler(reversActive);
             }
 
             //Добавляем разделительную полосу

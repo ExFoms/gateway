@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="windows-1251"?>
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <reglament>
     <enable>true</enable>
     <test>false</test>
-    <connectionString>uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\SQLEXPRESS;database=gate</connectionString>
+    <connectionString>Server=192.168.1.4;Port=5432;User Id=gate;Password=Ghnmop0!</connectionString>
   </reglament>
   <gateway>
     <identificationSynch>
       <enable>true</enable>
       <tick>1</tick>
-      <countFatalRestarts>1</countFatalRestarts>
+      <countFatalRestarts>0</countFatalRestarts>
       <limitCountFatalRestarts>10</limitCountFatalRestarts>
       <emergencyPuaseEnable>false</emergencyPuaseEnable>
       <emergencyPuaseStart>0001-01-01T00:00:00</emergencyPuaseStart>
@@ -19,25 +19,12 @@
       <folder>Q:\in</folder>
       <folder>Q:\out</folder>
     </connectionFolders>
-    <email>
-      <email>AOFOMS Gateware server-shrk@aofoms.tsl.ru</email>
-      <mailServer>192.168.1.2</mailServer>
-      <password>A3z4y5</password>
-    </email>
-    <admin>
-      <email>ex.foms@gmail.com</email>
-      <inform>true</inform>
-    </admin>
   </gateway>
-  <logining>
-    <enable>true</enable>
-    <connectionString>uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\SQLEXPRESS;database=gate</connectionString>
-  </logining>
   <connections>
     <connection>
       <nrecord>1</nrecord>
       <connectiontype>2</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>adapter_smev13</name>
       <connectionFolders>
         <folder>R:\in</folder>
@@ -48,7 +35,7 @@
     <connection>
       <nrecord>2</nrecord>
       <connectiontype>2</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>adapter_smev12</name>
       <connectionFolders>
         <folder>Q:\in</folder>
@@ -93,7 +80,7 @@
     <connection>
       <nrecord>4</nrecord>
       <connectiontype>2</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>storage</name>
       <connectionFolders>
         <folder>S:\</folder>
@@ -148,7 +135,7 @@
     <connection>
       <nrecord>0</nrecord>
       <connectiontype>1</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>postgres</name>
       <connectionString>User ID=postgres;Password=123OOO321;Host=11.0.0.65;ApplicationName = Gate;Port=5432;pooling=false;</connectionString>
       <serverIp>11.0.0.65</serverIp>
@@ -157,7 +144,7 @@
     <connection>
       <nrecord>0</nrecord>
       <connectiontype>1</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>my_db</name>
       <connectionString>Server=192.168.1.4;Port=5432;ApplicationName = Gate;User Id=gate;Password=Ghnmop0!;pooling=false;</connectionString>
       <serverIp>192.168.1.4</serverIp>
@@ -166,7 +153,7 @@
     <connection>
       <nrecord>0</nrecord>
       <connectiontype>1</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>private_office</name>
       <connectionString>Server=192.168.1.4;Port=5432;ApplicationName = Gate;User Id=gate;Password=Ghnmop0!;pooling=false;</connectionString>
       <serverIp>192.168.1.4</serverIp>
@@ -175,7 +162,7 @@
     <connection>
       <nrecord>1</nrecord>
       <connectiontype>1</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>server-e</name>
       <connectionString>uid=Sa;pwd=Q1w2e3;server=11.0.0.65</connectionString>
       <serverIp>11.0.0.65</serverIp>
@@ -184,7 +171,7 @@
     <connection>
       <nrecord>2</nrecord>
       <connectiontype>1</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>server-shrk</name>
       <connectionString>uid=sa;pwd=Wedfzx8!;server=192.168.1.93</connectionString>
       <serverIp>192.168.1.93</serverIp>
@@ -193,7 +180,7 @@
     <connection>
       <nrecord>3</nrecord>
       <connectiontype>1</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>server-shrk-name</name>
       <connectionString>uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\SQLEXPRESS</connectionString>
       <serverIp>SERVER-SHRK</serverIp>
@@ -202,7 +189,7 @@
     <connection>
       <nrecord>4</nrecord>
       <connectiontype>2</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>server-e-folders</name>
       <connectionFolders>
         <folder>O:\</folder>
@@ -212,7 +199,7 @@
     <connection>
       <nrecord>5</nrecord>
       <connectiontype>2</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>server-shrk-folders</name>
       <connectionFolders>
         <folder>C:\srz_support\current\input\</folder>
@@ -223,7 +210,7 @@
     <connection>
       <nrecord>6</nrecord>
       <connectiontype>2</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>cs_folders</name>
       <connectionFolders>
         <folder>\\10.28.160.17\srz\input\</folder>
@@ -234,14 +221,14 @@
     <connection>
       <nrecord>8</nrecord>
       <connectiontype>4</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>scanerp</name>
       <program>C:\srz\scanerp\scanerp.exe</program>
     </connection>
     <connection>
       <nrecord>9</nrecord>
       <connectiontype>4</connectiontype>
-      <enable>true</enable>
+      <enable>false</enable>
       <name>VipNetmail</name>
       <program>C:\Program Files\InfoTeCS\ViPNet Client\wmail.exe</program>
       <comments>Деловая почта VIpNet</comments>
@@ -252,7 +239,7 @@
       <zap>
         <name>Перенос входящих файлов СМЭВ (схема 1.3)</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix>smev13-</prefix>
         <rewrite>false</rewrite>
@@ -266,7 +253,7 @@
       <zap>
         <name>Перенос ошибок исходящих файлов СМЭВ (схема 1.3)</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix>error-smev13-</prefix>
         <rewrite>true</rewrite>
@@ -280,7 +267,7 @@
       <zap>
         <name>Перенос входящих файлов СМЭВ (схема 1.2)</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix>smev12-</prefix>
         <rewrite>false</rewrite>
@@ -294,7 +281,7 @@
       <zap>
         <name>Перенос ошибок исходящих файлов СМЭВ (схема 1.2)</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix>error-smev12-</prefix>
         <rewrite>true</rewrite>
@@ -308,7 +295,7 @@
       <zap>
         <name>Перенос исходящих файлов для СМЭВ (схема 1.2)</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -322,7 +309,7 @@
       <zap>
         <name>Перенос исходящих файлов для СМЭВ (схема 1.3)</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -336,7 +323,7 @@
       <zap>
         <name>Перенос резервных копий</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>true</rewrite>
@@ -352,7 +339,7 @@
       <zap>
         <name>Перенос исходящих файлов СРЗ</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -366,7 +353,7 @@
       <zap>
         <name>Перенос файлов из ЦС</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -380,7 +367,7 @@
       <zap>
         <name>Перенос файлов для ЦС</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -396,7 +383,7 @@
       <zap>
         <name>Перенос файлов для ЕИР</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -417,7 +404,7 @@
       <zap>
         <name>Перенос файлов от ЕИР</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -431,7 +418,7 @@
       <zap>
         <name>Подписки Богомаз О.В</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -448,7 +435,7 @@
       <zap>
         <name>Перенос файлов в персональные папки получателей (СМО)1</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -471,7 +458,7 @@
       <zap>
         <name>Перенос файлов в персональные папки получателей (СМО)2</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -496,7 +483,7 @@
       <zap>
         <name>Перенос файлов в персональные папки получателей (МО)</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>1</nrecord>
         <prefix />
         <rewrite>false</rewrite>
@@ -586,7 +573,7 @@
       <zap>
         <name>Отправка электронной почтой omo_zdrav@mail.ru в МИНЗДРАВ</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <comment>Отправка электронной почтой omo_zdrav@mail.ru в МИНЗДРАВ</comment>
         <source>W:\minzdrav\omo</source>
@@ -596,7 +583,7 @@
       <zap>
         <name>Уведомление администратора</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <comment>Уведомление администратора</comment>
         <source>W:\admin\error</source>
@@ -606,7 +593,7 @@
       <zap>
         <name>28004, почта директора</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <comment>28004, почта директора</comment>
         <source>W:\28004owner</source>
@@ -616,7 +603,7 @@
       <zap>
         <name>ФОМС, начальник управления ИТО</name>
         <tick>1</tick>
-        <enable>true</enable>
+        <enable>false</enable>
         <nrecord>0</nrecord>
         <comment>ФОМС, начальник управления ИТО</comment>
         <source>W:\FOMS\email\Sitnikov</source>

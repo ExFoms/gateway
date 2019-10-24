@@ -20,6 +20,7 @@ namespace WindowsFormsApplication3
     public class clsShedules  
     {
         public List<clsConnections> link_connections = new List<clsConnections>(); // Ссылка на список подключений
+        public string connectionString = string.Empty;
         public bool test = true;
 
         public List<clsShedule> shedule = new List<clsShedule>();
@@ -48,10 +49,11 @@ namespace WindowsFormsApplication3
 
         public Metod_Log metod_log; //для передачи метода публикации лога из основного класса
 
-        public clsShedules(Metod_Log metod_log_, ref List<clsConnections> link_connections_)
+        public clsShedules(Metod_Log metod_log_, ref List<clsConnections> link_connections_, string connectionString_)
         {
             metod_log = metod_log_;
             link_connections = link_connections_;
+            connectionString = connectionString_;
 
             intervalSec_GetReglament = TimeSpan.FromHours(3); //3 часа 
             dateStart_GetReglament = DateTime.Now-intervalSec_GetReglament;
@@ -242,8 +244,8 @@ namespace WindowsFormsApplication3
             if (active) active = false;
             DateTime time = DateTime.Now;
             dateStart_GetReglament = time;
-            List<clsShedule> shedule_temp = new List<clsShedule>(); 
-            SqlConnection Connection = new SqlConnection("uid=sa;pwd=Wedfzx8!;server=SERVER-SHRK\\SQLEXPRESS;database=gate");
+            List<clsShedule> shedule_temp = new List<clsShedule>();
+            SqlConnection Connection = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText =
                     "SELECT " +
@@ -271,11 +273,14 @@ namespace WindowsFormsApplication3
                 SqlDataReader rdr = cmd.ExecuteReader();
                 if (rdr.HasRows)
                 {
+                    int i = 0;
                     shedule_temp.Clear();
                     while (rdr.Read())
                     {
+                        i++;
                         shedule_temp.Add(new clsShedule()
                         {
+                            
                             region_id = (int)rdr["REGION_ID"],
                             region_name = (string)rdr["REGION_NAME"],
                             region_comment = (string)rdr["REGION_COMMENT"],
@@ -316,9 +321,9 @@ namespace WindowsFormsApplication3
                 if (active_incom) active = true;
                 return true;
             }
-            catch
+            catch(Exception e)
             {
-                metod_log(new clsLog(DateTime.Now, 0, "shedule", 0, 0, time, DateTime.Now, "Не удалось получить Регламент"));
+                metod_log(new clsLog(DateTime.Now, 0, "shedule", 0, 0, time, DateTime.Now, "Не удалось получить Регламент - " + e.Message));
                 enableReglament = false;
                 busy_Reglament = false;
                 if (active_incom) active = true;
@@ -493,6 +498,8 @@ namespace WindowsFormsApplication3
 
             private gatewayType gatewayField;
 
+            private loginingType loginingField;
+
             private connectionsTypeConnection[] connectionsField;
 
             private processesType processesField;
@@ -522,6 +529,20 @@ namespace WindowsFormsApplication3
                 set
                 {
                     this.gatewayField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public loginingType logining
+            {
+                get
+                {
+                    return this.loginingField;
+                }
+                set
+                {
+                    this.loginingField = value;
                 }
             }
 
@@ -565,9 +586,9 @@ namespace WindowsFormsApplication3
 
             private bool enableField;
 
-            private bool testField;
-
             private string connectionStringField;
+
+            private bool testField;
 
             /// <remarks/>
             [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -585,20 +606,6 @@ namespace WindowsFormsApplication3
 
             /// <remarks/>
             [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-            public bool test
-            {
-                get
-                {
-                    return this.testField;
-                }
-                set
-                {
-                    this.testField = value;
-                }
-            }
-
-            /// <remarks/>
-            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
             public string connectionString
             {
                 get
@@ -608,6 +615,20 @@ namespace WindowsFormsApplication3
                 set
                 {
                     this.connectionStringField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool test
+            {
+                get
+                {
+                    return this.testField;
+                }
+                set
+                {
+                    this.testField = value;
                 }
             }
         }
@@ -1174,12 +1195,57 @@ namespace WindowsFormsApplication3
         [System.SerializableAttribute()]
         [System.Diagnostics.DebuggerStepThroughAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
+        public partial class loginingType
+        {
+
+            private bool enableField;
+
+            private string connectionStringField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool enable
+            {
+                get
+                {
+                    return this.enableField;
+                }
+                set
+                {
+                    this.enableField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string connectionString
+            {
+                get
+                {
+                    return this.connectionStringField;
+                }
+                set
+                {
+                    this.connectionStringField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
         public partial class gatewayType
         {
 
             private gatewayTypeIdentificationSynch identificationSynchField;
 
             private string[] connectionFoldersField;
+
+            private gatewayTypeEmail emailField;
+
+            private gatewayTypeAdmin adminField;
 
             /// <remarks/>
             [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -1207,6 +1273,34 @@ namespace WindowsFormsApplication3
                 set
                 {
                     this.connectionFoldersField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public gatewayTypeEmail email
+            {
+                get
+                {
+                    return this.emailField;
+                }
+                set
+                {
+                    this.emailField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public gatewayTypeAdmin admin
+            {
+                get
+                {
+                    return this.adminField;
+                }
+                set
+                {
+                    this.adminField = value;
                 }
             }
         }
@@ -1329,6 +1423,106 @@ namespace WindowsFormsApplication3
                 set
                 {
                     this.emergencyPuaseField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        public partial class gatewayTypeEmail
+        {
+
+            private string emailField;
+
+            private string mailServerField;
+
+            private string passwordField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string email
+            {
+                get
+                {
+                    return this.emailField;
+                }
+                set
+                {
+                    this.emailField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string mailServer
+            {
+                get
+                {
+                    return this.mailServerField;
+                }
+                set
+                {
+                    this.mailServerField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string password
+            {
+                get
+                {
+                    return this.passwordField;
+                }
+                set
+                {
+                    this.passwordField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+        [System.SerializableAttribute()]
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        public partial class gatewayTypeAdmin
+        {
+
+            private string emailField;
+
+            private bool informField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public string email
+            {
+                get
+                {
+                    return this.emailField;
+                }
+                set
+                {
+                    this.emailField = value;
+                }
+            }
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+            public bool inform
+            {
+                get
+                {
+                    return this.informField;
+                }
+                set
+                {
+                    this.informField = value;
                 }
             }
         }
