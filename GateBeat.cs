@@ -120,7 +120,9 @@ namespace WindowsFormsApplication3
                 case "identification_create_response_01": thread = new Thread(identification_create_response_01) { IsBackground = true, Name = gate_nametask }; break;
                 case "cleaner_identificationPeople": thread = new Thread(cleaner_identificationPeople) { IsBackground = true, Name = gate_nametask }; break;
                 case "serverC_get_request_idetification": thread = new Thread(serverC_get_request_idetification) { IsBackground = true, Name = gate_nametask }; break;
+                case "serverC2_get_request_idetification": thread = new Thread(serverC2_get_request_idetification) { IsBackground = true, Name = gate_nametask }; break;
                 case "ServerC_unload_identification": thread = new Thread(ServerC_unload_identification) { IsBackground = true, Name = gate_nametask }; break;
+                case "ServerC2_unload_identification": thread = new Thread(ServerC2_unload_identification) { IsBackground = true, Name = gate_nametask }; break;
                 case "gateBackup": thread = new Thread(gateBackup) { IsBackground = true, Name = gate_nametask }; break;
                 case "eirBackup": thread = new Thread(eirBackup) { IsBackground = true, Name = gate_nametask }; break;
                 //удален case "unloading_ZLDNforSMO": thread = new Thread(unloading_ZLDNforSMO) { IsBackground = true, Name = gate_nametask }; break;
@@ -1080,6 +1082,69 @@ namespace WindowsFormsApplication3
                 error = GateError.errorPerformanceMetod;
             }
         }
+        public void serverC2_get_request_idetification()
+        // Получение запросов на идентификацию
+        {
+            state = Thread_state.starting;
+            string comment = "";
+            try
+            {
+                int limit_transaction = 5000;
+                List<string[]> response = new List<string[]>();
+                if (!clsLibrary.ExecQurey_PGR_GetListStrings(
+                    ref link_connections
+                    , null
+                    , "my_db"
+                    , string.Format("select '{0}', scheme, id, fam, im, ot, to_char(dr,'YYYY-MM-DD') dr, snils, opdoc, spolis, npolis, doctp, docser, docnum, enp, keys from static.identifications where state = 0 order by id limit {1}", "Server-c2", limit_transaction)
+                    , ref response))
+                {
+                    state = Thread_state.error;
+                    error = GateError.errorPerformanceMetod;
+                }
+                else
+                {
+                    if (response.Count() != 0)
+                    {
+                        queue_status.Enqueue(new Log_status("Server-c2 Request Identification", string.Empty, response.Count().ToString()));
+                        if (!clsLibrary.execQuery_insertList_bool("uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;",
+                            "INSERT INTO Gate_IdentificationPeople (subsystem, scheme, clientid, fam, im, ot, dr, SNILS, OPDOC, SPOLIS,NPOLIS,DOCTP,DOCSER,DOCNUM,enp, keys) VALUES ", response, 1))
+                        {
+                            string l = "";
+                            for (int i = 0; i < 15; i++)
+                            {
+                                l += "; " + response[0][i];
+                            }
+                            state = Thread_state.error;
+                            error = GateError.errorPerformanceMetod;
+                        }
+                        else
+                        {
+                            List<string> values = new List<string>();
+                            foreach (string[] row in response) values.Add(row[2]);
+                            if (!clsLibrary.execQuery_PGR(
+                                ref link_connections
+                                , "my_db"
+                                //"Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;",                                
+                                , string.Format("Update static.identifications set state = 1, identification_date = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                                ))
+                            {
+                                state = Thread_state.error;
+                                error = GateError.errorPerformanceMetod;
+                            }
+                            else state = Thread_state.finished;
+                        }
+                    }
+                    else
+                        state = Thread_state.finished;
+                }
+            }
+            catch
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+        }
+
 
         public void gate_get_request_identification_from_eir()
         // Получение запросов на идентификацию
@@ -1289,6 +1354,59 @@ namespace WindowsFormsApplication3
                     if (!clsLibrary.execQuery_PGR_updateList(
                         //"Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
                         "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=private_office;"
+                        , values, 1, 1000000))
+                    {
+                        state = Thread_state.error;
+                        error = GateError.errorPerformanceMetod;
+                    }
+                    else
+                    {
+                        values.Clear();
+                        foreach (string[] row in response) values.Add(row[0]);
+                        if (!clsLibrary.execQuery(
+                            "uid=sa;pwd=Cvbqwe2!;server=server-r;database=tmpForSRZ;"
+                            , string.Format("Update [tmpForSRZ].[dbo].[Gate_IdentificationPeople] set DATE_SENDING = '{0}' where id in ({1})", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), string.Join(",", values.ToArray()))
+                            ))
+                        {
+                            state = Thread_state.error;
+                            error = GateError.errorPerformanceMetod;
+                        }
+                        else state = Thread_state.finished;
+                    }
+                }
+                else state = Thread_state.finished;
+            }
+        }
+        public void ServerC2_unload_identification()
+        // Выгрузка запросов на идентификацию
+        {
+            state = Thread_state.starting;
+            int limit_transaction = 5000;
+            List<string[]> response = new List<string[]>();
+            if (!clsLibrary.execQuery_getListString(
+                ref response, ref link_connections, reglament_connections, "tmpForSRZ"
+                , string.Format("SELECT TOP {0} [ID],[CLIENTID],[PID],[KEYS_RESULT],[RESPONSE] FROM [tmpForSRZ].[dbo].[Gate_IdentificationPeople] where state = 99 and DATE_SENDING is null and subsystem = '{1}' order by id desc", limit_transaction, "Server-c2")
+                ))
+            {
+                state = Thread_state.error;
+                error = GateError.errorPerformanceMetod;
+            }
+            else
+            {
+                if (response.Count() != 0)
+                {
+                    List<string> values = new List<string>();
+                    foreach (string[] row in response)
+                        values.Add(string.Format("SET enable_seqscan TO on; Update static.identifications set pid = {0}, state = 99, identification_date = '{1}', KEYS_RESULT = '{2}', RESPONSE = '{4}' where id = {3}"
+                            , row[2]
+                            , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
+                            , row[3]
+                            , row[1]
+                            , row[4])
+                        );
+                    if (!clsLibrary.execQuery_PGR_updateList(
+                        "Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=my_db;"
+                        //"Server=192.168.1.4;Port=5432;ApplicationName = Dispetcher;User Id=gate;Password=Ghnmop0!;Database=private_office;"
                         , values, 1, 1000000))
                     {
                         state = Thread_state.error;
